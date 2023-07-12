@@ -1,0 +1,44 @@
+plugins {
+	id 'lumicore.java-conventions'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+dependencies {
+    implementation project(':core')
+    implementation project(':benchmark')
+    implementation project(':logging')
+    implementation project(':orm-sqlite')
+    implementation project(':properties')
+    implementation project(':remoteai')
+    implementation project(':stack-util')
+    implementation project(':swing')
+    //implementation project(':util')
+	
+    // Apache 2.0
+	// https://mvnrepository.com/artifact/io.github.willena/sqlite-jdbc
+	implementation group: 'io.github.willena', name: 'sqlite-jdbc', version: '3.38.1'
+}
+
+application {
+	mainClass = 'com.github.epimethix.lumicore.remoteaiui.RemoteAIUI'
+}
+
+shadowJar {
+   archiveBaseName.set(project.name)
+   archiveClassifier.set('')
+   archiveVersion.set('')
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class' : 'com.github.epimethix.lumicore.remoteaiui.RemoteAIUI',
+        	'Implementation-Title': project.name,
+        	'Implementation-Version': project.version
+    }
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}

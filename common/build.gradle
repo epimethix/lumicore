@@ -1,0 +1,28 @@
+plugins {
+	id 'lumicore.java-conventions'
+}
+
+dependencies {
+    // Apache 2.0
+	// https://mvnrepository.com/artifact/io.github.willena/sqlite-jdbc
+	implementation group: 'io.github.willena', name: 'sqlite-jdbc', version: '3.38.1'
+    implementation project(':benchmark')
+    implementation project(':ioc-annotations')
+    implementation project(':logging')
+    implementation project(':orm-annotations')
+    implementation project(':properties')
+    implementation project(':stack-util')
+    // Apache 2.0
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+
+    // Apache 2.0
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
+	
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}

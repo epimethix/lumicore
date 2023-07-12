@@ -1,0 +1,30 @@
+plugins {
+	id 'lumicore.java-conventions'
+	id 'java-library'
+}
+
+dependencies {
+	implementation project(':benchmark')
+	implementation project(':common')
+	implementation project(':logging')
+	api project(':orm')
+	api project(':orm-annotations')
+	implementation project(':properties')
+	implementation project(':stack-util')
+    // Apache 2.0
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+	// api group: 'commons-codec', name: 'commons-codec', version: '1.15'
+	implementation 'commons-codec:commons-codec:1.15'
+    // Apache 2.0
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
+    // Apache 2.0
+	// https://mvnrepository.com/artifact/io.github.willena/sqlite-jdbc
+	api group: 'io.github.willena', name: 'sqlite-jdbc', version: '3.38.1'
+	
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}

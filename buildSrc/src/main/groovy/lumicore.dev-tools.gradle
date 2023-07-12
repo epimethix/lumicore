@@ -1,0 +1,13 @@
+def dev = sourceSets.create("dev")
+
+dependencies {
+	devImplementation project(':dev-tools')
+}
+def devJava = new File(projectDir.toString() + "/src/dev/java")
+if (!devJava.exists()) {
+	devJava.mkdirs()
+}
+def devResources = new File(projectDir.toString() + "/src/dev/resources")
+if (!devResources.exists()) {
+	devResources.mkdirs()
+}

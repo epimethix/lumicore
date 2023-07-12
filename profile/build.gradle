@@ -1,0 +1,13 @@
+plugins {
+	id 'lumicore.java-conventions'
+}
+
+dependencies {
+    implementation project(':stack-util')
+    implementation project(':properties')
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}

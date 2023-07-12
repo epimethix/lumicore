@@ -1,0 +1,33 @@
+{
+  "type" : "ERD",
+  "fontSize" : 16,
+  "data" : {
+    "com.github.epimethix.lumicore.devtools.gui.diagram.DiagramView" : {
+      "location" : {
+        "x" : 10.0,
+        "y" : 10.0
+      },
+      "configuration" : {
+        "showStaticFields" : true,
+        "showInstanceFields" : true,
+        "showConstructors" : false,
+        "showStaticMethods" : false,
+        "showInstanceMethods" : false
+      }
+    },
+    "com.github.epimethix.lumicore.devtools.gui.diagram.DiagramController" : {
+      "location" : {
+        "x" : 10.0,
+        "y" : 444.0
+      },
+      "configuration" : {
+        "showStaticFields" : true,
+        "showInstanceFields" : true,
+        "showConstructors" : false,
+        "showStaticMethods" : false,
+        "showInstanceMethods" : false
+      }
+    }
+  },
+  "relations" : [ ]
+}

@@ -1,0 +1,20 @@
+{
+  "name" : "labels",
+  "constantsFile" : "src/main/java/com/github/epimethix/accounting/gui/L.java",
+  "localeFiles" : {
+    "de" : "src/main/resources/labels_de.properties",
+    "en" : "src/main/resources/labels_en.properties",
+    "iw" : "src/main/resources/labels_iw.properties",
+    "it" : "src/main/resources/labels_it.properties",
+    "fr" : "src/main/resources/labels_fr.properties",
+    "jp" : "src/main/resources/labels_jp.properties"
+  },
+  "localeLoaded" : {
+    "de" : true,
+    "en" : true,
+    "iw" : true,
+    "it" : true,
+    "fr" : true,
+    "jp" : true
+  }
+}

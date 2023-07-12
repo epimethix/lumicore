@@ -1,0 +1,15 @@
+plugins {
+	id 'lumicore.java-conventions'
+}
+
+dependencies {
+    
+	// https://mvnrepository.com/artifact/io.github.barqawiz/intellijava.core
+	implementation group: 'io.github.barqawiz', name: 'intellijava.core', version: '0.7.0'
+	implementation 'io.github.aminovmaksim:chatgpt4j:1.0.3'
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}

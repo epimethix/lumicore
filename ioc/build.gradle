@@ -1,0 +1,21 @@
+plugins {
+	id 'lumicore.java-conventions'
+}
+
+dependencies {
+    implementation project(':class-scan')
+    implementation project(':common')
+    implementation project(':benchmark')
+    implementation project(':ioc-annotations')
+    implementation project(':logging')
+    //implementation project(':orm-annotations')
+    implementation project(':profile')
+    implementation project(':properties')
+    implementation project(':stack-util')
+    //implementation project(':util')
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}

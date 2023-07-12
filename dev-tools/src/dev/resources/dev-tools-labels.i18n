@@ -1,0 +1,20 @@
+{
+  "name" : "dev-tools-labels",
+  "constantsFile" : "src/main/java/com/github/epimethix/lumicore/devtools/gui/D.java",
+  "localeFiles" : {
+    "de" : "src/main/resources/dev-tools-labels_de.properties",
+    "en" : "src/main/resources/dev-tools-labels_en.properties",
+    "fr" : "src/main/resources/dev-tools-labels_fr.properties",
+    "iw" : "src/main/resources/dev-tools-labels_iw.properties",
+    "it" : "src/main/resources/dev-tools-labels_it.properties",
+    "es" : "src/main/resources/dev-tools-labels_es.properties"
+  },
+  "localeLoaded" : {
+    "de" : false,
+    "en" : true,
+    "fr" : false,
+    "iw" : false,
+    "it" : true,
+    "es" : true
+  }
+}

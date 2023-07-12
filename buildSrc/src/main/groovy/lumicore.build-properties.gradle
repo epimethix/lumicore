@@ -1,0 +1,52 @@
+def retrieveEnvvar(String envvar_name) {
+    if ( System.getenv(envvar_name) == "" ) {
+        throw new InvalidUserDataException("\n\n\nPlease specify environment variable ${envvar_name}\n")
+    } else {
+        return System.getenv(envvar_name)
+    }       
+}
+
+task loadBuildProperties() {
+	File myfile = file("src/main/resources/build.properties");
+	def buildProperties = new Properties()
+	buildProperties.load(myfile.newDataInputStream())
+	println "Version: " + buildProperties.getProperty("version", "NOT FOUND")
+	buildProperties.setProperty("name", project.name)
+	buildProperties.setProperty("group", project.group)
+	buildProperties.setProperty("version", project.version)
+	buildProperties.setProperty("time", System.currentTimeMillis() + "")
+	buildProperties.store(myfile.newWriter(), null)
+}
+
+loadBuildProperties {
+    outputs.upToDateWhen { false }
+}
+
+tasks.matching { it.name != 'loadBuildProperties' }.all { Task t ->
+    t.dependsOn loadBuildProperties
+}
+
+//def p = new Properties() 
+//project.name = p.getProperty("project-name")
+//project.version = p.getProperty("project-version")
+//p.setProperty("project-name", project.name)
+//p.setProperty("project-version", project.version)
+//def buildNumber = Long.parseLong(p.getProperty("build-number"))+1L
+//p.setProperty("build-number", "${buildNumber}")
+//p.setProperty("build-time", System.currentTimeMillis() + "")
+//p.store(myfile.newWriter(), null)
+
+//tasks.register('stampBuild') {
+//    doLast {
+    	// def p1 = new Properties() 
+		//File myfile1 = file("src/main/resources/example-build.properties");
+		//p.load(myfile.newDataInputStream())
+		//p.setProperty("project-name", project.name)
+		//p.setProperty("project-version", project.version)
+		//def buildNumber = Long.parseLong(p.getProperty("build-number"))+1L
+		//p.setProperty("build-number", "${buildNumber}")
+//		buildProperties.setProperty("build-time", System.currentTimeMillis() + "")
+//		buildProperties.store(myfile.newWriter(), null)
+//    }
+//}
+//build.dependsOn stampBuild

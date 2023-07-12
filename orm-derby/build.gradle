@@ -1,0 +1,17 @@
+plugins {
+	id 'lumicore.java-conventions'
+	id 'java-library'
+}
+
+dependencies {
+	api project(':common')
+	api project(':orm')
+	api project(':orm-annotations')
+	// https://mvnrepository.com/artifact/org.apache.derby/derby
+	api group: 'org.apache.derby', name: 'derby', version: '10.14.2.0'
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}

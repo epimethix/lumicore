@@ -1,0 +1,15 @@
+plugins {
+	id 'lumicore.java-conventions'
+}
+
+dependencies {
+    
+	// https://mvnrepository.com/artifact/org.odftoolkit/simple-odf
+	implementation group: 'org.odftoolkit', name: 'simple-odf', version: '0.9.0'
+	
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}

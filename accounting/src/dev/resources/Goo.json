@@ -1,0 +1,85 @@
+{
+  "type" : "UML",
+  "fontSize" : 16,
+  "data" : {
+    "com.github.epimethix.lumicoreexample.UniqueList" : {
+      "location" : {
+        "x" : 10.0,
+        "y" : 10.0
+      },
+      "configuration" : {
+        "showStaticFields" : true,
+        "showInstanceFields" : true,
+        "showConstructors" : true,
+        "showStaticMethods" : true,
+        "showInstanceMethods" : true
+      }
+    },
+    "com.github.epimethix.lumicoreexample.GOOH" : {
+      "location" : {
+        "x" : 10.0,
+        "y" : 174.0
+      },
+      "configuration" : {
+        "showStaticFields" : true,
+        "showInstanceFields" : true,
+        "showConstructors" : true,
+        "showStaticMethods" : true,
+        "showInstanceMethods" : true
+      }
+    },
+    "com.github.epimethix.lumicoreexample.Testtteentity" : {
+      "location" : {
+        "x" : 206.0,
+        "y" : 277.0
+      },
+      "configuration" : {
+        "showStaticFields" : true,
+        "showInstanceFields" : true,
+        "showConstructors" : true,
+        "showStaticMethods" : true,
+        "showInstanceMethods" : true
+      }
+    },
+    "com.github.epimethix.lumicoreexample.TetsClsas" : {
+      "location" : {
+        "x" : 10.0,
+        "y" : 328.0
+      },
+      "configuration" : {
+        "showStaticFields" : true,
+        "showInstanceFields" : true,
+        "showConstructors" : true,
+        "showStaticMethods" : true,
+        "showInstanceMethods" : true
+      }
+    },
+    "com.github.epimethix.lumicoreexample.Doodoo" : {
+      "location" : {
+        "x" : 10.0,
+        "y" : 366.0
+      },
+      "configuration" : {
+        "showStaticFields" : true,
+        "showInstanceFields" : true,
+        "showConstructors" : true,
+        "showStaticMethods" : true,
+        "showInstanceMethods" : true
+      }
+    },
+    "java.lang.String" : {
+      "location" : {
+        "x" : 93.0,
+        "y" : 55.0
+      },
+      "configuration" : {
+        "showStaticFields" : true,
+        "showInstanceFields" : true,
+        "showConstructors" : false,
+        "showStaticMethods" : false,
+        "showInstanceMethods" : true
+      }
+    }
+  },
+  "relations" : [ ]
+}

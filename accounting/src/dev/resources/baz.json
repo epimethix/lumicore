@@ -1,0 +1,59 @@
+{
+  "type" : "UML",
+  "fontSize" : 16,
+  "data" : {
+    "com.github.epimethix.lumicoreexample.ExampleLoggerConfiguration" : {
+      "location" : {
+        "x" : 10.0,
+        "y" : 10.0
+      },
+      "configuration" : {
+        "showStaticFields" : true,
+        "showInstanceFields" : true,
+        "showConstructors" : true,
+        "showStaticMethods" : true,
+        "showInstanceMethods" : true
+      }
+    },
+    "com.github.epimethix.lumicoreexample.AppFiles" : {
+      "location" : {
+        "x" : 10.0,
+        "y" : 270.0
+      },
+      "configuration" : {
+        "showStaticFields" : true,
+        "showInstanceFields" : true,
+        "showConstructors" : true,
+        "showStaticMethods" : true,
+        "showInstanceMethods" : true
+      }
+    },
+    "com.github.epimethix.lumicoreexample.ExampleApplication" : {
+      "location" : {
+        "x" : 322.0,
+        "y" : 111.0
+      },
+      "configuration" : {
+        "showStaticFields" : true,
+        "showInstanceFields" : true,
+        "showConstructors" : true,
+        "showStaticMethods" : true,
+        "showInstanceMethods" : true
+      }
+    },
+    "com.github.epimethix.lumicoreexample.ExampleSettings" : {
+      "location" : {
+        "x" : 870.0,
+        "y" : 10.0
+      },
+      "configuration" : {
+        "showStaticFields" : true,
+        "showInstanceFields" : true,
+        "showConstructors" : true,
+        "showStaticMethods" : true,
+        "showInstanceMethods" : true
+      }
+    }
+  },
+  "relations" : [ ]
+}

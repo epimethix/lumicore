@@ -1,0 +1,23 @@
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+bin
+
+# Projects
+edicat
+
+# Types
+*.old
+*.log
+*.zip
+
+# Files
+lumicore-dev-tools.properties
+
+# eclipse files
+.classpath
+.project
+.settings
+.metadata
