@@ -1,6 +1,6 @@
 # lumicore
 
-![lumicore Logo](https://github.com/epimethix/lumicore/blob/main/core/src/resources/lumicore_256.png?raw=true)
+![lumicore Logo](https://github.com/epimethix/lumicore/blob/main/core/src/main/resources/lumicore_256.png?raw=true)
 
 ## Introduction
 
@@ -12,4 +12,4 @@ There are the three main features that the framework supplies.
 
 Inversion of Control / Dependency injection is realized through some annotations and Reflection. 
 
-[Read more...](../blob/main/LICENSE)
+[Read more...](../../blob/main/LICENSE)
