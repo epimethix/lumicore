@@ -22,6 +22,25 @@ dependencies {
 	
 }
 
+task loadLumicoreBuildProperties() {
+	File myfile = file("src/main/resources/lumicore-build.properties");
+	def buildProperties = new Properties()
+	buildProperties.load(myfile.newDataInputStream())
+	println "Version: " + buildProperties.getProperty("version", "NOT FOUND")
+	buildProperties.setProperty("name", project.name)
+	buildProperties.setProperty("group", project.group)
+	buildProperties.setProperty("version", project.version)
+	buildProperties.setProperty("time", System.currentTimeMillis() + "")
+	buildProperties.store(myfile.newWriter(), null)
+}
+
+loadLumicoreBuildProperties {
+    outputs.upToDateWhen { false }
+}
+
+tasks.matching { it.name != 'loadLumicoreBuildProperties' }.all { Task t ->
+    t.dependsOn loadLumicoreBuildProperties
+}
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
