@@ -1,6 +1,6 @@
-# lumicore
+# ![lumicore Logo](https://github.com/epimethix/lumicore/blob/main/core/src/main/resources/lumicore_256.png?raw=true) lumicore
 
-![lumicore Logo](https://github.com/epimethix/lumicore/blob/main/core/src/main/resources/lumicore_256.png?raw=true)
+
 
 ## Introduction
 
@@ -25,3 +25,10 @@ Object-Relational-Mapping is realized through some annotations and Reflection. A
 Swing is included in the IOC Concept. Swing `Component`s are initialized on the `EventDispatchThread` and are scanned for `LabelsDisplayer` implementations for dynamic I18N.
 
 [Read more...](../../blob/main/swing/README.md)
+
+## Example Applications
+
+- See [DevTools](../../blob/main/dev-tools) as an example of a non-db and ai application.
+- See [Accounting](../../blob/main/accounting) as an example of a simple database application
+- See [RemoteAI UI](../../blob/main/remoteai-ui) as an example of a crypto-db and ai application
+

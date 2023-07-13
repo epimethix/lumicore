@@ -12,21 +12,41 @@ Swing UI Components can be annotated with `@SwingComponent`. Those components wi
 
 Also there are implicit components:
 
-- implementation of the `Application` interface.
-- implementations of the `Database` interface.
+- implementation of the `Application` interface
+- implementations of the `Database` interface
 - implementations of the `Repository` interface
+- implementations of the `SwingUI` interface
 
 ```java
 @Component
 public class ComponentDemo {
 	// mark dependencies for injection after instantiation
 	@Autowired
-	private OtherComponent dependency
+	private OtherComponent dependency;
 
 	// the @PostConstruct method must return void and be without parameters
 	@PostConstruct
 	public void init() {
 		// initialization tasks after dependency injection
+	}
+}
+```
+
+### Constructor injection
+
+Constructor injection is possible but rather discouraged since the components that are injected through the constructor may not be injected. there is no guarantee when the components will be injected that are passed through the constructor.
+
+An Exception is injecting non-swing-components through the constructor of swing-components. since the swing components are initialized sequentially after all other components.
+
+```java
+@SwingComponent
+public class SwingComponentDemo {
+	// mark dependencies for injection after instantiation
+	private final MyApplication myApplication;
+
+	// the swing components constructor safely receives the application component
+	public SwingComponentDemo(MyApplication myApplication) {
+		this.myApplication = myApplication;
 	}
 }
 ```
