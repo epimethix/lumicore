@@ -1,10 +1,10 @@
-# lumicore :: ioc
+# lumicore :: IOC
 
 ## Components
 
 There is the concept of managed "components". 
 
-Components are the classes that get automatically instatiated by the IOC algorithm. Also they are injected with their dependencies.
+Components are the classes that get automatically instantiated by the IOC algorithm. Also they are injected with their dependencies.
 
 Components are classes that are annotated with the `@Component` or `@Service` annotations; these annotations are synonyms and can be used interchangeably.
 
@@ -61,7 +61,7 @@ The application interface has some variants:
 - `DatabaseApplication` for database applications
 - `CryptoDatabaseApplication` for database applications with user obtained credentials
 
-The `Application` implementation should reside in the base package of the project. That way the class scanners can include all project files.
+The `Application` implementation should reside in the base package of the project. That way the class scanners can include all project files. Otherwise the `@ComponentScan(packages = {"some.pkg", some.other.pkg"})` annotation can be used to specify the packages to scan explicitly.
 
 Starting the framework is done using the static initialization method:
 
@@ -74,6 +74,8 @@ public static void main(String[] args) {
 	}
 }
 ```
+
+
 
 ## `ConfigurationException`
 

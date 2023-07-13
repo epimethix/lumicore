@@ -83,3 +83,7 @@ Labels can then be loaded like this:
 		mainFrame.setTitle(L.getLabel(L.MAIN_FRAME_TITLE));
 	}
 ```
+
+## Acknowledgments
+
+This project includes and exports the latest/last version of the swingx library as obtained from [github.com/arotenberg/swingx](https://github.com/arotenberg/swingx).
