@@ -38,8 +38,7 @@ import javax.swing.SwingUtilities;
 import com.github.epimethix.lumicore.benchmark.Benchmark;
 import com.github.epimethix.lumicore.benchmark.Benchmark.Check;
 import com.github.epimethix.lumicore.classscan.ClassScanner;
-import com.github.epimethix.lumicore.classscan.ClasspathScanner;
-import com.github.epimethix.lumicore.classscan.JarFileScanner;
+import com.github.epimethix.lumicore.classscan.ClassScannerFactory;
 import com.github.epimethix.lumicore.common.Application;
 import com.github.epimethix.lumicore.common.ApplicationUtils;
 import com.github.epimethix.lumicore.common.ConfigurationException;
@@ -55,7 +54,6 @@ import com.github.epimethix.lumicore.common.ui.C;
 import com.github.epimethix.lumicore.common.util.PrintStreamString;
 import com.github.epimethix.lumicore.ioc.annotation.Autowired;
 import com.github.epimethix.lumicore.ioc.annotation.Component;
-import com.github.epimethix.lumicore.ioc.annotation.ComponentScan;
 import com.github.epimethix.lumicore.ioc.annotation.PostConstruct;
 import com.github.epimethix.lumicore.ioc.annotation.Qualifier;
 import com.github.epimethix.lumicore.ioc.annotation.Service;
@@ -230,26 +228,8 @@ public class Lumicore implements Injector {
 		autowiredFlags = new HashMap<>();
 		instanceAutowiredFlags = new HashMap<>();
 //		String scannerName;
-		if (applicationClass.isAnnotationPresent(ComponentScan.class)) {
-			ComponentScan cs = applicationClass.getAnnotation(ComponentScan.class);
-			if (Profile.runsFromJar()) {
-				scanner = new JarFileScanner(Profile.getExecutionPath(), cs.packages());
-//				scannerName = "JarFileScanner";
-			} else {
-				scanner = new ClasspathScanner(cs.packages());
-//				scannerName = "ClasspathScanner";
-			}
-//			scanner = new BurningwaveScanner(cs.packages());
-		} else {
-			if (Profile.runsFromJar()) {
-				scanner = new JarFileScanner(Profile.getExecutionPath(), applicationClass.getPackageName());
-//				scannerName = "JarFileScanner";
-			} else {
-				scanner = new ClasspathScanner(applicationClass.getPackageName());
-//				scannerName = "ClasspathScanner";
-			}
-//			scanner = new BurningwaveScanner(applicationClass.getPackageName());
-		}
+		scanner = ClassScannerFactory.createClassScanner(applicationClass);
+		
 //		logger.info("initialized %s", scannerName);
 	}
 
