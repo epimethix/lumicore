@@ -181,7 +181,6 @@ public class PropertiesFile {
 	 * @param propertiesFile the *.properties file to load
 	 * @param charset        the charset
 	 * @throws IOException
-	 * @see {@link StandardCharsets}
 	 */
 	public PropertiesFile(File propertiesFile, Charset charset) throws IOException {
 		this(propertiesFile, charset, null);
@@ -195,7 +194,6 @@ public class PropertiesFile {
 	 * @param charset        the charset
 	 * @param fileComment    the comment
 	 * @throws IOException
-	 * @see {@link StandardCharsets}
 	 */
 	public PropertiesFile(File propertiesFile, Charset charset, String fileComment) throws IOException {
 		this(propertiesFile, charset, fileComment, null);
@@ -210,7 +208,6 @@ public class PropertiesFile {
 	 * @param fileComment    the comment
 	 * @param defaults       the defaults
 	 * @throws IOException
-	 * @see {@link StandardCharsets}
 	 */
 	public PropertiesFile(File propertiesFile, Charset charset, String fileComment, Properties defaults)
 			throws IOException {
