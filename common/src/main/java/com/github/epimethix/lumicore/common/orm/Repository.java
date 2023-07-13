@@ -340,9 +340,11 @@ public interface Repository<E extends Entity<ID>, ID> {
 
 	long max(String field) throws SQLException;
 
-	Number sum(String field) throws SQLException;
+	long sumInteger(String field) throws SQLException;
 
-	Number average(String field) throws SQLException;
+	double sumDouble(String field) throws SQLException;
+
+	double average(String field) throws SQLException;
 
 	/*
 	 * * * OLD CRUD

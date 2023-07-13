@@ -34,7 +34,7 @@ final class SQLDeleteQuery extends DefaultQuery implements DeleteQuery {
 	}
 
 	@Override
-	public DeleteQuery withCriteriumValues(Object[] values) {
+	public DeleteQuery withCriteriumValues(Object... values) {
 		return new SQLDeleteQuery(getUser().orElse(null), isCloseConnection().orElse(null), getQueryString(),
 				values, b);
 	}

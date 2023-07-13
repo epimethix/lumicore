@@ -245,6 +245,16 @@ public final class SQLSelectBuilder implements SelectBuilder {
 	}
 
 	@Override
+	public SelectBuilder selectAverage(String schemaName, Class<? extends Entity<?>> e, String field) {
+		String alias = getLastAlias(schemaName, e);
+		if (selectionBuilder.length() != 0) {
+			selectionBuilder.append(", ");
+		}
+		selectionBuilder.append("avg(").append(alias).append(".`").append(field).append("`)");
+		return this;
+	}
+
+	@Override
 	public CriteriaBuilder<SelectBuilder> withCriteria(String schemaName, Class<? extends Entity<?>> e) {
 		String alias = getLastAlias(schemaName, e);
 		return criteriaBuilder.withAlias(alias);

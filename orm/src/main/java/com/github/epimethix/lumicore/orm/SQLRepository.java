@@ -1802,7 +1802,7 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 
 	@Override
 	public Optional<E> deleteById(ID id) throws SQLException {
-		List<E> ls = delete(DEFAULT_DELETE_QUERY_BY_ID.withCriteriumValues(new Object[] { id }));
+		List<E> ls = delete(DEFAULT_DELETE_QUERY_BY_ID.withCriteriumValues(id));
 		if (ls.size() == 1) {
 			return Optional.of(ls.get(0));
 		}
@@ -1842,20 +1842,38 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 
 	@Override
 	public long max(String field) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		List<Long> result = selectLong(queryBuilderFactory.select(this).distinct().selectMax(this, field).build());
+		if (result.size() == 1) {
+			return result.get(0).longValue();
+		}
+		return 0L;
 	}
 
 	@Override
-	public Number sum(String field) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	public long sumInteger(String field) throws SQLException {
+		List<Long> result = selectLong(queryBuilderFactory.select(this).distinct().selectSum(this, field).build());
+		if (result.size() == 1) {
+			return result.get(0).longValue();
+		}
+		return 0L;
 	}
 
 	@Override
-	public Number average(String field) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	public double sumDouble(String field) throws SQLException {
+		List<Double> result = selectDouble(queryBuilderFactory.select(this).distinct().selectSum(this, field).build());
+		if (result.size() == 1) {
+			return result.get(0).doubleValue();
+		}
+		return 0.0d;
+	}
+
+	@Override
+	public double average(String field) throws SQLException {
+		List<Double> result = selectDouble(queryBuilderFactory.select(this).distinct().selectAverage(this, field).build());
+		if (result.size() == 1) {
+			return result.get(0).doubleValue();
+		}
+		return 0.0d;
 	}
 
 	/*
@@ -1901,11 +1919,6 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 		}
 		return item;
 	}
-
-//	@Override
-//	public Optional<E> save(E item, QueryParameters params) throws SQLException, InterruptedException {
-//		return Optional.ofNullable(save(item, params.isCloseConnection(), params.getUserName(), true, true));
-//	}
 
 	/**
 	 * saves (inserts or updates) the given item.
@@ -2020,7 +2033,6 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 				}
 			}
 		}
-//		if(oneToManyMap.keySet().size()>0) {
 		return item;
 	}
 
@@ -2028,11 +2040,6 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 			SQLException, InterruptedException {
 		return insert(item, getDB().getActiveUser(), LumicoreProperties.CLOSE_CONNECTION_AFTER_OPERATION);
 	}
-
-//	public E insert(E item, QueryParameters params) throws IllegalAccessException, IllegalArgumentException,
-//			InvocationTargetException, SQLException, InterruptedException {
-//		return insert(item, params.getUserName(), params.isCloseConnection());
-//	}
 
 	private E insert(E item, String user, boolean closeConnection)
 			throws SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -2059,27 +2066,12 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 			if (PK_IS_AUTO_GENERATED) {
 				Long l = JDBCUtils.lastInsertIntegerId(ps);
 				item = setId(item, (ID) l);
-//				if (Objects.nonNull(ENTITY_CLASS_BUILDER_COPY_CONSTRUCTOR)) {
-//					EntityBuilder<ID> builder;
-//					try {
-//						builder = ENTITY_CLASS_BUILDER_COPY_CONSTRUCTOR.newInstance(item);
-//						setValue(builder, l, MAPPING_DEFINITION_PK.mappingTypes[0], MAPPING_DEFINITION_PK.setters[0],
-//								MAPPING_DEFINITION_PK.transforms[0]);
-//						item = (E) builder.build();
-//					} catch (InstantiationException e) {
-//						e.printStackTrace();
-//					}
-//				} else {
-//					setValue(item, l, MAPPING_DEFINITION_PK.mappingTypes[0], MAPPING_DEFINITION_PK.setters[0],
-//							MAPPING_DEFINITION_PK.transforms[0]);
-//				}
 			}
 			log(item.getId(), CRUD.C, user, true);
 		}
 		saveMany(item);
 
 		return item;
-//		return load(item.getId(), closeConnection, null, false, false);
 	}
 
 	@Override
@@ -2101,8 +2093,6 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 		if (deltaDefinitionOpt.isPresent()) {
 			stampMeta(item, CRUD.U, stampUpdateMeta);
 			MappingDefinition deltaDefinition = deltaDefinitionOpt.get();
-//			String sqlUpdateDelta = SQLiteBuilder.newBuilder().updateSet(ENTITY_NAME, deltaDefinition.sqlNames)
-//					.where(ENTITY_NAME, MAPPING_DEFINITION_PK.sqlNames).getSQL();
 			UpdateBuilder sqlUpdateDeltaBuilder = DB.getQueryBuilderFactory().update(this);
 			{
 				int i = 0;
@@ -2147,7 +2137,6 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 		}
 		saveMany(item);
 		return item;
-//		return load(item.getId(), closeConnection, null, false, false);
 	};
 
 	private Optional<MappingDefinition> getDelta(E existing, E item) {

@@ -286,6 +286,11 @@ public interface Query {
 		
 		SelectBuilder selectMax(String schemaName, Class<? extends Entity<?>> e, String field);
 
+		default SelectBuilder selectAverage(Repository<?, ?> r, String field) {
+			return selectAverage(r.getSchemaName(), r.getEntityClass(), field);
+		}
+
+		SelectBuilder selectAverage(String schemaName, Class<? extends Entity<?>> e, String field);
 	}
 
 	public interface UpdateQuery extends Query {
@@ -330,7 +335,7 @@ public interface Query {
 	public interface DeleteQuery extends Query {
 		Object[] getCriteriumValues();
 
-		DeleteQuery withCriteriumValues(Object[] values);
+		DeleteQuery withCriteriumValues(Object... values);
 
 		DeleteBuilder builder();
 	}
