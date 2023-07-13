@@ -21,7 +21,7 @@ To enable ORM also the specific database implementation must be linked.
     implementation project(':orm-sqlite')
 ```
 
-For Properties management see:
+For `Properties` management [see](../../../blob/main/properties/README.md):
 
 ```groovy
     implementation project(':properties')
@@ -33,19 +33,19 @@ For creating measurements during startup [see](../../../blob/main/benchmark/READ
     implementation project(':benchmark')
 ```
 
-For Inter Process Communication see:
+For Inter Process Communication [see](../../../blob/main/ipc/README.md):
 
 ```groovy
     implementation project(':ipc')
 ```
 
-For logging see:
+For logging [see](../../../blob/main/logging/README.md):
 
 ```groovy
     implementation project(':logging')
 ```
 
-For Swing UI see:
+For Swing UI [see](../../../blob/main/swing/README.md):
 
 ```groovy
     implementation project(':swing')
