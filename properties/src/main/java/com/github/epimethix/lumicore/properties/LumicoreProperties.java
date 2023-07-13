@@ -27,7 +27,7 @@ import java.util.Objects;
 /**
  * <b>Configurability:</b>
  * <p>
- * put "sqlite-utils.properties" in the default package of your resources
+ * put "lumicore.properties" in the default package of your resources
  * directory to configure the following behaviors:
  * <ul>
  * <li>Property "default-bigdecimal-scale" (number of fraction digits to store,
@@ -245,21 +245,21 @@ public final class LumicoreProperties {
 			 */
 			if (PROPERTIES.containsKey(DEFAULT_SCALE_KEY)) {
 				try {
-					defaultScale = Integer.parseInt(PROPERTIES.getString(DEFAULT_SCALE_KEY));
+					defaultScale = Integer.parseInt(PROPERTIES.getProperty(DEFAULT_SCALE_KEY));
 				} catch (NumberFormatException e) {
 					e.printStackTrace();
 				}
 			}
 			if (PROPERTIES.containsKey(CONNECTION_POLICY_KEY)) {
-				String policy = PROPERTIES.getString(CONNECTION_POLICY_KEY);
+				String policy = PROPERTIES.getProperty(CONNECTION_POLICY_KEY);
 				closeConnection = !isActive(policy);
 			}
 			if (PROPERTIES.containsKey(OBTAIN_IMMUTABLE_KEY)) {
-				String value = PROPERTIES.getString(OBTAIN_IMMUTABLE_KEY);
+				String value = PROPERTIES.getProperty(OBTAIN_IMMUTABLE_KEY);
 				obtainImmutable = isActive(value);
 			}
 			if (PROPERTIES.containsKey(DEFAULT_QUERY_LIMIT_KEY)) {
-				String value = PROPERTIES.getString(DEFAULT_QUERY_LIMIT_KEY);
+				String value = PROPERTIES.getProperty(DEFAULT_QUERY_LIMIT_KEY);
 				try {
 					defaultQueryLimit = Long.parseLong(value);
 				} catch (NumberFormatException e) {
@@ -271,14 +271,14 @@ public final class LumicoreProperties {
 			 */
 			if (PROPERTIES.containsKey(HASHING_ITERATIONS_KEY)) {
 				try {
-					hashingIterations = Integer.parseInt(PROPERTIES.getString(HASHING_ITERATIONS_KEY));
+					hashingIterations = Integer.parseInt(PROPERTIES.getProperty(HASHING_ITERATIONS_KEY));
 				} catch (NumberFormatException e) {
 					e.printStackTrace();
 				}
 			}
 			if (PROPERTIES.containsKey(HASHING_KEY_LENGTH_KEY)) {
 				try {
-					hashingKeyLength = Integer.parseInt(PROPERTIES.getString(HASHING_KEY_LENGTH_KEY));
+					hashingKeyLength = Integer.parseInt(PROPERTIES.getProperty(HASHING_KEY_LENGTH_KEY));
 				} catch (NumberFormatException e) {
 					e.printStackTrace();
 				}
@@ -287,7 +287,7 @@ public final class LumicoreProperties {
 			 * 4) Logging
 			 */
 			if (PROPERTIES.containsKey(LOGGER_CONFIGURATION_KEY)) {
-				loggerConfiguration = PROPERTIES.getString(LOGGER_CONFIGURATION_KEY);
+				loggerConfiguration = PROPERTIES.getProperty(LOGGER_CONFIGURATION_KEY);
 //				swingVerbose = isActive(output);
 //				try {
 //					/*
@@ -308,15 +308,15 @@ public final class LumicoreProperties {
 				System.err.println("Please configure the logging system in 'lumicore.properties'");
 			}
 			if (PROPERTIES.containsKey(IOC_VERBOSE_KEY)) {
-				String output = PROPERTIES.getString(IOC_VERBOSE_KEY);
+				String output = PROPERTIES.getProperty(IOC_VERBOSE_KEY);
 				iocVerbose = isActive(output);
 			}
 			if (PROPERTIES.containsKey(ORM_VERBOSE_KEY)) {
-				String output = PROPERTIES.getString(ORM_VERBOSE_KEY);
+				String output = PROPERTIES.getProperty(ORM_VERBOSE_KEY);
 				sqliteVerbose = isActive(output);
 			}
 			if (PROPERTIES.containsKey(SWING_VERBOSE_KEY)) {
-				String output = PROPERTIES.getString(SWING_VERBOSE_KEY);
+				String output = PROPERTIES.getProperty(SWING_VERBOSE_KEY);
 				swingVerbose = isActive(output);
 			}
 		}
