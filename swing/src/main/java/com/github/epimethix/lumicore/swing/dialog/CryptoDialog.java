@@ -22,6 +22,8 @@ import static com.github.epimethix.lumicore.swing.util.GridBagUtils.initGridBagC
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -67,7 +69,7 @@ public class CryptoDialog {
 			pwSetupSecret1 = new JPasswordField(30);
 			pwSetupSecret2 = new JPasswordField(30);
 			GridBagConstraints c = initGridBagConstraints();
-			if(m == Mode.NAME_AND_KEY) {
+			if (m == Mode.NAME_AND_KEY) {
 				addGridBagLine(this, c, lbUser, tfUser);
 			}
 			addGridBagLine(this, c, lbEnterNewSecret1, pwSetupSecret1);
@@ -105,7 +107,7 @@ public class CryptoDialog {
 			pwNewSecret1 = new JPasswordField(30);
 			pwNewSecret2 = new JPasswordField(30);
 			GridBagConstraints c = initGridBagConstraints();
-			if(m == Mode.NAME_AND_KEY) {
+			if (m == Mode.NAME_AND_KEY) {
 				addGridBagLine(this, c, lbUser, tfUser);
 			}
 			addGridBagLine(this, c, lbEnterOldSecret, pwOldSecret);
@@ -124,7 +126,7 @@ public class CryptoDialog {
 	}
 
 	@SuppressWarnings("serial")
-	private final static class GetSecretDialogUI extends JPanel implements LabelsDisplayer {
+	private final class GetSecretDialogUI extends JPanel implements LabelsDisplayer {
 		private final JLabel lbUser;
 		private final JTextField tfUser;
 		private final JLabel lbEnterSecret;
@@ -136,8 +138,9 @@ public class CryptoDialog {
 			tfUser = new JTextField();
 			lbEnterSecret = new JLabel();
 			pwSecret = new JPasswordField(30);
+
 			GridBagConstraints c = initGridBagConstraints();
-			if(m == Mode.NAME_AND_KEY) {
+			if (m == Mode.NAME_AND_KEY) {
 				addGridBagLine(this, c, lbUser, tfUser);
 			}
 			addGridBagLine(this, c, lbEnterSecret, pwSecret);
@@ -191,6 +194,16 @@ public class CryptoDialog {
 		this.setupSecretUI = DialogUI
 				.getDialogUI(new AbstractDialog(parent, () -> C.getLabel(C.CRYPTO_TITLE_SET_UP_SECRET),
 						AbstractDialog.ICON_SECRET, setupSecretDialogUI, AnswerOption.OK_CANCEL) {
+					{
+						setupSecretDialogUI.pwSetupSecret1.addActionListener(this);
+						setupSecretDialogUI.pwSetupSecret2.addActionListener(this);
+					}
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						onAnswer(Answer.OK, setupSecretUI.getDialog());
+					}
+
 					@Override
 					public void onAnswer(Answer answer, JDialog parent) {
 						if (answer == Answer.OK) {
@@ -200,8 +213,9 @@ public class CryptoDialog {
 							char[] sec2 = setupSecretDialogUI.pwSetupSecret2.getPassword();
 							try {
 								if (Arrays.equals(sec1, sec2)) {
-									if(mode == Mode.NAME_AND_KEY) {
-										result = new DefaultCredentials(setupSecretDialogUI.tfUser.getText(), Arrays.copyOf(sec1, sec1.length));
+									if (mode == Mode.NAME_AND_KEY) {
+										result = new DefaultCredentials(setupSecretDialogUI.tfUser.getText(),
+												Arrays.copyOf(sec1, sec1.length));
 									} else {
 										result = new DefaultCredentials(null, Arrays.copyOf(sec1, sec1.length));
 									}
@@ -226,6 +240,17 @@ public class CryptoDialog {
 		this.resetSecretUI = DialogUI
 				.getDialogUI(new AbstractDialog(parent, () -> C.getLabel(C.CRYPTO_TITLE_RESET_SECRET),
 						AbstractDialog.ICON_SECRET, resetSecretDialogUI, AnswerOption.OK_CANCEL) {
+					{
+						resetSecretDialogUI.pwNewSecret1.addActionListener(this);
+						resetSecretDialogUI.pwNewSecret2.addActionListener(this);
+						resetSecretDialogUI.pwOldSecret.addActionListener(this);
+					}
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						onAnswer(Answer.OK, resetSecretUI.getDialog());
+					}
+
 					@Override
 					public void onAnswer(Answer answer, JDialog parent) {
 						if (answer == Answer.OK) {
@@ -241,8 +266,9 @@ public class CryptoDialog {
 								}
 								if (Arrays.equals(sec1, sec2)) {
 
-									if(mode == Mode.NAME_AND_KEY) {
-										result = new DefaultCredentials(resetSecretDialogUI.tfUser.getText(), Arrays.copyOf(sec1, sec1.length));
+									if (mode == Mode.NAME_AND_KEY) {
+										result = new DefaultCredentials(resetSecretDialogUI.tfUser.getText(),
+												Arrays.copyOf(sec1, sec1.length));
 									} else {
 										result = new DefaultCredentials(null, Arrays.copyOf(sec1, sec1.length));
 									}
@@ -269,13 +295,23 @@ public class CryptoDialog {
 		this.getSecretDialogUI = new GetSecretDialogUI(mode);
 		this.getSecretUI = DialogUI.getDialogUI(new AbstractDialog(parent, () -> C.getLabel(C.CRYPTO_TITLE_GET_SECRET),
 				AbstractDialog.ICON_SECRET, getSecretDialogUI, AnswerOption.OK_CANCEL) {
+			{
+				getSecretDialogUI.pwSecret.addActionListener(this);
+			}
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onAnswer(Answer.OK, getSecretUI.getDialog());
+			}
+
 			@Override
 			public void onAnswer(Answer answer, JDialog parent) {
 				if (answer == Answer.OK) {
 					char[] sec = getSecretDialogUI.pwSecret.getPassword();
 					try {
-						if(mode == Mode.NAME_AND_KEY) {
-							result = new DefaultCredentials(getSecretDialogUI.tfUser.getText(), Arrays.copyOf(sec, sec.length));
+						if (mode == Mode.NAME_AND_KEY) {
+							result = new DefaultCredentials(getSecretDialogUI.tfUser.getText(),
+									Arrays.copyOf(sec, sec.length));
 						} else {
 							result = new DefaultCredentials(null, Arrays.copyOf(sec, sec.length));
 						}

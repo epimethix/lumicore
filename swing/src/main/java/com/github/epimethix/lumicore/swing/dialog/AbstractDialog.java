@@ -16,6 +16,8 @@
 package com.github.epimethix.lumicore.swing.dialog;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
@@ -28,7 +30,7 @@ import javax.swing.JLabel;
 import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.AnswerOption;
 
-public abstract class AbstractDialog implements Dialog {
+public abstract class AbstractDialog implements Dialog, ActionListener {
 
 	public final static Icon ICON_INFO = new ImageIcon(AbstractDialog.class.getResource("/img/info.png"));
 	public final static Icon ICON_EDIT = new ImageIcon(AbstractDialog.class.getResource("/img/edit.png"));
@@ -93,6 +95,9 @@ public abstract class AbstractDialog implements Dialog {
 		return Arrays.copyOf(answerOptions, answerOptions.length);
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent e) {};
+	
 	@Override
 	public abstract void onAnswer(Answer answer, JDialog parent);
 }
