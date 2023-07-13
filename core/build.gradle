@@ -15,46 +15,10 @@ plugins {
 
 
 dependencies {
-
-    // Apache 2.0
-    // https://mvnrepository.com/artifact/commons-codec/commons-codec
-	// api group: 'commons-codec', name: 'commons-codec', version: '1.15'
-	// implementation 'commons-codec:commons-codec:1.15'
-
-    // Apache 2.0
-	// https://mvnrepository.com/artifact/io.github.willena/sqlite-jdbc
-	// implementation group: 'io.github.willena', name: 'sqlite-jdbc', version: '3.38.1'
-
-    // Apache 2.0
-	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-	// implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
-
-    // Apache 2.0
-	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-	// implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-	
-	// implementation 'org.reflections:reflections:0.10.2'
-	// https://mvnrepository.com/artifact/org.reflections/reflections
-	// implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
-	
-	// https://mvnrepository.com/artifact/org.apache.openjpa/openjpa
-	// implementation group: 'org.apache.openjpa', name: 'openjpa', version: '3.2.0'
-	
-	// https://mvnrepository.com/artifact/net.harawata/appdirs
-	// runtimeOnly group: 'net.harawata', name: 'appdirs', version: '1.2.1'
-	
-	//implementation project(':benchmark')
-	//implementation project(':class-scan')
 	api project(':common')
 	api project(':ioc')
 	api project(':ioc-annotations')
-	//implementation project(':logging')
-	//implementation project(':orm-sqlite')
-	//implementation project(':orm-annotations')
 	api project(':profile')
-	//implementation project(':properties')
-	//implementation project(':stack-util')
-	//implementation project(':util')
 }
 
 jar {

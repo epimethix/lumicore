@@ -7,30 +7,14 @@
  */
 
 plugins {
-    // Apply the java-library plugin to add support for Java Library
-    // id 'java-library'
-  	// id 'com.github.johnrengelman.shadow' version '7.1.2'
-    // id 'java'
-    // id 'de.fuerstenau.buildconfig' version '1.1.8'
 	id 'lumicore.java-conventions'
 	id 'lumicore.dev-tools'
 	id 'lumicore.build-properties'
-    // id 'com.github.johnrengelman.shadow' version '7.1.2'
-    // id 'eclipse'
     id 'application'
 }
-/*
-distributions {
-    main {
-        contents {
-            from jar
-        }
-    }
-}
-*/
 
 application {
-	mainClass = 'com.github.epimethix.lumicoreexample.ExampleApplication'
+	mainClass = 'com.github.epimethix.accounting.Accounting'
 }
 
 dependencies {
@@ -41,41 +25,15 @@ dependencies {
     implementation project(':orm-sqlite')
     implementation project(':properties')
     implementation project(':swing')
-    // implementation project(':util')
     // Apache 2.0
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
-    // https://mvnrepository.com/artifact/org.projectlombok/lombok
-	// jcompileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.26'
-    
 }
-
-
-//shadowJar.dependsOn stampBuild
-
-//build.finalizedBy(shadowJar)
-
-// shadowJar.shouldRunAfter(build)
 
 jar {
     manifest {
-        attributes 'Main-Class' : 'com.github.epimethix.lumicoreexample.ExampleApplication',
+        attributes 'Main-Class' : 'com.github.epimethix.accounting.Accounting',
         	'Implementation-Title': project.name,
         	'Implementation-Version': project.version
     }
 }
-/*
-shadowJar {
-   archiveBaseName.set('shadow')
-   archiveClassifier.set('')
-   archiveVersion.set('')
-}
-*/
-
-/*
-task devTools(type: JavaExec) {
-	mainClass = "com.github.epimethix.lumicoreexample.devtools.ExampleDevToolsStarter"
-	classpath = sourceSets.test.runtimeClasspath
-	
-}
-*/
