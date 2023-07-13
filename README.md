@@ -1,4 +1,4 @@
-# ![lumicore Logo](https://github.com/epimethix/lumicore/blob/main/core/src/main/resources/lumicore_256.png?raw=true) lumicore
+# ![lumicore Logo](https://github.com/epimethix/lumicore/blob/main/core/src/main/resources/lumicore_128.png?raw=true) lumicore
 
 
 
