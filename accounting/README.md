@@ -5,6 +5,7 @@ Example Application for minimal design requirements with database and gui editor
 ## Dependencies
 
 ```groovy
+dependencies {
     implementation project(':core')
     implementation project(':benchmark')
     implementation project(':ipc')
@@ -15,4 +16,6 @@ Example Application for minimal design requirements with database and gui editor
     // Apache 2.0
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
+}
 ```
+
