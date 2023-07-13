@@ -169,4 +169,19 @@ public class JarFileScanner implements ClassScanner {
 		return searchClassesByAnnotation("*", annotation);
 	}
 
+	@Override
+	public Collection<Class<?>> searchClassesByCriteria(ClassCriteria criteria) {
+		return searchClassesByCriteria("*", criteria);
+	}
+
+	@Override
+	public Collection<Class<?>> searchClassesByCriteria(String packageName, ClassCriteria criteria) {
+		Check ckSearch = Benchmark.start(JarFileScanner.class, "searchClassesByCriteria(" + packageName + ")",
+				"JarFileScanner.search");
+		Collection<Class<?>> result = search(packageName, criteria);
+		ckSearch.stop();
+		LOGGER.trace("searchClassesByCriteria(%s) returned %d results", packageName, result.size());
+		return result;
+	}
+
 }

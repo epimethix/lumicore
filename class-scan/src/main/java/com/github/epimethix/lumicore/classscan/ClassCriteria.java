@@ -16,7 +16,7 @@
 package com.github.epimethix.lumicore.classscan;
 
 /**
- * Functional interface to specify a class scan/search criterium.
+ * Functional interface to specify a class scan/search criterion.
  * <p>
  * This interface is used by some implementations of {@link ClassScanner}.
  * 

@@ -77,4 +77,25 @@ public interface ClassScanner {
 	 * @return the result of the search
 	 */
 	Collection<Class<?>> searchClassesByAnnotation(Class<? extends Annotation> annotation);
+
+	/**
+	 * search the indexed classes with the specified custom filter.
+	 * <p>
+	 * To select all interfaces: {@code cls->cls.isInterface()}
+	 * 
+	 * @param criteria function to test whether the class should be selected
+	 * @return the selected classes
+	 */
+	Collection<Class<?>> searchClassesByCriteria(ClassCriteria criteria);
+
+	/**
+	 * search the indexed classes with the specified custom filter.
+	 * <p>
+	 * To select all interfaces: {@code cls->cls.isInterface()}
+	 * 
+	 * @param packageName narrow or broaden the scope to search
+	 * @param criteria    function to test whether the class should be selected
+	 * @return the selected classes
+	 */
+	Collection<Class<?>> searchClassesByCriteria(String packageName, ClassCriteria criteria);
 }

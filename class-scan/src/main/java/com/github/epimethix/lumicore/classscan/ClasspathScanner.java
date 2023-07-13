@@ -169,8 +169,12 @@ public class ClasspathScanner implements ClassScanner {
 			List<Class<?>> source, List<Class<?>> result) {
 		for (Class<?> cls : source) {
 			String pkgName = cls.getPackageName();
-			boolean condition = recursive ? pkgName.startsWith(packageName) : pkgName.equals(packageName);
-			condition = condition || searchAll;
+			boolean condition;
+			if(!searchAll) {
+				condition = recursive ? pkgName.startsWith(packageName) : pkgName.equals(packageName);
+			} else {
+				condition = true;
+			}
 			if (condition && criteria.accept(cls)) {
 				result.add(cls);
 			}
@@ -227,6 +231,22 @@ public class ClasspathScanner implements ClassScanner {
 		Collection<Class<?>> result = search(packageName, (c) -> cls.isAssignableFrom(c), true);
 		ckSearch.stop();
 		LOGGER.trace("searchClassesAssignableFrom(%s, %s) returned %d results", packageName, cls.getName(),
+				result.size());
+		return result;
+	}
+
+	@Override
+	public Collection<Class<?>> searchClassesByCriteria(ClassCriteria criteria) {
+		return searchClassesByCriteria("*", criteria);
+	}
+
+	@Override
+	public Collection<Class<?>> searchClassesByCriteria(String packageName, ClassCriteria criteria) {
+		Check ckSearch = Benchmark.start(ClasspathScanner.class,
+				"searchClassesByCriteria(" + packageName + ")", "ClassPathScanner.search");
+		Collection<Class<?>> result = search(packageName, criteria, true);
+		ckSearch.stop();
+		LOGGER.trace("searchClassesByCriteria(%s) returned %d results", packageName,
 				result.size());
 		return result;
 	}
