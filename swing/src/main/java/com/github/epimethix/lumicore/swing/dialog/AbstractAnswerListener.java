@@ -39,10 +39,10 @@ public abstract class AbstractAnswerListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.err.println(e.getActionCommand());
+//		System.err.println(e.getActionCommand());
 		try {
 			if (e.getSource() instanceof JButton) {
-				onAnswer(Answer.valueOf(((JButton) e.getSource()).getActionCommand()), dialog);
+				onAnswer(Answer.valueOf(e.getActionCommand()), dialog);
 			}
 		} catch (Exception exception) {}
 
