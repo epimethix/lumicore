@@ -19,7 +19,12 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
+/**
+ * apply to {@code SwingUI} implementation class to add custom ui packages to the {@code LabelsDisplayer}s scan.
+ * 
+ * @author epimethix
+ *
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LabelsScan {
