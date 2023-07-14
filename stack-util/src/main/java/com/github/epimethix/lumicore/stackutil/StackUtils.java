@@ -18,12 +18,34 @@ package com.github.epimethix.lumicore.stackutil;
 import java.io.PrintStream;
 import java.util.Objects;
 
+/**
+ * This class provides utility methods for analyzing callers using the stack.
+ * 
+ * @author epimethix
+ *
+ */
 public class StackUtils {
-
+	/**
+	 * Returns the {@link StackTraceElement} of the caller of the method that called
+	 * this method.
+	 *
+	 * @return the {@link StackTraceElement} of the caller
+	 * @throws RuntimeException if this method is called from the main method
+	 */
+	@CallerSensitive
 	public static final StackTraceElement getCallerStackTraceElement() {
 		return getCallerStackTraceElement(1);
 	}
 
+	/**
+	 * Returns the {@link StackTraceElement} of the caller of the method that called
+	 * this method, skipping the specified number of frames.
+	 *
+	 * @param skip the number of frames to skip
+	 * @return the {@link StackTraceElement} of the caller
+	 * @throws RuntimeException if this method is called from the main method
+	 */
+	@CallerSensitive
 	public static final StackTraceElement getCallerStackTraceElement(int skip) {
 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 		if (stackTrace.length < 4 + skip) {
@@ -33,14 +55,32 @@ public class StackUtils {
 		return stackTrace[3 + skip];
 	}
 
+	/**
+	 * Prints the stack trace to {@code System.out}.
+	 */
+	@CallerSensitive
 	public static final void printStackTrace() {
 		printStackTrace(System.out, 1);
 	}
 
+	/**
+	 * Prints the stack trace to the specified {@code PrintStream}.
+	 * 
+	 * @param printStream the {@code PrintStream} to print the stack trace to
+	 */
+	@CallerSensitive
 	public static final void printStackTrace(PrintStream printStream) {
 		printStackTrace(printStream, 1);
 	}
 
+	/**
+	 * Prints the stack trace to the specified {@code PrintStream}, skipping the
+	 * specified number of frames.
+	 * 
+	 * @param printStream the {@code PrintStream} to print the stack trace to
+	 * @param skip        the number of frames to skip
+	 */
+	@CallerSensitive
 	public static final void printStackTrace(PrintStream printStream, int skip) {
 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 		int i = 0;
@@ -49,15 +89,33 @@ public class StackUtils {
 			if (i < 2 + skip) {
 				i++;
 			} else {
-				printStream.printf("%s::%s[%d]%n", element.getClassName(), element.getMethodName(), element.getLineNumber());
+				printStream.printf("%s::%s[%d]%n", element.getClassName(), element.getMethodName(),
+						element.getLineNumber());
 			}
 		}
 	}
 
+	/**
+	 * Prints the stack trace to {@code System.out} between the caller of this
+	 * method and the specified callerClass.
+	 * 
+	 * @param callerClass the expected caller class
+	 */
+	@CallerSensitive
 	public static final void printStackTraceToCaller(Class<?> callerClass) {
 		printStackTraceToCaller(callerClass, System.out, 1);
 	}
 
+	/**
+	 * Prints the stack trace to the specified {@code PrintStream} between the
+	 * caller of this method and the specified callerClass, skipping the specified
+	 * number of stack trace levels.
+	 * 
+	 * @param callerClass the expected caller class
+	 * @param printStream the {@code PrintStream} to print the stack trace to
+	 * @param skip        the number of stack trace levels to skip.
+	 */
+	@CallerSensitive
 	public static final void printStackTraceToCaller(Class<?> callerClass, PrintStream printStream, int skip) {
 		String callerClassName = callerClass.getName();
 		String thisClassName = null;
@@ -88,6 +146,14 @@ public class StackUtils {
 //		System.out.println(element.getClassName() + "::" + element.getMethodName());
 	}
 
+	/**
+	 * Gets the caller class of the method that calls this method.
+	 * 
+	 * @param skipSelf true to skip the stack trace elements from within the class
+	 *                 calling this method
+	 * @return the caller {@code Class}
+	 */
+	@CallerSensitive
 	public static final Class<?> getCallerClass(boolean skipSelf) {
 		if (skipSelf) {
 			return getCallerClass(-1);
@@ -96,10 +162,25 @@ public class StackUtils {
 		}
 	}
 
+	/**
+	 * Returns the {@link Class} of the caller class, one level up in the stack
+	 * trace.
+	 *
+	 * @return the {@link Class} of the caller class.
+	 */
+	@CallerSensitive
 	public static final Class<?> getCallerClass() {
 		return getCallerClass(1);
 	}
 
+	/**
+	 * Returns the {@link Class} of the caller class, skipping the specified number
+	 * of levels in the stack trace.
+	 *
+	 * @param skip the number of levels to skip in the stack trace.
+	 * @return the {@link Class} of the caller class.
+	 */
+	@CallerSensitive
 	public static final Class<?> getCallerClass(int skip) {
 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 		if (stackTrace.length < 4) {
@@ -137,6 +218,14 @@ public class StackUtils {
 		throw new RuntimeException("ApplicationUtils::getCallerClass operation failed!");
 	}
 
+	/**
+	 * Gets the caller class of the method that calls this method, skipping the
+	 * specified intermediate callers.
+	 * 
+	 * @param intermediates the intermediate callers to skip
+	 * @return the caller {@code Class}
+	 */
+	@CallerSensitive
 	public static final Class<?> getCallerClass(String... intermediates) {
 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 		if (stackTrace.length < 4) {

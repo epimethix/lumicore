@@ -23,6 +23,6 @@ import java.lang.annotation.Target;
 /*
  * Indicates that the result of a method is depending on the caller class / method
  */
-@Target({ ElementType.METHOD, ElementType.TYPE })
+@Target({ ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CallerSensitive {}

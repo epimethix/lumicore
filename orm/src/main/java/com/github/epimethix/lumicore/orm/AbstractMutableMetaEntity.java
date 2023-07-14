@@ -30,7 +30,7 @@ import com.github.epimethix.lumicore.stackutil.AccessCheck;
  */
 public abstract class AbstractMutableMetaEntity<ID> implements MetaEntity<ID> {
 	// @formatter:off
-	private static final AccessCheck AC_ABSTRACT_REPOSITORY = AccessCheck.allowAbstractRepositoryViaReflection();
+	private static final AccessCheck AC_ABSTRACT_REPOSITORY = AccessCheck.Builder.createAllowAbstractRepositoryViaReflection();
 	// @formatter:on
 
 	@Column(name = CREATE_DATE)

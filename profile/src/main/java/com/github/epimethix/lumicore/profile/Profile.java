@@ -76,7 +76,6 @@ import com.github.epimethix.lumicore.stackutil.StackUtils;
  * @author epimethix
  *
  */
-@CallerSensitive
 public class Profile {
 //	private final static Logger LOGGER = Log.getLogger();
 
