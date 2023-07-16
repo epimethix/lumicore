@@ -72,6 +72,10 @@ public final class TabComponent extends JPanel implements ActionListener, MouseL
 		this.label.setText(label);
 	}
 
+	public void setText(String value) {
+		setLabel(value);
+	}
+
 	public void setChanged(boolean changed) {
 		labelChanged.setVisible(changed);
 		revalidate();
