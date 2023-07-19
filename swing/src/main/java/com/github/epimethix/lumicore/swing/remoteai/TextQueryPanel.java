@@ -67,10 +67,10 @@ import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 public class TextQueryPanel extends JPanel implements ActionListener, PropertyChangeListener, LabelsDisplayer {
 	private final JFrame parent;
 	private final Generator generator;
-	private Supplier<File> outputDir;
+	private final Supplier<File> outputDir;
 
 	private final JTextArea taPrompt;
-	private RSyntaxTextArea taResponse;
+	private final RSyntaxTextArea taResponse;
 //	private final JPanel pnResponse;
 	private final JButton btGenerate;
 	private final JButton btSave;
