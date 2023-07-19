@@ -18,12 +18,13 @@ package com.github.epimethix.lumicore.common;
 import java.io.File;
 import java.util.Locale;
 
+import com.github.epimethix.lumicore.common.ui.Theme;
 import com.github.epimethix.lumicore.ioc.annotation.ComponentScan;
 import com.github.epimethix.lumicore.ioc.annotation.JarFileScan;
 
-
 /**
- * The {@code Application} interface can be implemented to define an application class.
+ * The {@code Application} interface can be implemented to define an application
+ * class.
  * <p>
  * Use {@code Application} to specify an application without a database.
  * <p>
@@ -64,6 +65,12 @@ public interface Application {
 	 * @return the application name to display.
 	 */
 	String getApplicationName();
-	
+
 	File getNestingDirectory();
+
+	default Theme getTheme() {
+		return Theme.DEFAULT;
+	}
+
+	default void setTheme(Theme t) {}
 }

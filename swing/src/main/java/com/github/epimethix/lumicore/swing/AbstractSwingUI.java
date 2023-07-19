@@ -25,6 +25,7 @@ import javax.swing.SwingUtilities;
 
 import com.github.epimethix.lumicore.common.swing.SwingUI;
 import com.github.epimethix.lumicore.common.ui.Answer;
+import com.github.epimethix.lumicore.common.ui.Theme;
 import com.github.epimethix.lumicore.common.ui.labels.manager.LabelsManagerPool;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
 
@@ -111,6 +112,17 @@ public abstract class AbstractSwingUI implements SwingUI, WindowListener {
 		}
 		return Answer.CANCEL;
 	}
+
+	@Override
+	public Theme getTheme() {
+		return Theme.DEFAULT;
+	}
+
+	@Override
+	public void setTheme(Theme t) {}
+
+	@Override
+	public void setupTheme() {}
 
 	@Override
 	public void windowOpened(WindowEvent e) {}

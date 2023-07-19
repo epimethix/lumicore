@@ -44,13 +44,15 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
 import com.github.epimethix.lumicore.common.Application;
-import com.github.epimethix.lumicore.common.ui.C;
+import com.github.epimethix.lumicore.common.swing.SwingUI;
 import com.github.epimethix.lumicore.common.ui.Answer;
+import com.github.epimethix.lumicore.common.ui.C;
+import com.github.epimethix.lumicore.common.ui.Theme;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayerPool;
 import com.github.epimethix.lumicore.common.ui.labels.manager.LabelsManagerPool;
-import com.github.epimethix.lumicore.swing.dialog.AnswerButtonPanel;
 import com.github.epimethix.lumicore.swing.dialog.AbstractAnswerListener;
+import com.github.epimethix.lumicore.swing.dialog.AnswerButtonPanel;
 
 public final class DialogUtils {
 
@@ -160,8 +162,8 @@ public final class DialogUtils {
 		return initializeJDialog(childComponent, title, view, modal, null);
 	}
 
-	public static final JDialog initializeJDialog(Component c, String title, JComponent view,
-			boolean modal, Predicate<ActionEvent> escapeCondition) {
+	public static final JDialog initializeJDialog(Component c, String title, JComponent view, boolean modal,
+			Predicate<ActionEvent> escapeCondition) {
 		JDialog dialog;
 		Component parent = c;
 		if (Objects.nonNull(c)) {
@@ -292,6 +294,23 @@ public final class DialogUtils {
 			menu.add(mi);
 		}
 		LabelsDisplayer ld = () -> menu.setText(C.getLabel(C.MENU_LANGUAGES));
+		LabelsDisplayerPool.addLabelsDisplayer(ld);
+		return menu;
+	}
+
+	public static JMenu getThemeSeletionMenu(final SwingUI swingUi) {
+		final JMenu menu = new JMenu();
+		final JMenuItem miLight = new JMenuItem();
+		miLight.addActionListener(a->swingUi.setTheme(Theme.LIGHT));
+		final JMenuItem miDark = new JMenuItem();
+		miDark.addActionListener(a->swingUi.setTheme(Theme.DARK));
+		menu.add(miLight);
+		menu.add(miDark);
+		LabelsDisplayer ld = () -> {
+			menu.setText(C.getLabel(C.MENU_THEMES));
+			miLight.setText(C.getLabel(C.MENU_THEME_LIGHT));
+			miDark.setText(C.getLabel(C.MENU_THEME_DARK));
+		};
 		LabelsDisplayerPool.addLabelsDisplayer(ld);
 		return menu;
 	}
