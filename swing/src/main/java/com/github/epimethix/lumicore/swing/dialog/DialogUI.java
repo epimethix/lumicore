@@ -32,7 +32,7 @@ import javax.swing.SwingUtilities;
 import com.github.epimethix.lumicore.common.Application;
 import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
-import com.github.epimethix.lumicore.swing.LumicoreSwingImpl;
+import com.github.epimethix.lumicore.swing.LumicoreSwing;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
@@ -55,7 +55,7 @@ public class DialogUI implements LabelsDisplayer {
 	}
 	
 	public static final DialogUI getDialogUI(Dialog d) {
-		return new DialogUI(d, LumicoreSwingImpl.getApplication());
+		return new DialogUI(d, LumicoreSwing.getApplication());
 	}
 
 	private final Dialog dialog;

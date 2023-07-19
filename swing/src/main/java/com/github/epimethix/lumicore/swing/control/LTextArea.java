@@ -28,7 +28,7 @@ import com.github.epimethix.lumicore.swing.util.LayoutUtils;
  * <code>JPopupMenu</code>, triggered by right clicking.
  */
 @SuppressWarnings("serial")
-public class ABTextArea extends JTextArea {
+public class LTextArea extends JTextArea {
 
 	private final TextComponentPopupMenu popupMenu;
 
@@ -39,7 +39,7 @@ public class ABTextArea extends JTextArea {
 	 * 
 	 * @see JTextArea
 	 */
-	public ABTextArea() {
+	public LTextArea() {
 		this(null, null, 0, 0);
 	}
 
@@ -51,7 +51,7 @@ public class ABTextArea extends JTextArea {
 	 * @param doc The model to use
 	 * @see JTextArea
 	 */
-	public ABTextArea(Document doc) {
+	public LTextArea(Document doc) {
 		this(doc, null, 0, 0);
 	}
 
@@ -63,7 +63,7 @@ public class ABTextArea extends JTextArea {
 	 * @param text the text to be displayed, or null
 	 * @see JTextArea
 	 */
-	public ABTextArea(String text) {
+	public LTextArea(String text) {
 		this(null, text, 0, 0);
 	}
 
@@ -78,7 +78,7 @@ public class ABTextArea extends JTextArea {
 	 *                                     negative.
 	 * @see JTextArea
 	 */
-	public ABTextArea(int rows, int columns) {
+	public LTextArea(int rows, int columns) {
 		this(null, null, rows, columns);
 	}
 
@@ -93,7 +93,7 @@ public class ABTextArea extends JTextArea {
 	 *                                     negative.
 	 * @see JTextArea
 	 */
-	public ABTextArea(String text, int rows, int columns) {
+	public LTextArea(String text, int rows, int columns) {
 		this(null, text, rows, columns);
 	}
 
@@ -110,7 +110,7 @@ public class ABTextArea extends JTextArea {
 	 *                                     negative.
 	 * @see JTextArea
 	 */
-	public ABTextArea(Document doc, String text, int rows, int columns) {
+	public LTextArea(Document doc, String text, int rows, int columns) {
 		super(doc, text, rows, columns);
 		this.popupMenu = new TextComponentPopupMenu(this);
 		setComponentPopupMenu(popupMenu);

@@ -66,7 +66,11 @@ public class Accounting extends AbstractDatabaseApplication {
 		 * Profile must be loaded before logger creation to enable logging in the main
 		 * method?
 		 */
-		Lumicore.loadProfile(AppFiles.PROFILE_FILE);
+		try {
+			Lumicore.loadProfile(PropertiesFile.getProperties(AppFiles.PROFILE_FILE.getPath()));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 		LOGGER = Log.getLogger();
 		/*
 		 * Loading some application.properties

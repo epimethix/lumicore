@@ -39,12 +39,12 @@ import com.github.epimethix.lumicore.devtools.fs.TranslationModelFile;
 import com.github.epimethix.lumicore.devtools.gui.translation.dialog.TranslateDialog.TranslationJob;
 import com.github.epimethix.lumicore.sourceutil.JavaSource;
 import com.github.epimethix.lumicore.sourceutil.JavaSource.FieldSource;
-import com.github.epimethix.lumicore.swing.control.ABTextArea;
+import com.github.epimethix.lumicore.swing.control.LTextArea;
 
 public class TranslationModel {
 
 	@SuppressWarnings("serial")
-	final static class LabelTextField extends ABTextArea {
+	final static class LabelTextField extends LTextArea {
 		private String initialValue;
 
 		LabelTextField() {

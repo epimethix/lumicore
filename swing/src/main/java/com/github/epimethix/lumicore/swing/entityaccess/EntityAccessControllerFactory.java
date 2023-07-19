@@ -31,7 +31,7 @@ import com.github.epimethix.lumicore.common.swing.SwingUI;
 import com.github.epimethix.lumicore.logging.Log;
 import com.github.epimethix.lumicore.logging.Logger;
 import com.github.epimethix.lumicore.orm.EntityController;
-import com.github.epimethix.lumicore.swing.LumicoreSwingImpl;
+import com.github.epimethix.lumicore.swing.LumicoreSwing;
 import com.github.epimethix.lumicore.swing.editor.AbstractEditorPanel;
 
 public class EntityAccessControllerFactory {
@@ -88,7 +88,7 @@ public class EntityAccessControllerFactory {
 			EntityAccessMapping eam = entityAccessMappings.get(entityClass);
 			if (Objects.nonNull(eam)) {
 				try {
-					AbstractEditorPanel<?, ?> editor = LumicoreSwingImpl.initializeEditor(eam.editorClass);
+					AbstractEditorPanel<?, ?> editor = LumicoreSwing.initializeEditor(eam.editorClass);
 //							(AbstractEditorPanel<?, ?>) eam.editorClass
 //							.getConstructor(eam.ui.getClass(), eam.repository.getClass())
 //							.newInstance(eam.ui, eam.repository);

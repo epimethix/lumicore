@@ -25,7 +25,7 @@ import com.github.epimethix.lumicore.sourceutil.JavaSource;
 import com.github.epimethix.lumicore.sourceutil.JavaSource.ConstructorSource;
 import com.github.epimethix.lumicore.sourceutil.JavaSource.FieldSource;
 import com.github.epimethix.lumicore.sourceutil.JavaSource.MethodSource;
-import com.github.epimethix.lumicore.swing.LumicoreSwingImpl;
+import com.github.epimethix.lumicore.swing.LumicoreSwing;
 
 public class EntitySource implements DiagramEntity {
 
@@ -44,7 +44,7 @@ public class EntitySource implements DiagramEntity {
 //	}
 	
 	public EntitySource(File javaFile) throws IOException {
-		this(javaFile, JavaSource.readFile(javaFile, ((DevTools)LumicoreSwingImpl.getApplication()).getJavaCharset()));
+		this(javaFile, JavaSource.readFile(javaFile, ((DevTools)LumicoreSwing.getApplication()).getJavaCharset()));
 	}
 	
 	public EntitySource(File javaFile, JavaSource javaSource) throws IOException {
@@ -113,7 +113,7 @@ public class EntitySource implements DiagramEntity {
 
 	@Override
 	public void persist() throws IOException {
-		javaSource.print(javaFile, ((DevTools)LumicoreSwingImpl.getApplication()).getJavaCharset());
+		javaSource.print(javaFile, ((DevTools)LumicoreSwing.getApplication()).getJavaCharset());
 		hasChanges = false;
 	}
 

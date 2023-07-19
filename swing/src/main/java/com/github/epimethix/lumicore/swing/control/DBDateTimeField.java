@@ -48,7 +48,7 @@ public class DBDateTimeField implements DBControl<LocalDateTime>, KeyListener, A
 	private final String fieldName;
 	private final String labelKey;
 	private final JLabel label;
-	private final ABTextField textField;
+	private final LTextField textField;
 	private LocalDateTime initialValue;
 	private final DateTimeFormatter formatter;
 	private final String formatString;
@@ -83,7 +83,7 @@ public class DBDateTimeField implements DBControl<LocalDateTime>, KeyListener, A
 			nonPatternLettersIndexes[i] = index;
 			nonPatternLetters[i] = formatString.charAt(index);
 		}
-		textField = new ABTextField();
+		textField = new LTextField();
 		textField.addFocusListener(this);
 		textField.addKeyListener(this);
 		defaultTextFieldBorder = textField.getBorder();

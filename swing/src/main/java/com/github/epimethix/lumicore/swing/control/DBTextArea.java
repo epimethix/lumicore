@@ -34,7 +34,7 @@ import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
 public class DBTextArea implements DBControl<String>, FocusListener {
 
-	private final ABTextArea control;
+	private final LTextArea control;
 
 	private final JLabel label;
 
@@ -65,7 +65,7 @@ public class DBTextArea implements DBControl<String>, FocusListener {
 //	}
 
 	public DBTextArea(SwingUI ui, String labelKey, String fieldName, boolean required, int rows, int columns) {
-		control = new ABTextArea(rows, columns);
+		control = new LTextArea(rows, columns);
 		control.addFocusListener(this);
 		scrollControl = LayoutUtils.initScrollPane(control);
 		defaultScrollPaneBorder = scrollControl.getBorder();

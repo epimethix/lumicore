@@ -89,7 +89,7 @@ public class Lumicore implements Injector {
 	private static boolean headless;
 	
 	private final static  String sqlDatabaseInjector = "com.github.epimethix.lumicore.orm.SQLDatabaseInjector";
-	private final static String swingInjector = "com.github.epimethix.lumicore.swing.LumicoreSwingImpl";
+	private final static String swingInjector = "com.github.epimethix.lumicore.swing.LumicoreSwing";
 
 	/**
 	 * 
@@ -99,13 +99,13 @@ public class Lumicore implements Injector {
 	 */
 	public static void startApplication(Class<? extends Application> applicationClass, String[] args)
 			throws ConfigurationException {
-		startApplication(applicationClass, args, (File) null);
+		startApplication(applicationClass, args, null);
 	}
 
-	public static void startApplication(Class<? extends Application> applicationClass, String[] args,
-			PropertiesFile properties) throws ConfigurationException {
-		startApplication(applicationClass, args, properties.getFile());
-	}
+//	public static void startApplication(Class<? extends Application> applicationClass, String[] args,
+//			PropertiesFile properties) throws ConfigurationException {
+//		startApplication(applicationClass, args, properties.getFile());
+//	}
 
 	/**
 	 * Starts the framework using the specified {@code Application} class using the
@@ -129,7 +129,7 @@ public class Lumicore implements Injector {
 	 * @see SwingUI
 	 * @see Profile
 	 */
-	public static void startApplication(Class<? extends Application> applicationClass, String[] args, File profileFile)
+	public static void startApplication(Class<? extends Application> applicationClass, String[] args, PropertiesFile profileFile)
 			throws ConfigurationException {
 		try {
 			synchronized (Lumicore.class) {
@@ -763,7 +763,7 @@ public class Lumicore implements Injector {
 	 * @param profileFile the properties file containing the profile configuration
 	 * @see Profile
 	 */
-	public static void loadProfile(File profileFile) {
+	public static void loadProfile(PropertiesFile profileFile) {
 		Profile.loadProfile(profileFile);
 		try {
 			Log.reconfigure();

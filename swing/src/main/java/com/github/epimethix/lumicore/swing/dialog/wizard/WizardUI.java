@@ -40,7 +40,7 @@ import javax.swing.SwingUtilities;
 import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayerPool;
-import com.github.epimethix.lumicore.swing.LumicoreSwingImpl;
+import com.github.epimethix.lumicore.swing.LumicoreSwing;
 import com.github.epimethix.lumicore.swing.dialog.AnswerButtonPanel;
 import com.github.epimethix.lumicore.swing.dialog.DialogController;
 import com.github.epimethix.lumicore.swing.dialog.AbstractAnswerListener;
@@ -229,7 +229,7 @@ public final class WizardUI extends AbstractAnswerListener implements LabelsDisp
 		setDialog(dlg);
 		dialogController = new DialogController(dialog);
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.add(DialogUtils.getLanguageSelectionMenu(LumicoreSwingImpl.getApplication()));
+		menuBar.add(DialogUtils.getLanguageSelectionMenu(LumicoreSwing.getApplication()));
 		dialog.setJMenuBar(menuBar);
 		if (allRequired) {
 			answerButtonPanel = new AnswerButtonPanel(this, Answer.CANCEL, Answer.PREVIOUS, Answer.NEXT, Answer.FINISH);

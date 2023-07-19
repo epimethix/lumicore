@@ -43,7 +43,7 @@ import com.github.epimethix.lumicore.ioc.annotation.Autowired;
 import com.github.epimethix.lumicore.ioc.annotation.PostConstruct;
 import com.github.epimethix.lumicore.ioc.annotation.SwingComponent;
 import com.github.epimethix.lumicore.sourceutil.ProjectSource;
-import com.github.epimethix.lumicore.swing.control.ABTextField;
+import com.github.epimethix.lumicore.swing.control.LTextField;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
@@ -167,7 +167,7 @@ public class TranslationController {
 
 	public void showNewLocaleDialog(TranslationModel model) {
 		JLabel message = new JLabel(D.getLabel(D.MESSAGE_NEW_LOCALE));
-		ABTextField tfLocaleName = new ABTextField(10);
+		LTextField tfLocaleName = new LTextField(10);
 		JPanel pnEditor = new JPanel(new FlowLayout());
 		pnEditor.add(message);
 		pnEditor.add(tfLocaleName);

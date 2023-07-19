@@ -105,7 +105,7 @@ public class PropertiesFile {
 				}
 			}
 		}
-		Class<?> callerClass = StackUtils.getCallerClass();
+		Class<?> callerClass = StackUtils.getCallerClass(true);
 
 		{
 			String executionPath = callerClass.getProtectionDomain().getCodeSource().getLocation().getPath();

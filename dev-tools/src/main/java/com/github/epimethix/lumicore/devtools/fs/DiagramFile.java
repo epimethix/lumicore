@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.epimethix.lumicore.devtools.DevTools;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.DiagramType;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.connector.Relation;
-import com.github.epimethix.lumicore.swing.LumicoreSwingImpl;
+import com.github.epimethix.lumicore.swing.LumicoreSwing;
 
 public class DiagramFile {
 	
@@ -55,7 +55,7 @@ public class DiagramFile {
 	}
 
 	public static DiagramFile get(File diagramFile, DiagramType type) {
-		return get(diagramFile, ((DevTools)LumicoreSwingImpl.getApplication()).getDefaultCharset(), type);
+		return get(diagramFile, ((DevTools)LumicoreSwing.getApplication()).getDefaultCharset(), type);
 	}
 
 	public static DiagramFile get(File diagramFile, Charset charset, DiagramType type) {
@@ -87,7 +87,7 @@ public class DiagramFile {
 	private List<Relation> initialRelations;
 
 	public DiagramFile() {
-		this(null, ((DevTools)LumicoreSwingImpl.getApplication()).getDefaultCharset(), null);
+		this(null, ((DevTools)LumicoreSwing.getApplication()).getDefaultCharset(), null);
 	}
 
 	private DiagramFile(File file, Charset charset, DiagramType type) {

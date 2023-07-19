@@ -32,7 +32,7 @@ import com.github.epimethix.lumicore.swing.util.LayoutUtils;
  * 
  */
 @SuppressWarnings("serial")
-public class ABTextField extends JTextField implements ComboBoxEditor {
+public class LTextField extends JTextField implements ComboBoxEditor {
 	private final TextComponentPopupMenu popupMenu;
 
 	/**
@@ -42,7 +42,7 @@ public class ABTextField extends JTextField implements ComboBoxEditor {
 	 * 
 	 * @see JTextField
 	 */
-	public ABTextField() {
+	public LTextField() {
 		this(0);
 	}
 
@@ -56,7 +56,7 @@ public class ABTextField extends JTextField implements ComboBoxEditor {
 	 *                whatever naturally results from the component implementation.
 	 * @see JTextField
 	 */
-	public ABTextField(int columns) {
+	public LTextField(int columns) {
 		this(null, columns);
 	}
 
@@ -68,7 +68,7 @@ public class ABTextField extends JTextField implements ComboBoxEditor {
 	 * @param text The text to be displayed, or <code>null</code>.
 	 * @see JTextField
 	 */
-	public ABTextField(String text) {
+	public LTextField(String text) {
 		this(text, 0);
 	}
 
@@ -83,7 +83,7 @@ public class ABTextField extends JTextField implements ComboBoxEditor {
 	 *                whatever naturally results from the component implementation.
 	 * @see JTextField
 	 */
-	public ABTextField(String text, int columns) {
+	public LTextField(String text, int columns) {
 		this(null, text, columns);
 	}
 
@@ -103,7 +103,7 @@ public class ABTextField extends JTextField implements ComboBoxEditor {
 	 *                whatever naturally results from the component implementation.
 	 * @see JTextField
 	 */
-	public ABTextField(Document doc, String text, int columns) {
+	public LTextField(Document doc, String text, int columns) {
 		super(doc, text, columns);
 		this.popupMenu = new TextComponentPopupMenu(this);
 		setComponentPopupMenu(popupMenu);

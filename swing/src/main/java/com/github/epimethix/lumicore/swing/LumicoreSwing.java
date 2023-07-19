@@ -45,7 +45,7 @@ import com.github.epimethix.lumicore.swing.editor.AbstractEditorPanel;
 import com.github.epimethix.lumicore.swing.entityaccess.EntityAccessControllerFactory;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
-public class LumicoreSwingImpl implements SwingInjector {
+public class LumicoreSwing implements SwingInjector {
 
 	private static final Logger LOGGER_IOC = Log.getLogger(Log.CHANNEL_IOC);
 	private static final Logger LOGGER_SWING = Log.getLogger(Log.CHANNEL_SWING);
@@ -62,8 +62,8 @@ public class LumicoreSwingImpl implements SwingInjector {
 
 	private final String[] args;
 
-	public LumicoreSwingImpl(Injector injector, Class<? extends SwingUI> swingUIClass, String[] args) {
-		LumicoreSwingImpl.injector = injector;
+	public LumicoreSwing(Injector injector, Class<? extends SwingUI> swingUIClass, String[] args) {
+		LumicoreSwing.injector = injector;
 		this.swingUIClass = swingUIClass;
 		this.args = args;
 	}
@@ -80,14 +80,14 @@ public class LumicoreSwingImpl implements SwingInjector {
 				 * LayoutUtils must be loaded before creating the Swing UI Components because it
 				 * may modify swing layout defaults (font sizes)
 				 */
-				Check ckLayoutUtils = Benchmark.start(LumicoreSwingImpl.class, "Initialize LayoutUtils");
+				Check ckLayoutUtils = Benchmark.start(LumicoreSwing.class, "Initialize LayoutUtils");
 				LayoutUtils.touch();
 				ckLayoutUtils.stop();
 				/*
 				 * Load LabelsControllers
 				 */
 //				Check ckLabelsControllers = Benchmark.start(LumicoreSwingImpl.class, "Initialize LabelsControllers");
-				Check ckLabels = Benchmark.start(LumicoreSwingImpl.class, "configure Labels");
+				Check ckLabels = Benchmark.start(LumicoreSwing.class, "configure Labels");
 				Collection<Class<?>> labelsControllers = injector.searchClassesByAnnotation(LabelsController.class);
 				labelsControllers.add(C.class);
 				for (String arg : args) {
@@ -108,7 +108,7 @@ public class LumicoreSwingImpl implements SwingInjector {
 				 * Registering UI Packages to be included in LabelsDisplayer scan
 				 */
 //				Check ckRegisterUIPackages = Benchmark.start(LumicoreSwingImpl.class, "Register UI Packages");
-				LabelsDisplayerPool.registerUiPackage(LumicoreSwingImpl.class.getPackageName());
+				LabelsDisplayerPool.registerUiPackage(LumicoreSwing.class.getPackageName());
 				LabelsDisplayerPool.registerUiPackage(swingUIClass.getPackageName());
 				if (swingUIClass.isAnnotationPresent(LabelsScan.class)) {
 					for (String pkg : swingUIClass.getAnnotation(LabelsScan.class).scope()) {
@@ -144,7 +144,7 @@ public class LumicoreSwingImpl implements SwingInjector {
 				LabelsManagerPool.setLocale(application.getDefaultLocale());
 				ckLabels.stop();
 				try {
-					Check ckSearchForSwingComponents = Benchmark.start(LumicoreSwingImpl.class, "Search For Swing Components");
+					Check ckSearchForSwingComponents = Benchmark.start(LumicoreSwing.class, "Search For Swing Components");
 					Collection<Class<?>> swingComponents = injector.searchClassesByAnnotation(SwingComponent.class);
 					Iterator<Class<?>> i = swingComponents.iterator();
 					while (i.hasNext()) {
@@ -157,19 +157,20 @@ public class LumicoreSwingImpl implements SwingInjector {
 						}
 					}
 					ckSearchForSwingComponents.stop();
-					Check ckInitializeUIController = Benchmark.start(LumicoreSwingImpl.class, "initialize SwingUI");
+					Check ckInitializeUIController = Benchmark.start(LumicoreSwing.class, "initialize SwingUI");
 					SwingUI uiControllerInstance = null;
 //						uiControllerInstance = (SwingUI) autoInstance(uiControllerClass);
 					uiControllerInstance = (SwingUI) injector.getComponent(swingUIClass);
 					if (Objects.isNull(uiControllerInstance)) {
-						LumicoreSwingImpl.this.exitSwingInitializerException = new ConfigurationException(
+						LumicoreSwing.this.exitSwingInitializerException = new ConfigurationException(
 								ConfigurationException.INITIALIZE_SWING_UI_FAILED, swingUIClass.getSimpleName());
 						ckInitializeUIController.stop();
 						return;
 					}
 					injector.registerComponent(swingUIClass, uiControllerInstance, swingComponents);
 					ckInitializeUIController.stop();
-					Check ckRegisterEditors = Benchmark.start(LumicoreSwingImpl.class, "register editors");
+					uiControllerInstance.setupTheme();
+					Check ckRegisterEditors = Benchmark.start(LumicoreSwing.class, "register editors");
 					Collection<Class<?>> editors = injector.searchClassesAssignableFrom(AbstractEditorPanel.class);
 					for (Class<?> editorClass : editors) {
 						@SuppressWarnings("unchecked")
@@ -177,7 +178,7 @@ public class LumicoreSwingImpl implements SwingInjector {
 						EntityAccessControllerFactory.register(uiControllerInstance, editorClass1);
 					}
 					ckRegisterEditors.stop();
-					Check ckAutowireSwing = Benchmark.start(LumicoreSwingImpl.class, "autowire-swing");
+					Check ckAutowireSwing = Benchmark.start(LumicoreSwing.class, "autowire-swing");
 					for (Class<?> implementationClass : swingComponents) {
 						injector.putImplementation(implementationClass);
 						Class<?>[] interfaces = implementationClass.getInterfaces();
@@ -191,7 +192,7 @@ public class LumicoreSwingImpl implements SwingInjector {
 					for (Class<?> cls : swingComponents) {
 						Object classInstance = injector.getComponent(cls);
 						if (Objects.isNull(classInstance)) {
-							LumicoreSwingImpl.this.exitSwingInitializerException = new ConfigurationException(
+							LumicoreSwing.this.exitSwingInitializerException = new ConfigurationException(
 									ConfigurationException.INITIALIZE_SWING_COMPONENT_FAILED, cls.getSimpleName());
 							return;
 						} else {
@@ -203,7 +204,7 @@ public class LumicoreSwingImpl implements SwingInjector {
 					LOGGER_IOC.info("%n%s", autowireDiagnostics.toString());
 					LOGGER_SWING.info("%n%s", labelsDisplayersDiagnostics.toString());
 					ckAutowireSwing.stop();
-					Check ckShowUI = Benchmark.start(LumicoreSwingImpl.class, "show UI");
+					Check ckShowUI = Benchmark.start(LumicoreSwing.class, "show UI");
 					SplashScreenController.hideSplashScreen();
 					uiControllerInstance.showUI();
 					ckShowUI.stop();
@@ -218,7 +219,8 @@ public class LumicoreSwingImpl implements SwingInjector {
 //				} catch (SecurityException e) {
 //					e.printStackTrace();
 				}catch (Exception e) {
-					LumicoreSwingImpl.this.exitSwingInitializerException = e;
+					e.printStackTrace();
+					LumicoreSwing.this.exitSwingInitializerException = e;
 //					SplashScreenController.hideSplashScreen();
 				}
 			});

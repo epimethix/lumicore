@@ -18,6 +18,7 @@
 package com.github.epimethix.lumicore.remoteaiui;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 import java.util.Optional;
@@ -29,19 +30,16 @@ import org.sqlite.mc.SQLiteMCChacha20Config;
 import com.github.epimethix.lumicore.common.ConfigurationException;
 import com.github.epimethix.lumicore.common.CryptoDatabaseApplication;
 import com.github.epimethix.lumicore.common.orm.Database;
-import com.github.epimethix.lumicore.common.orm.SQLConnection;
 import com.github.epimethix.lumicore.common.orm.sql.ConnectionFactory;
 import com.github.epimethix.lumicore.common.ui.CryptoUI;
-import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayerPool;
 import com.github.epimethix.lumicore.ioc.Lumicore;
 import com.github.epimethix.lumicore.ioc.annotation.Autowired;
-import com.github.epimethix.lumicore.orm.sqlite.LumiSQLiteConnection;
 import com.github.epimethix.lumicore.orm.sqlite.SQLiteUtils;
+import com.github.epimethix.lumicore.properties.PropertiesFile;
 import com.github.epimethix.lumicore.remoteaiui.db.AppDB;
 import com.github.epimethix.lumicore.remoteaiui.service.GeneratorServiceImpl;
 import com.github.epimethix.lumicore.remoteaiui.ui.GUIController;
 import com.github.epimethix.lumicore.stackutil.AccessCheck;
-import com.github.epimethix.lumicore.swing.LumicoreSwingImpl;
 import com.github.epimethix.lumicore.swing.dialog.CryptoDialog.Mode;
 import com.github.epimethix.lumicore.swing.dialog.SwingCryptoUI;
 
@@ -51,8 +49,10 @@ public final class RemoteAIUI implements CryptoDatabaseApplication {
 
 	public static void main(String[] args) {
 		try {
-			Lumicore.startApplication(RemoteAIUI.class, args, PROPERTIES.getFile());
+			Lumicore.startApplication(RemoteAIUI.class, args, PropertiesFile.getProperties(PROPERTIES.getFile().getPath()));
 		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}

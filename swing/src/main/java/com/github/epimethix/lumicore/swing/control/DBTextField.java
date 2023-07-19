@@ -32,7 +32,7 @@ import com.github.epimethix.lumicore.common.ui.labels.manager.LabelsManagerPool;
 
 public class DBTextField implements DBControl<String>, FocusListener {
 
-	private final ABTextField control;
+	private final LTextField control;
 
 	private final JLabel label;
 
@@ -59,7 +59,7 @@ public class DBTextField implements DBControl<String>, FocusListener {
 		this.required = required;
 		this.labelKey = labelKey;
 //		this.ui = ui;
-		control = new ABTextField();
+		control = new LTextField();
 		control.addFocusListener(this);
 		defaultTextFieldBorder = control.getBorder();
 		textComponentValidation = new TextComponentValidation(ui, control, required);

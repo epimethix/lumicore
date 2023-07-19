@@ -26,7 +26,7 @@ import javax.swing.SwingUtilities;
 import com.github.epimethix.lumicore.common.Application;
 import com.github.epimethix.lumicore.common.ui.CryptoUI;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayerPool;
-import com.github.epimethix.lumicore.swing.LumicoreSwingImpl;
+import com.github.epimethix.lumicore.swing.LumicoreSwing;
 import com.github.epimethix.lumicore.swing.dialog.CryptoDialog.Mode;
 
 public class SwingCryptoUI implements CryptoUI {
@@ -46,7 +46,7 @@ public class SwingCryptoUI implements CryptoUI {
 			throw new RuntimeException("SwingCryptoUI must be instantiated on the Event Dispatch Thread!");
 		}
 
-		LabelsDisplayerPool.registerUiPackage(LumicoreSwingImpl.class.getPackageName());
+		LabelsDisplayerPool.registerUiPackage(LumicoreSwing.class.getPackageName());
 		LabelsDisplayerPool.registerUiPackage(guiControllerClass.getPackageName());
 		LabelsDisplayerPool.addLabelsDisplayers(this);
 		cryptoDialog = new CryptoDialog(application, null, mode);
