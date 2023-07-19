@@ -70,7 +70,7 @@ import com.github.epimethix.lumicore.remoteai.Generator;
 import com.github.epimethix.lumicore.swing.AbstractSwingUI;
 import com.github.epimethix.lumicore.swing.StatusBar;
 import com.github.epimethix.lumicore.swing.TabComponent;
-import com.github.epimethix.lumicore.swing.control.ABTextField;
+import com.github.epimethix.lumicore.swing.control.LTextField;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
 
 public class GUIController extends AbstractSwingUI
@@ -354,7 +354,7 @@ public class GUIController extends AbstractSwingUI
 			generator = application.getGenerator();
 		} else {
 			JLabel lbMessage = new JLabel(D.getLabel(D.MESSAGE_ENTER_GENERATOR_API_KEY));
-			ABTextField tfKey = new ABTextField(50);
+			LTextField tfKey = new LTextField(50);
 			JPanel pnEditor = new JPanel(new FlowLayout());
 			pnEditor.add(lbMessage);
 			pnEditor.add(tfKey);
