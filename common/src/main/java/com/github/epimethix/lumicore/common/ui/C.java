@@ -119,6 +119,9 @@ public class C {
 	public static final String ERROR_MESSAGE_SECRET_INVALID_TITLE = "ERROR_MESSAGE_SECRET_INVALID_TITLE";
 	public static final String BOOLEAN_FIELD_MUST_BE_CHECKED = "BOOLEAN_FIELD_MUST_BE_CHECKED";
 	public static final String CRYPTO_USER_NAME = "CRYPTO_USER_NAME";
+	public static final String MENU_THEMES = "MENU_THEMES";
+	public static final String MENU_THEME_LIGHT = "MENU_THEME_LIGHT";
+	public static final String MENU_THEME_DARK = "MENU_THEME_DARK";
 
 //	public static final LabelsManager getLabelsManager() {
 //		return LABELS;
