@@ -15,11 +15,10 @@
  */
 package com.github.epimethix.lumicore.common;
 
-import com.github.epimethix.lumicore.common.orm.SQLConnection;
+import com.github.epimethix.lumicore.common.orm.Database;
 import com.github.epimethix.lumicore.common.orm.sql.ConnectionFactory;
 import com.github.epimethix.lumicore.ioc.annotation.ComponentScan;
 import com.github.epimethix.lumicore.ioc.annotation.JarFileScan;
-import com.github.epimethix.lumicore.common.orm.Database;
 
 /**
  * The {@code DatabaseApplication} interface can be implemented to define an
