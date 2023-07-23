@@ -23,6 +23,11 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
 	
+    // Apache 2.0
+	// https://mvnrepository.com/artifact/com.formdev/flatlaf
+	implementation group: 'com.formdev', name: 'flatlaf', version: '3.1.1'
+	implementation 'com.formdev:flatlaf-swingx:3.1.1'
+	
 	api fileTree('swingx')
 }
 
