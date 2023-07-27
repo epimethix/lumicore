@@ -46,14 +46,21 @@ public class PropertiesFile {
 	 * <p>
 	 * propertiesName search is looking for:
 	 * <p>
-	 * 1. the properties file relative to the project directory
+	 * 1. the properties file relative to the project directory (R/W)
 	 * <p>
-	 * 2. the properties files full path
+	 * 2. the properties files full path (R/W)
 	 * <p>
-	 * 3. the properties file in the same package as the caller class
+	 * 3. the properties file in any of the relative upstream directories (R/W)
 	 * <p>
-	 * 3. the properties file in the default package on the classpath
-	 * 
+	 * 4. the properties file in the execution directory
+	 * {@code callerClass.getProtectionDomain().getCodeSource().getLocation()} (R/W)
+	 * <p>
+	 * 5. the properties file in the same package as the caller class (R)
+	 * <p>
+	 * 6. the properties file in the default package on the class path (R)
+	 * <p>
+	 * 7. in case the specified propertiesName contains a {@code File.separator}
+	 * {@code getProperties(String, Charset)} is called with the file name only (?)
 	 * 
 	 * @param propertiesName the properties file name to search for, with or without
 	 *                       the file extension ".properties", may also be a
@@ -70,14 +77,21 @@ public class PropertiesFile {
 	 * <p>
 	 * propertiesName search is looking for:
 	 * <p>
-	 * 1. the properties file relative to the project directory
+	 * 1. the properties file relative to the project directory (R/W)
 	 * <p>
-	 * 2. the properties files full path
+	 * 2. the properties files full path (R/W)
 	 * <p>
-	 * 3. the properties file in the same package as the caller class
+	 * 3. the properties file in any of the relative upstream directories (R/W)
 	 * <p>
-	 * 3. the properties file in the default package on the classpath
-	 * 
+	 * 4. the properties file in the execution directory
+	 * {@code callerClass.getProtectionDomain().getCodeSource().getLocation()} (R/W)
+	 * <p>
+	 * 5. the properties file in the same package as the caller class (R)
+	 * <p>
+	 * 6. the properties file in the default package on the class path (R)
+	 * <p>
+	 * 7. in case the specified propertiesName contains a {@code File.separator}
+	 * {@code getProperties(String, Charset)} is called with the file name only (?)
 	 * 
 	 * @param propertiesName the properties file name to search for, with or without
 	 *                       the file extension ".properties", may also be a
@@ -94,6 +108,9 @@ public class PropertiesFile {
 			fileName = propertiesName;
 		}
 		{
+			/*
+			 * Search relative or absolute paths
+			 */
 			File f = new File(fileName);
 			if (f.exists()) {
 				try {
@@ -108,6 +125,9 @@ public class PropertiesFile {
 		Class<?> callerClass = StackUtils.getCallerClass(true);
 
 		{
+			/*
+			 * Search in execution directory
+			 */
 			String executionPath = callerClass.getProtectionDomain().getCodeSource().getLocation().getPath();
 			File f = new File(executionPath, fileName);
 			if (f.exists()) {
@@ -120,6 +140,29 @@ public class PropertiesFile {
 				}
 			}
 		}
+		{
+			/*
+			 * Search in relative parent directories
+			 */
+			int upstreamDirs;
+			String parent = ".." + File.separator;
+			String separatorRegex = File.separator.equals("/") ? "[/]" : "[\\\\]";
+			upstreamDirs = new File("").getAbsolutePath().split(separatorRegex).length;
+			for (int i = 1; i < upstreamDirs; i++) {
+				File fTest = new File(parent.repeat(i) + fileName);
+				if (fTest.exists()) {
+					try {
+						PropertiesFile p = new PropertiesFile(fTest, charset);
+						return p;
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		/*
+		 * Search for resource relative to caller class (may be in jar)
+		 */
 		try (InputStream in = callerClass.getResourceAsStream(fileName)) {
 			if (Objects.nonNull(in)) {
 				PropertiesFile p = new PropertiesFile(in, charset);
@@ -129,6 +172,9 @@ public class PropertiesFile {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		/*
+		 * Search for absolute resource path
+		 */
 		try (InputStream in = callerClass.getResourceAsStream("/" + fileName)) {
 			if (Objects.nonNull(in)) {
 				PropertiesFile p = new PropertiesFile(in);
@@ -137,6 +183,12 @@ public class PropertiesFile {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		if (fileName.contains(File.separator)) {
+			/*
+			 * Search relative path of absolute specification
+			 */
+			return getProperties(new File(fileName).getName(), charset);
 		}
 		throw new FileNotFoundException(String.format("Properties file '%s' not found", new File(fileName).getName()));
 	}
@@ -150,6 +202,8 @@ public class PropertiesFile {
 	private final String fileComment;
 
 	private final boolean readOnly;
+
+	private final Properties runtimeProperties = new Properties();
 
 	/**
 	 * Constructs a writable PropertiesFile using the charset
@@ -259,7 +313,9 @@ public class PropertiesFile {
 	 * @return the properties key set.
 	 */
 	public final Set<Object> keySet() {
-		return properties.keySet();
+		Set<Object> keySet = properties.keySet();
+		keySet.addAll(runtimeProperties.keySet());
+		return keySet;
 	}
 
 	/**
@@ -270,8 +326,12 @@ public class PropertiesFile {
 	 * @throws IOException
 	 */
 	public final void setProperty(String key, String value) throws IOException {
-		properties.setProperty(key, value);
-		store();
+		if (!readOnly) {
+			properties.setProperty(key, value);
+			store();
+		} else {
+			runtimeProperties.setProperty(key, value);
+		}
 	}
 
 	/**
@@ -292,6 +352,9 @@ public class PropertiesFile {
 	 * @return the value or the specified defaultValue by default
 	 */
 	public final String getProperty(String key, String defaultValue) {
+		if (runtimeProperties.containsKey(key)) {
+			return runtimeProperties.getProperty(key, defaultValue);
+		}
 		return properties.getProperty(key, defaultValue);
 	}
 
@@ -303,8 +366,7 @@ public class PropertiesFile {
 	 * @throws IOException
 	 */
 	public final void setProperty(String key, int value) throws IOException {
-		properties.setProperty(key, String.valueOf(value));
-		store();
+		setProperty(key, String.valueOf(value));
 	}
 
 	/**
@@ -343,7 +405,7 @@ public class PropertiesFile {
 	 * @throws IOException
 	 */
 	public final void setProperty(String key, long value) throws IOException {
-		properties.setProperty(key, String.valueOf(value));
+		setProperty(key, String.valueOf(value));
 		store();
 	}
 
@@ -383,7 +445,7 @@ public class PropertiesFile {
 	 * @throws IOException
 	 */
 	public final void setProperty(String key, double value) throws IOException {
-		properties.setProperty(key, String.valueOf(value));
+		setProperty(key, String.valueOf(value));
 		store();
 	}
 
@@ -423,7 +485,7 @@ public class PropertiesFile {
 	 * @throws IOException
 	 */
 	public final void setProperty(String key, float value) throws IOException {
-		properties.setProperty(key, String.valueOf(value));
+		setProperty(key, String.valueOf(value));
 		store();
 	}
 
@@ -463,7 +525,7 @@ public class PropertiesFile {
 	 * @throws IOException
 	 */
 	public final void setProperty(String key, Locale value) throws IOException {
-		properties.setProperty(key, value.toLanguageTag());
+		setProperty(key, value.toLanguageTag());
 		store();
 	}
 
@@ -489,10 +551,63 @@ public class PropertiesFile {
 		Locale result = defaultValue;
 		try {
 			result = Locale.forLanguageTag(val);
-		} catch (NullPointerException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	/**
+	 * Sets an enum property.
+	 * 
+	 * @param <T>   the enum type
+	 * @param key   the property key
+	 * @param value the enum value to set
+	 */
+	public <T extends Enum<T>> void setProperty(String key, T value) {
+		try {
+			setProperty(key, value.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Gets an enum property.
+	 * 
+	 * @param <T>       the enum type
+	 * @param key       the property key
+	 * @param enumClass the enum class
+	 * @return the enum value or null by default
+	 */
+	public <T extends Enum<T>> T getEnumProperty(String key, Class<T> enumClass) {
+		String value = getProperty(key);
+		if (Objects.isNull(value)) {
+			return null;
+		}
+		return Enum.valueOf(enumClass, value);
+	}
+
+	/**
+	 * Gets an enum property.
+	 * 
+	 * @param <T>          the enum type
+	 * @param key          the property key
+	 * @param defaultValue the default value
+	 * @return the enum value or null by default
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends Enum<T>> T getEnumProperty(String key, T defaultValue) {
+		Objects.requireNonNull(defaultValue);
+		try {
+			String val = getProperty(key);
+			if (Objects.nonNull(val)) {
+				return (T) Enum.valueOf(defaultValue.getClass(), val);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return defaultValue;
 	}
 
 	/**
@@ -502,12 +617,8 @@ public class PropertiesFile {
 	 * @return true if the key exists, false otherwise.
 	 */
 	public boolean containsKey(String key) {
-		return properties.containsKey(key);
+		return properties.containsKey(key) || runtimeProperties.contains(key);
 	}
-
-//	public String getString(String key) {
-//		return properties.getProperty(key);
-//	}
 
 	/**
 	 * Loads the properties from the specified input stream.
@@ -629,5 +740,9 @@ public class PropertiesFile {
 		} else if (!propertiesFile.equals(other.propertiesFile))
 			return false;
 		return true;
+	}
+
+	public boolean isReadOnly() {
+		return readOnly;
 	}
 }
