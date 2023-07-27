@@ -18,12 +18,7 @@
 package com.github.epimethix.lumicore.remoteaiui;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Locale;
 import java.util.Optional;
-
-import javax.swing.SwingUtilities;
 
 import org.sqlite.mc.SQLiteMCChacha20Config;
 
@@ -31,28 +26,25 @@ import com.github.epimethix.lumicore.common.ConfigurationException;
 import com.github.epimethix.lumicore.common.CryptoDatabaseApplication;
 import com.github.epimethix.lumicore.common.orm.Database;
 import com.github.epimethix.lumicore.common.orm.sql.ConnectionFactory;
-import com.github.epimethix.lumicore.common.ui.CryptoUI;
 import com.github.epimethix.lumicore.ioc.Lumicore;
 import com.github.epimethix.lumicore.ioc.annotation.Autowired;
 import com.github.epimethix.lumicore.orm.sqlite.SQLiteUtils;
-import com.github.epimethix.lumicore.properties.PropertiesFile;
+import com.github.epimethix.lumicore.properties.ApplicationProperties;
 import com.github.epimethix.lumicore.remoteaiui.db.AppDB;
 import com.github.epimethix.lumicore.remoteaiui.service.GeneratorServiceImpl;
 import com.github.epimethix.lumicore.remoteaiui.ui.GUIController;
 import com.github.epimethix.lumicore.stackutil.AccessCheck;
+import com.github.epimethix.lumicore.swing.AbstractSwingCryptoApplication;
 import com.github.epimethix.lumicore.swing.dialog.CryptoDialog.Mode;
-import com.github.epimethix.lumicore.swing.dialog.SwingCryptoUI;
 
-public final class RemoteAIUI implements CryptoDatabaseApplication {
+public final class RemoteAIUI extends AbstractSwingCryptoApplication implements CryptoDatabaseApplication {
 
 	private static final AppProperties PROPERTIES = new AppProperties();
 
 	public static void main(String[] args) {
 		try {
-			Lumicore.startApplication(RemoteAIUI.class, args, PropertiesFile.getProperties(PROPERTIES.getFile().getPath()));
+			Lumicore.startApplication(RemoteAIUI.class, args, PROPERTIES.getProperties());
 		} catch (ConfigurationException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
@@ -60,31 +52,13 @@ public final class RemoteAIUI implements CryptoDatabaseApplication {
 	@Autowired
 	private AppDB db;
 
-	private CryptoUI cryptoUI;
-
 	public RemoteAIUI() {
-		try {
-			SwingUtilities.invokeAndWait(() -> {
-				cryptoUI = new SwingCryptoUI(this, GUIController.class, Mode.KEY);
-			});
-		} catch (InvocationTargetException | InterruptedException e) {
-			e.printStackTrace();
-		}
+		super(Mode.KEY);
 	}
 
 	@Override
 	public String getApplicationName() {
 		return "Remote AI UI";
-	}
-
-	@Override
-	public Locale getDefaultLocale() {
-		return PROPERTIES.getDefaultLocale();
-	}
-
-	@Override
-	public void setDefaultLocale(Locale locale) {
-		PROPERTIES.setDefaultLocale(locale);
 	}
 
 	@Override
@@ -146,7 +120,8 @@ public final class RemoteAIUI implements CryptoDatabaseApplication {
 	}
 
 	@Override
-	public CryptoUI getCryptoUI() {
-		return cryptoUI;
+	public ApplicationProperties getApplicationProperties() {
+		return PROPERTIES;
 	}
+
 }

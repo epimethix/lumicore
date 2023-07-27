@@ -31,6 +31,7 @@ import com.github.epimethix.lumicore.ioc.annotation.Autowired;
 import com.github.epimethix.lumicore.ioc.annotation.PostConstruct;
 import com.github.epimethix.lumicore.swing.AbstractSwingUI;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
+import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
 public class ExampleMainController extends AbstractSwingUI implements SwingUI, LabelsDisplayer {
 //	private final static Logger LOGGER = Log.getLogger();
@@ -46,6 +47,7 @@ public class ExampleMainController extends AbstractSwingUI implements SwingUI, L
 	private ExamleEntityAccessBrowser examleEntityAccessBrowser;
 
 	public ExampleMainController(Accounting application) {
+		super(application);
 		this.application = application;
 		this.frm = new JFrame(application.getApplicationName());
 		frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,6 +57,7 @@ public class ExampleMainController extends AbstractSwingUI implements SwingUI, L
 	public void init() {
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(DialogUtils.getLanguageSelectionMenu(application));
+		menuBar.add(DialogUtils.getThemeSeletionMenu(this));
 		frm.setJMenuBar(menuBar);
 		frm.setContentPane(examleEntityAccessBrowser);
 	}

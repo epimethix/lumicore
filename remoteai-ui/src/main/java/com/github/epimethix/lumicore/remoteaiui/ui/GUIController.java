@@ -28,6 +28,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.ioc.annotation.Autowired;
@@ -36,13 +37,13 @@ import com.github.epimethix.lumicore.remoteaiui.RemoteAIUI;
 import com.github.epimethix.lumicore.remoteaiui.service.GeneratorService;
 import com.github.epimethix.lumicore.remoteaiui.ui.dialog.Setup;
 import com.github.epimethix.lumicore.swing.AbstractSwingUI;
+import com.github.epimethix.lumicore.swing.remoteai.AIChatPanel;
 import com.github.epimethix.lumicore.swing.remoteai.ImageQueryPanel;
 import com.github.epimethix.lumicore.swing.remoteai.TextQueryPanel;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
 
 public final class GUIController extends AbstractSwingUI implements SwingUI, LabelsDisplayer{
 
-	@Autowired
 	private RemoteAIUI application;
 
 	private final JFrame frame;
@@ -56,11 +57,15 @@ public final class GUIController extends AbstractSwingUI implements SwingUI, Lab
 
 	private TextQueryPanel textQueryPanel;
 
+	private AIChatPanel aiChatPanel;
+	
 	@Autowired
 	private GeneratorService generatorService;
 
-	public GUIController() {
-//		this.application = application;
+
+	public GUIController(RemoteAIUI application) {
+		super(application);
+		this.application = application;
 		this.frame = new JFrame();
 		miReRunSetup = new JMenuItem();
 		miExit = new JMenuItem();
@@ -96,6 +101,7 @@ public final class GUIController extends AbstractSwingUI implements SwingUI, Lab
 		muFile.add(miExit);
 		menuBar.add(muFile);
 		menuBar.add(DialogUtils.getLanguageSelectionMenu(application));
+		menuBar.add(DialogUtils.getThemeSeletionMenu(this));
 		frame.setJMenuBar(menuBar);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(this);
@@ -104,9 +110,13 @@ public final class GUIController extends AbstractSwingUI implements SwingUI, Lab
 //		imageQueryPanel = new Image
 		textQueryPanel = new TextQueryPanel(frame, generatorService.getGenerator(),
 				() -> new File(application.getTextOutputDirectory().get()));
+		aiChatPanel = new AIChatPanel(frame, generatorService.getGenerator(),
+				() -> new File(application.getTextOutputDirectory().get()));
 		JTabbedPane tpTabbedPane = new JTabbedPane();
-		tpTabbedPane.insertTab("Text", null, textQueryPanel, "", 0);
+		tpTabbedPane.insertTab("Completion", null, textQueryPanel, "", 0);
 		tpTabbedPane.insertTab("Image", null, imageQueryPanel, "", 1);
+		tpTabbedPane.insertTab("Chat", null, aiChatPanel, "", 2);
+		
 		frame.setContentPane(tpTabbedPane);
 	}
 

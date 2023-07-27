@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Objects;
 
 import javax.swing.SwingUtilities;
@@ -42,6 +41,7 @@ import com.github.epimethix.lumicore.logging.Log;
 import com.github.epimethix.lumicore.logging.Logger;
 import com.github.epimethix.lumicore.orm.sqlite.SQLiteUtils;
 import com.github.epimethix.lumicore.profile.Profile;
+import com.github.epimethix.lumicore.properties.ApplicationProperties;
 import com.github.epimethix.lumicore.properties.PropertiesFile;
 import com.github.epimethix.lumicore.swing.dialog.DefaultSwingSplashScreen;
 /**
@@ -60,17 +60,16 @@ public class Accounting extends AbstractDatabaseApplication {
 	private static final String APP_VERSION_KEY = "app-version";
 
 	private static IPCController ipcController;
+	
+	private static final AppProperties PROPERTIES;
 
 	static {
 		/*
 		 * Profile must be loaded before logger creation to enable logging in the main
 		 * method?
 		 */
-		try {
-			Lumicore.loadProfile(PropertiesFile.getProperties(AppFiles.PROFILE_FILE.getPath()));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		PROPERTIES = new AppProperties(AppFiles.PROFILE_FILE.getPath());
+		Lumicore.loadProfile(PROPERTIES.getProperties());
 		LOGGER = Log.getLogger();
 		/*
 		 * Loading some application.properties
@@ -147,19 +146,11 @@ public class Accounting extends AbstractDatabaseApplication {
 	 * Example settings file for storing the default locale <p> another demo of
 	 * PropertiesFile
 	 */
-	private final ExampleSettings exampleSettings;
+//	private final ExampleSettings exampleSettings;
 
 	public Accounting(String[] args) {
-//		super(AppFiles.LOCK_FILE);
 		LOGGER.info("Hello Application args=" + Arrays.asList(args).toString());
-		ExampleSettings es = null;
-		try {
-			es = new ExampleSettings();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		ipcController.addMessageListener(this::openDocument);
-		this.exampleSettings = es;
 	}
 
 	/**
@@ -194,17 +185,6 @@ public class Accounting extends AbstractDatabaseApplication {
 	}
 
 	@Override
-	public Locale getDefaultLocale() {
-		Locale defaultLocale = exampleSettings.getDefaultLocale();
-		return defaultLocale;
-	}
-
-	@Override
-	public void setDefaultLocale(Locale locale) {
-		exampleSettings.setDefaultLocale(locale);
-	}
-
-	@Override
 	public File getNestingDirectory() {
 		return AppFiles.APP_DIR;
 	}
@@ -214,27 +194,8 @@ public class Accounting extends AbstractDatabaseApplication {
 		return SQLiteUtils.connectToFile(AppFiles.DB_FILE);
 	}
 
-//	@Override
-//	public ConnectionParameters getConnectionParameters(Class<? extends Database> dbClass) {
-//		// TODO Auto-generated method stub
-//		return new ConnectionParameters(SQLiteUtils.connectToFile(AppFiles.DB_FILE), "", "");
-//	}
-
-//	@Override
-//	public SQLConnection initializeConnection(Database database) {
-//		Credentials credentials = null;
-//		try {
-//			credentials = Profile.loadCredentials(".");
-//		} catch (IllegalAccessException e) {
-//			e.printStackTrace();
-//			throw new NullPointerException("Could not initialize credentials");
-//		}
-//		// @formatter:off
-//			return LumiSQLiteConnection.Builder
-//					.newBuilder()
-//					.connectToFile(AppFiles.DB_FILE)
-//					.buildWithChacha20(credentials.getPassword());
-////					.build();
-//		// @formatter:on
-//	}
+	@Override
+	public ApplicationProperties getApplicationProperties() {
+		return PROPERTIES;
+	}
 }

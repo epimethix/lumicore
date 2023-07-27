@@ -17,51 +17,25 @@
  */
 package com.github.epimethix.lumicore.remoteaiui;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Locale;
-import java.util.Objects;
 
-import com.github.epimethix.lumicore.properties.PropertiesFile;
+import com.github.epimethix.lumicore.properties.ApplicationProperties;
 
-public final class AppProperties {
+public final class AppProperties extends ApplicationProperties {
 
-	private final static String DEFAULT_LOCALE = "DEFAULT_LOCALE";
-
-	private final static PropertiesFile PROPERTIES;
-
-	static {
-		PropertiesFile pf = null;
-		try {
-			if (!AppFiles.PROPERTIES_FILE.exists()) {
-				AppFiles.PROPERTIES_FILE.createNewFile();
+	AppProperties() {
+		super(AppFiles.PROPERTIES_FILE.getPath());
+		/*
+		 * For Example Purposes the development profile is set. This enables the console
+		 * output.
+		 */
+		// TODO Remove setting development profile by default
+		if (!containsKey("active-profile")) {
+			try {
+				setProperty("active-profile", "dev");
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			pf = PropertiesFile.getProperties(AppFiles.PROPERTIES_FILE.getPath());
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-		if(Objects.isNull(pf)) {
-			System.err.println("Fatal: application properties could not be loaded!");
-			System.exit(100);
-		}
-		PROPERTIES = pf;
-	}
-
-	AppProperties() {}
-
-	public void setDefaultLocale(Locale locale) {
-		try {
-			PROPERTIES.setProperty(DEFAULT_LOCALE, locale.toLanguageTag());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public Locale getDefaultLocale() {
-		return Locale.forLanguageTag(PROPERTIES.getProperty(DEFAULT_LOCALE, Locale.ENGLISH.toLanguageTag()));
-	}
-
-	public File getFile() {
-		return PROPERTIES.getFile();
 	}
 }
