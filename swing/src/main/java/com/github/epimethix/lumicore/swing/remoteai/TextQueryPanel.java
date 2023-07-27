@@ -50,9 +50,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.Theme;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.epimethix.lumicore.common.ui.C;
@@ -134,7 +136,7 @@ public class TextQueryPanel extends JPanel implements ActionListener, PropertyCh
 		});
 		taResponse = new RSyntaxTextArea();
 		taResponse.setLineWrap(true);
-//		pnResponse = new JPanel(new BorderLayout());
+		installTheme();
 		btGenerate = new JButton();
 		btGenerate.addActionListener(this);
 		btSave = new JButton();
@@ -286,6 +288,29 @@ public class TextQueryPanel extends JPanel implements ActionListener, PropertyCh
 		};
 		worker.addPropertyChangeListener(this);
 		worker.execute();
+	}
+
+	@Override
+	public void updateUI() {
+		super.updateUI();
+		installTheme();
+	}
+
+	private void installTheme() {
+		if (Objects.nonNull(taResponse)) {
+			try {
+				String res;
+				if(UIManager.getLookAndFeel().getName().toLowerCase().contains("light")) {
+					res = "/org/fife/ui/rsyntaxtextarea/themes/default.xml";
+				} else {
+					res = "/org/fife/ui/rsyntaxtextarea/themes/dark.xml";
+				}
+				Theme t = Theme.load(getClass().getResourceAsStream(res));
+				t.apply(taResponse);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
