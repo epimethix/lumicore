@@ -21,6 +21,7 @@ import java.util.Locale;
 import com.github.epimethix.lumicore.common.ui.Theme;
 import com.github.epimethix.lumicore.ioc.annotation.ComponentScan;
 import com.github.epimethix.lumicore.ioc.annotation.JarFileScan;
+import com.github.epimethix.lumicore.properties.ApplicationProperties;
 
 /**
  * The {@code Application} interface can be implemented to define an application
@@ -73,4 +74,6 @@ public interface Application {
 	}
 
 	default void setTheme(Theme t) {}
+	
+	ApplicationProperties getApplicationProperties();
 }

@@ -15,6 +15,8 @@
  */
 package com.github.epimethix.lumicore.common;
 
+import com.github.epimethix.lumicore.common.ui.AbstractApplication;
+
 /**
  * The DatabaseApplication interface is created to secure the database against
  * unwanted/malicious down-grades when in case for whatever reason an out-dated
@@ -77,7 +79,7 @@ package com.github.epimethix.lumicore.common;
  * @author epimethix
  * 
  */
-public abstract class AbstractDatabaseApplication implements DatabaseApplication {
+public abstract class AbstractDatabaseApplication extends AbstractApplication implements DatabaseApplication {
 
 	/**
 	 * Instantiate the database application without lock file to enforce running a

@@ -106,6 +106,7 @@ public class GUIController extends AbstractSwingUI
 	private final Map<TabComponent, Document> openDocuments;
 
 	public GUIController(DevTools devTools) {
+		super(devTools);
 		this.application = devTools;
 		tabbedPane = new JTabbedPane();
 		tabbedPane.addChangeListener(this);

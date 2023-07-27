@@ -23,6 +23,9 @@ import java.util.Objects;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+import com.github.epimethix.lumicore.common.Application;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
 import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.Theme;
@@ -30,6 +33,12 @@ import com.github.epimethix.lumicore.common.ui.labels.manager.LabelsManagerPool;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
 
 public abstract class AbstractSwingUI implements SwingUI, WindowListener {
+	private final Application application;
+
+	public AbstractSwingUI(Application application) {
+		this.application = application;
+	}
+
 	public void showErrorMessage(String key, Object... args) {
 		showErrorMessage(null, key, args);
 	}
@@ -115,14 +124,25 @@ public abstract class AbstractSwingUI implements SwingUI, WindowListener {
 
 	@Override
 	public Theme getTheme() {
-		return Theme.DEFAULT;
+		return application.getTheme();
 	}
 
 	@Override
-	public void setTheme(Theme t) {}
+	public void setTheme(Theme t) {
+		application.setTheme(t);
+		setupTheme();
+	}
 
 	@Override
-	public void setupTheme() {}
+	public void setupTheme() {
+		Theme t = getTheme();
+		if (t == Theme.DARK || t == Theme.DEFAULT) {
+			FlatDarkLaf.setup();
+		} else {
+			FlatLightLaf.setup();
+		}
+		SwingUtilities.updateComponentTreeUI(getMainFrame());
+	}
 
 	@Override
 	public void windowOpened(WindowEvent e) {}

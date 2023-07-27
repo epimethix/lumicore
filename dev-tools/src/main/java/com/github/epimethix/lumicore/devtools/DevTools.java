@@ -24,28 +24,31 @@ import java.util.Locale;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.epimethix.lumicore.common.Application;
 import com.github.epimethix.lumicore.common.ConfigurationException;
+import com.github.epimethix.lumicore.common.ui.AbstractApplication;
 import com.github.epimethix.lumicore.common.ui.SplashScreenController;
 import com.github.epimethix.lumicore.devtools.gui.DevToolsSplashScreen;
 import com.github.epimethix.lumicore.ioc.Lumicore;
+import com.github.epimethix.lumicore.properties.ApplicationProperties;
 import com.github.epimethix.lumicore.properties.PropertiesFile;
 import com.github.epimethix.lumicore.remoteai.Generator;
 import com.github.epimethix.lumicore.remoteai.OpenAI;
 import com.github.epimethix.lumicore.sourceutil.ProjectSource;
 
-public final class DevTools implements Application {
+public final class DevTools extends AbstractApplication implements Application {
+	
+	private final static AppProperties PROPERTIES = new AppProperties("dev-tools-profile");
+	
 	public static void main(String[] args) {
 		launchDevTools(args);
 	}
 
 	public final static void launchDevTools(String[] args) {
-
-		ProjectSource.printClassPathElements();
+//		ProjectSource.printClassPathElements();
 //		System.err.println(ProjectSource.discoverSiblingProjects().toString());
 //		System.err.println(siblingProjects.toString());
-//		
 		SplashScreenController.showSplashScreen(DevToolsSplashScreen.class);
 		try {
-			Lumicore.startApplication(DevTools.class, args, PropertiesFile.getProperties("dev-tools-profile"));
+			Lumicore.startApplication(DevTools.class, args, PROPERTIES.getProperties());
 //			Runtime.getRuntime().addShutdownHook(new Thread(()->{
 //				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 //				if(Objects.nonNull(workspace)) {
@@ -61,8 +64,6 @@ public final class DevTools implements Application {
 //			}));
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -74,30 +75,30 @@ public final class DevTools implements Application {
 		ClassPathIndex.startIndexing(false);
 	}
 
-	@Override
-	public Locale getDefaultLocale() {
-		if (DevToolsFiles.LOCALE_JSON.exists()) {
-			ObjectMapper om = new ObjectMapper();
-			Locale locale;
-			try {
-				locale = om.readValue(DevToolsFiles.LOCALE_JSON, Locale.class);
-				return locale;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return Locale.ENGLISH;
-	}
-
-	@Override
-	public void setDefaultLocale(Locale locale) {
-		ObjectMapper om = new ObjectMapper();
-		try {
-			om.writerWithDefaultPrettyPrinter().writeValue(DevToolsFiles.LOCALE_JSON, locale);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	@Override
+//	public Locale getDefaultLocale() {
+//		if (DevToolsFiles.LOCALE_JSON.exists()) {
+//			ObjectMapper om = new ObjectMapper();
+//			Locale locale;
+//			try {
+//				locale = om.readValue(DevToolsFiles.LOCALE_JSON, Locale.class);
+//				return locale;
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return Locale.ENGLISH;
+//	}
+//
+//	@Override
+//	public void setDefaultLocale(Locale locale) {
+//		ObjectMapper om = new ObjectMapper();
+//		try {
+//			om.writerWithDefaultPrettyPrinter().writeValue(DevToolsFiles.LOCALE_JSON, locale);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	@Override
 	public String getApplicationName() {
@@ -131,9 +132,15 @@ public final class DevTools implements Application {
 		Generator g = new OpenAI(properties.getGeneratorApiKey().orElse(""));
 		return g;
 	}
+	
 	public Generator setGeneratorApiKey(String key) {
 		properties.setGeneratorApiKey(key);
 		Generator g = new OpenAI(key);
 		return g;
+	}
+
+	@Override
+	public ApplicationProperties getApplicationProperties() {
+		return PROPERTIES;
 	}
 }
