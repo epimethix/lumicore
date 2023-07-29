@@ -28,8 +28,8 @@ import com.formdev.flatlaf.FlatLightLaf;
 import com.github.epimethix.lumicore.common.Application;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
 import com.github.epimethix.lumicore.common.ui.Answer;
-import com.github.epimethix.lumicore.common.ui.Theme;
 import com.github.epimethix.lumicore.common.ui.labels.manager.LabelsManagerPool;
+import com.github.epimethix.lumicore.properties.Theme;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
 
 public abstract class AbstractSwingUI implements SwingUI, WindowListener {

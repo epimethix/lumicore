@@ -6,8 +6,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-import com.github.epimethix.lumicore.common.ui.Theme;
-
 public abstract class ApplicationProperties {
 
 	private final static String DEFAULT_LOCALE = "default-locale";

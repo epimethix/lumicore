@@ -47,10 +47,10 @@ import com.github.epimethix.lumicore.common.Application;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
 import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.C;
-import com.github.epimethix.lumicore.common.ui.Theme;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayerPool;
 import com.github.epimethix.lumicore.common.ui.labels.manager.LabelsManagerPool;
+import com.github.epimethix.lumicore.properties.Theme;
 import com.github.epimethix.lumicore.swing.dialog.AbstractAnswerListener;
 import com.github.epimethix.lumicore.swing.dialog.AnswerButtonPanel;
 

@@ -15,7 +15,7 @@
  */
 package com.github.epimethix.lumicore.common;
 
-import com.github.epimethix.lumicore.common.ui.Theme;
+import com.github.epimethix.lumicore.properties.Theme;
 
 public interface UserInterface {
 	void showUI();

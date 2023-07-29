@@ -3,6 +3,7 @@ package com.github.epimethix.lumicore.common.ui;
 import java.util.Locale;
 
 import com.github.epimethix.lumicore.common.Application;
+import com.github.epimethix.lumicore.properties.Theme;
 
 public abstract class AbstractApplication implements Application {
 

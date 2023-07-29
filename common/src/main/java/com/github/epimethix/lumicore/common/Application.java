@@ -18,10 +18,10 @@ package com.github.epimethix.lumicore.common;
 import java.io.File;
 import java.util.Locale;
 
-import com.github.epimethix.lumicore.common.ui.Theme;
 import com.github.epimethix.lumicore.ioc.annotation.ComponentScan;
 import com.github.epimethix.lumicore.ioc.annotation.JarFileScan;
 import com.github.epimethix.lumicore.properties.ApplicationProperties;
+import com.github.epimethix.lumicore.properties.Theme;
 
 /**
  * The {@code Application} interface can be implemented to define an application
