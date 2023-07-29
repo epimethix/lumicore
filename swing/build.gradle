@@ -9,6 +9,7 @@ dependencies {
     implementation project(':ioc-annotations')
     implementation project(':logging')
     implementation project(':orm')
+    implementation project(':properties')
     implementation project(':remoteai')
     //implementation project(':util')
     
