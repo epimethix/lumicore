@@ -85,7 +85,7 @@ import static com.github.epimethix.lumicore.sourceutil.SourceAnalyzer.find;
 import static com.github.epimethix.lumicore.sourceutil.SourceAnalyzer.getVisibilityFromModifiers;
 import static com.github.epimethix.lumicore.sourceutil.SourceAnalyzer.nextEndOfComment;
 import static com.github.epimethix.lumicore.sourceutil.SourceAnalyzer.nextNewLine;
-import static com.github.epimethix.lumicore.sourceutil.SourceAnalyzer.nextWhitespace;
+import static com.github.epimethix.lumicore.sourceutil.SourceAnalyzer.skipWhitespace;
 import static com.github.epimethix.lumicore.sourceutil.SourceAnalyzer.readExceptions;
 import static com.github.epimethix.lumicore.sourceutil.SourceAnalyzer.readParameters;
 import static com.github.epimethix.lumicore.sourceutil.SourceAnalyzer.readSignatureList;
@@ -175,7 +175,6 @@ public final class JavaSource implements Source {
 				opt = testIndex(MYSTERY_SIGNATURE_METHOD_TYPE_PARAMETERS_PATTERN, genericString, 0);
 				if (opt.isPresent()) {
 					ms = js.parseMethod2(0, genericString, opt.get(), null, Collections.emptyList());
-
 				} else {
 					opt = testIndex(MYSTERY_SIGNATURE_METHOD_OR_FIELD_TYPE_PARAMETERS_PATTERN, genericString, 0);
 					if (opt.isPresent()) {
@@ -596,6 +595,17 @@ public final class JavaSource implements Source {
 			 */
 			public Builder addValue(String value) {
 				values.add(value);
+				return this;
+			}
+
+			/**
+			 * adds a value to the annotation.
+			 * 
+			 * @param value the value to add
+			 * @return this {@code Builder}
+			 */
+			public Builder setStringValue(String value) {
+				values.add("\"".concat(value).concat("\""));
 				return this;
 			}
 
@@ -3289,7 +3299,7 @@ public final class JavaSource implements Source {
 		if (Objects.isNull(returnTypeArray)) {
 			returnTypeArray = "";
 		}
-		end = nextWhitespace(sourceCode, end);
+		end = skipWhitespace(sourceCode, end);
 		test = testIndex(IDENTIFIER_PATTERN, sourceCode, end);
 //		findVerbose(IDENTIFIER_PATTERN, sourceCode, end);
 		method = test.get();
@@ -3327,7 +3337,7 @@ public final class JavaSource implements Source {
 			end = arrayMatcher.end();
 		}
 //		System.err.println(array);
-		end = nextWhitespace(sourceCode, end);
+		end = skipWhitespace(sourceCode, end);
 		test = testIndex(MYSTERY_IDENTIFIER_PATTERN, sourceCode, end);
 		Matcher matchIdentifier = test.get();
 		String identifier = matchIdentifier.group(MYSTERY_IDENTIFIER_NAME);

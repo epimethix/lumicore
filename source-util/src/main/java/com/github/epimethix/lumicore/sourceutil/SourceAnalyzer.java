@@ -15,9 +15,6 @@
  */
 package com.github.epimethix.lumicore.sourceutil;
 
-import static com.github.epimethix.lumicore.sourceutil.SourceAnalyzer.NEEDED_WHITESPACE_PATTERN;
-import static com.github.epimethix.lumicore.sourceutil.SourceAnalyzer.testIndex;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -691,7 +688,7 @@ public class SourceAnalyzer {
 		return sourceCode.length();
 	}
 
-	public static int nextWhitespace(CharSequence sourceCode, int start) {
+	public static int skipWhitespace(CharSequence sourceCode, int start) {
 		Optional<Matcher> test = testIndex(NEEDED_WHITESPACE_PATTERN, sourceCode, start);
 		if (test.isPresent()) {
 			start = test.get().end();
