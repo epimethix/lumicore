@@ -35,7 +35,7 @@ import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.AnswerOption;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.devtools.gui.D;
-import com.github.epimethix.lumicore.devtools.gui.GUIController;
+import com.github.epimethix.lumicore.devtools.gui.DevToolsGUIController;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.Diagram;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.DiagramType;
 import com.github.epimethix.lumicore.ioc.annotation.SwingComponent;
@@ -74,7 +74,7 @@ public class NewDiagramDialog implements Dialog, LabelsDisplayer {
 //		}
 //	}
 
-	private final GUIController guiController;
+	private final DevToolsGUIController guiController;
 
 	private final DialogUI dialogUI;
 
@@ -87,7 +87,7 @@ public class NewDiagramDialog implements Dialog, LabelsDisplayer {
 	private final JRadioButton rbUML;
 	private final JRadioButton rbERD;
 
-	public NewDiagramDialog(GUIController guiController) {
+	public NewDiagramDialog(DevToolsGUIController guiController) {
 		this.guiController = guiController;
 		tfPath = new JTextField();
 		JButton btFileChooser = new JButton();

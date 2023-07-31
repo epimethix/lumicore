@@ -32,7 +32,7 @@ import com.github.epimethix.lumicore.common.ui.AnswerOption;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.devtools.fs.DiagramData;
 import com.github.epimethix.lumicore.devtools.gui.D;
-import com.github.epimethix.lumicore.devtools.gui.GUIController;
+import com.github.epimethix.lumicore.devtools.gui.DevToolsGUIController;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.DiagramEntityConfiguration;
 import com.github.epimethix.lumicore.ioc.annotation.SwingComponent;
 import com.github.epimethix.lumicore.swing.dialog.Dialog;
@@ -42,7 +42,7 @@ import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 @SwingComponent
 public class PropertiesDialog implements Dialog, LabelsDisplayer {
 
-	private final GUIController guiController;
+	private final DevToolsGUIController guiController;
 	private final JCheckBox ckShowStaticFields;
 	private final JCheckBox ckShowInstanceFields;
 	private final JCheckBox ckShowConstructors;
@@ -54,7 +54,7 @@ public class PropertiesDialog implements Dialog, LabelsDisplayer {
 	private ArrayList<String> keys;
 	private final JPanel pnEditor;
 
-	public PropertiesDialog(GUIController guiController) {
+	public PropertiesDialog(DevToolsGUIController guiController) {
 		this.guiController = guiController;
 		ckShowStaticFields = new JCheckBox(D.getLabel(D.DIALOG_SHOW_STATIC_FIELDS));
 		ckShowInstanceFields = new JCheckBox(D.getLabel(D.DIALOG_SHOW_INSTANCE_FIELDS));

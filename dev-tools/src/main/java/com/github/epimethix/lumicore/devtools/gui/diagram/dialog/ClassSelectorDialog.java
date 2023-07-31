@@ -44,7 +44,7 @@ import com.github.epimethix.lumicore.common.ui.AnswerOption;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.IgnoreLabels;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.devtools.gui.D;
-import com.github.epimethix.lumicore.devtools.gui.GUIController;
+import com.github.epimethix.lumicore.devtools.gui.DevToolsGUIController;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.Diagram;
 import com.github.epimethix.lumicore.ioc.annotation.SwingComponent;
 import com.github.epimethix.lumicore.swing.dialog.Dialog;
@@ -261,7 +261,7 @@ public class ClassSelectorDialog implements ActionListener, LabelsDisplayer, Dia
 
 	private Diagram diagram;
 
-	public ClassSelectorDialog(GUIController guiController) {
+	public ClassSelectorDialog(DevToolsGUIController guiController) {
 		this.parent = guiController.getFrame();
 		cmPackages = new DefaultComboBoxModel<>();
 		cbPackages = new JComboBox<>(cmPackages);

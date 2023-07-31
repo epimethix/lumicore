@@ -36,7 +36,7 @@ import javax.swing.ListSelectionModel;
 
 import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.devtools.gui.D;
-import com.github.epimethix.lumicore.devtools.gui.GUIController;
+import com.github.epimethix.lumicore.devtools.gui.DevToolsGUIController;
 import com.github.epimethix.lumicore.devtools.gui.translation.dialog.TranslateDialog;
 import com.github.epimethix.lumicore.devtools.service.ProjectService;
 import com.github.epimethix.lumicore.ioc.annotation.Autowired;
@@ -50,7 +50,7 @@ import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 @SwingComponent
 public class TranslationController {
 	@Autowired
-	private GUIController guiController;
+	private DevToolsGUIController guiController;
 
 	@Autowired
 	private TranslateDialog translateDialog;

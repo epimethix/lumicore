@@ -40,7 +40,7 @@ import com.github.epimethix.lumicore.common.ui.AnswerOption;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.devtools.ClassPathIndex;
 import com.github.epimethix.lumicore.devtools.gui.D;
-import com.github.epimethix.lumicore.devtools.gui.GUIController;
+import com.github.epimethix.lumicore.devtools.gui.DevToolsGUIController;
 import com.github.epimethix.lumicore.devtools.gui.ListComboBoxModel;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.DiagramEntity;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.DiagramType;
@@ -116,7 +116,7 @@ public class FieldEditorDialog implements Dialog, LabelsDisplayer {
 		}
 	}
 
-	private final GUIController guiController;
+	private final DevToolsGUIController guiController;
 	private DiagramEntity diagramEntity;
 	private final JComboBox<String> visibility;
 	private final JCheckBox ckStatic;
@@ -137,7 +137,7 @@ public class FieldEditorDialog implements Dialog, LabelsDisplayer {
 		return new FieldEditorUI();
 	}
 
-	public FieldEditorDialog(GUIController guiController) {
+	public FieldEditorDialog(DevToolsGUIController guiController) {
 		this.guiController = guiController;
 		visibility = new JComboBox<>(new String[] { "package", "private", "protected", "public" });
 		ckStatic = new JCheckBox("static");

@@ -45,7 +45,7 @@ import com.github.epimethix.lumicore.common.orm.model.MutableEntity;
 import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.devtools.gui.D;
-import com.github.epimethix.lumicore.devtools.gui.GUIController;
+import com.github.epimethix.lumicore.devtools.gui.DevToolsGUIController;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.Diagram;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.EntitySource;
 import com.github.epimethix.lumicore.ioc.annotation.SwingComponent;
@@ -63,7 +63,7 @@ import com.github.epimethix.lumicore.swing.dialog.wizard.WizardUI;
 @SwingComponent
 public class NewEntityWizard extends AbstractWizard implements LabelsDisplayer {
 
-	private final GUIController guiController;
+	private final DevToolsGUIController guiController;
 	private final Icon icon = new ImageIcon(getClass().getResource("/img/wizard.png"));
 
 	/*
@@ -282,7 +282,7 @@ public class NewEntityWizard extends AbstractWizard implements LabelsDisplayer {
 	private Diagram diagram;
 //	private DiagramView diagramView;
 
-	public NewEntityWizard(GUIController guiController) {
+	public NewEntityWizard(DevToolsGUIController guiController) {
 		super(() -> D.getLabel(D.WIZARD_TITLE_NEW_ENTITY));
 		this.guiController = guiController;
 		/*

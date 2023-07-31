@@ -41,7 +41,7 @@ import com.github.epimethix.lumicore.common.ui.labels.displayer.IgnoreLabels;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.devtools.ClassPathIndex;
 import com.github.epimethix.lumicore.devtools.gui.D;
-import com.github.epimethix.lumicore.devtools.gui.GUIController;
+import com.github.epimethix.lumicore.devtools.gui.DevToolsGUIController;
 import com.github.epimethix.lumicore.devtools.gui.ListComboBoxModel;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.Diagram;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.DiagramEntity;
@@ -56,7 +56,7 @@ public class AddEntityDialog implements Dialog, LabelsDisplayer {
 	private final JPanel pnEditor;
 	private final JList<String> lsFullNames;
 
-	private final GUIController uic;
+	private final DevToolsGUIController uic;
 	private final DefaultListModel<String> model;
 	@IgnoreLabels
 	private Diagram diagram;
@@ -65,7 +65,7 @@ public class AddEntityDialog implements Dialog, LabelsDisplayer {
 	private final JLabel lbClassName;
 	private final JComboBox<String> cbSimpleName;
 
-	public AddEntityDialog(GUIController uic) {
+	public AddEntityDialog(DevToolsGUIController uic) {
 		this.uic = uic;
 		lbClassName = new JLabel();
 		cbSimpleName = new JComboBox<String>();

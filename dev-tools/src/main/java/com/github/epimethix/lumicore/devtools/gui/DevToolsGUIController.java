@@ -73,7 +73,7 @@ import com.github.epimethix.lumicore.swing.TabComponent;
 import com.github.epimethix.lumicore.swing.control.LTextField;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
 
-public class GUIController extends AbstractSwingUI
+public class DevToolsGUIController extends AbstractSwingUI
 		implements SwingUI, ActionListener, WindowListener, LabelsDisplayer, ChangeListener {
 	private static final Logger LOGGER = Log.getLogger();
 	private final JFrame frm;
@@ -105,7 +105,7 @@ public class GUIController extends AbstractSwingUI
 
 	private final Map<TabComponent, Document> openDocuments;
 
-	public GUIController(DevTools devTools) {
+	public DevToolsGUIController(DevTools devTools) {
 		super(devTools);
 		this.application = devTools;
 		tabbedPane = new JTabbedPane();

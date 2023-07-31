@@ -26,7 +26,7 @@ import com.github.epimethix.lumicore.common.ui.labels.displayer.IgnoreLabels;
 import com.github.epimethix.lumicore.devtools.ClassPathIndex;
 import com.github.epimethix.lumicore.devtools.ClassPathIndex.IndexedClass;
 import com.github.epimethix.lumicore.devtools.fs.DiagramData;
-import com.github.epimethix.lumicore.devtools.gui.GUIController;
+import com.github.epimethix.lumicore.devtools.gui.DevToolsGUIController;
 import com.github.epimethix.lumicore.devtools.gui.diagram.dialog.DiagramEditorDialog;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.Diagram;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.DiagramEntity;
@@ -41,7 +41,7 @@ import com.github.epimethix.lumicore.sourceutil.ProjectSource;
 public class DiagramController {
 
 	@Autowired
-	private GUIController guiController;
+	private DevToolsGUIController guiController;
 
 	private final File sourcesDirectory;
 
@@ -55,7 +55,7 @@ public class DiagramController {
 	@Autowired
 	private DiagramEditorDialog diagramEditorDialog;
 
-	public DiagramController(GUIController guiController) {
+	public DiagramController(DevToolsGUIController guiController) {
 		this.sourcesDirectory = guiController.getSourcesDirectory();
 		this.diagramEntities = new HashMap<>();
 //		this.classSelectorDialog = new ClassSelectorDialog(guiController.getFrame(), sourcesDirectory);
@@ -126,7 +126,7 @@ public class DiagramController {
 		return sourcesDirectory;
 	}
 
-	public GUIController getGUIController() {
+	public DevToolsGUIController getGUIController() {
 		return guiController;
 	}
 

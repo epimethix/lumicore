@@ -42,7 +42,7 @@ import com.github.epimethix.lumicore.common.ui.AnswerOption;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.devtools.DevTools;
 import com.github.epimethix.lumicore.devtools.gui.D;
-import com.github.epimethix.lumicore.devtools.gui.GUIController;
+import com.github.epimethix.lumicore.devtools.gui.DevToolsGUIController;
 import com.github.epimethix.lumicore.devtools.gui.translation.TranslationModel;
 import com.github.epimethix.lumicore.ioc.annotation.Autowired;
 import com.github.epimethix.lumicore.ioc.annotation.SwingComponent;
@@ -193,9 +193,9 @@ public final class TranslateDialog extends AbstractDialog {
 	@Autowired
 	private DevTools app;
 
-	private final GUIController guiController;
+	private final DevToolsGUIController guiController;
 
-	public TranslateDialog(GUIController guiController) {
+	public TranslateDialog(DevToolsGUIController guiController) {
 		super(guiController.getFrame(), () -> D.getLabel(D.TRANSLATE_DIALOG_TITLE), ICON_EDIT, new TranslateDialogUI(),
 				AnswerOption.OK_CANCEL);
 		this.guiController = guiController;

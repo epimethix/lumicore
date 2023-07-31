@@ -20,7 +20,7 @@ import java.util.Optional;
 
 import com.github.epimethix.lumicore.common.ui.labels.displayer.IgnoreLabels;
 import com.github.epimethix.lumicore.devtools.fs.DiagramData;
-import com.github.epimethix.lumicore.devtools.gui.GUIController;
+import com.github.epimethix.lumicore.devtools.gui.DevToolsGUIController;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.Diagram;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.DiagramEntity;
 import com.github.epimethix.lumicore.ioc.annotation.Autowired;
@@ -51,9 +51,9 @@ public class DiagramEditorDialog {
 	private FieldEditorDialog addFieldDialog;
 
 	@IgnoreLabels
-	private final GUIController guiController;
+	private final DevToolsGUIController guiController;
 
-	public DiagramEditorDialog(GUIController guiController) {
+	public DiagramEditorDialog(DevToolsGUIController guiController) {
 		this.guiController = guiController;
 	}
 

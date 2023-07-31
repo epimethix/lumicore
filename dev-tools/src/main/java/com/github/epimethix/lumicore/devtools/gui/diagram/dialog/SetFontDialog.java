@@ -29,7 +29,7 @@ import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.AnswerOption;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.devtools.gui.D;
-import com.github.epimethix.lumicore.devtools.gui.GUIController;
+import com.github.epimethix.lumicore.devtools.gui.DevToolsGUIController;
 import com.github.epimethix.lumicore.devtools.gui.diagram.model.Diagram;
 import com.github.epimethix.lumicore.ioc.annotation.SwingComponent;
 import com.github.epimethix.lumicore.swing.dialog.Dialog;
@@ -44,11 +44,11 @@ public class SetFontDialog implements Dialog, LabelsDisplayer {
 	
 	private Diagram diagram;
 
-	private final GUIController guiController;
+	private final DevToolsGUIController guiController;
 	
 	private final DialogUI dialogUI;
 	
-	public SetFontDialog(GUIController guiController) {
+	public SetFontDialog(DevToolsGUIController guiController) {
 		this.guiController = guiController;
 		lbFontSize = new JLabel();
 		cbFontSize = new JComboBox<>(new String[] { "10", "12", "14", "16", "18", "20", "22", "24" });
