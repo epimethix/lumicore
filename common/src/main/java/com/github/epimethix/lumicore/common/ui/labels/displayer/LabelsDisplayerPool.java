@@ -257,5 +257,4 @@ public final class LabelsDisplayerPool {
 			}
 		} while (Objects.nonNull(componentClass = componentClass.getSuperclass()));
 	}
-
 }
