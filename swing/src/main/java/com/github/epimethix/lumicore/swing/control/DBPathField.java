@@ -24,6 +24,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.swing.BorderFactory;
@@ -71,6 +72,7 @@ public class DBPathField implements DBControl<Path>, ActionListener {
 	private Path initialValue;
 
 	private final Border defaultTextFieldBorder;
+	private Consumer<Path> selectAction;
 
 	public DBPathField(SwingUI ui, String labelKey, String fieldName, boolean required, Selector selector,
 			Path parent) {
@@ -132,6 +134,9 @@ public class DBPathField implements DBControl<Path>, ActionListener {
 					selectedPath = Path.of(dir);
 					tfPath.setText(dir);
 					tfPath.setBorder(defaultTextFieldBorder);
+					if(Objects.nonNull(selectAction)) {
+						selectAction.accept(selectedPath);
+					}
 				}
 			} else {
 				JFileChooser fc = new JFileChooser();
@@ -240,4 +245,8 @@ public class DBPathField implements DBControl<Path>, ActionListener {
 		btOpenSelector.requestFocusInWindow();
 	}
 
+	@Override
+	public void onSelect(Consumer<Path> selectAction) {
+		this.selectAction = selectAction;
+	}
 }
