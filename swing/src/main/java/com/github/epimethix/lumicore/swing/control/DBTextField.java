@@ -189,4 +189,8 @@ public class DBTextField implements DBControl<String>, FocusListener {
 
 	@Override
 	public void focusLost(FocusEvent e) {}
+
+	public void setText(String text) {
+		control.setText(text);
+	}
 }
