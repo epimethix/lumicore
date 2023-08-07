@@ -17,6 +17,7 @@ package com.github.epimethix.lumicore.common.swing;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -80,4 +81,7 @@ public interface DBControl<T> extends LabelsDisplayer {
 		System.err.println(getClass().getSimpleName() + " should override DBControl.getLabelText()!!!");
 		return "#ERROR: Could not resolve label text#";
 	}
+
+
+	default public void onSelect(Consumer<T> selectAction) {};
 }
