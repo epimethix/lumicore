@@ -27,6 +27,8 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JSeparator;
 
 import com.github.epimethix.lumicore.common.orm.model.Entity;
 import com.github.epimethix.lumicore.common.orm.model.MutableEntity;
@@ -222,6 +224,11 @@ public class EditorLayoutController<E extends Entity<?>> {
 		return c;
 	}
 
+	public void registerControl(DBControl<?> dbc) {
+		controls.add(dbc);
+		writeControls.add(dbc);
+	}
+	
 	public void addControl(DBControl<?> dbc) {
 		addControl(dbc, (ControlTransform) null);
 	}
@@ -253,15 +260,24 @@ public class EditorLayoutController<E extends Entity<?>> {
 			addComponent(dbc.getLabel(), LayoutIncrement.RIGHT);
 			c.weightx = 1.0;
 		} else {
-			c.weightx = 1.0;
 			c.gridwidth = 2;
 			addComponent(dbc.getLabel(), LayoutIncrement.DOWN);
+//			c.weightx = 1.0;
+//			addComponent(new JSeparator(), LayoutIncrement.LINE_DOWN);
 		}
 		addComponent(dbc.getControl(), i);
 		if (labelPosition != DBControl.LABEL_LEFT) {
 			c.gridwidth = 1;
 		}
 		c.weightx = 0.0;
+	}
+
+	public void addTitle(JLabel lbTitle) {
+		addComponent(lbTitle, LayoutIncrement.RIGHT);
+		c.weightx = 1.0;
+		addComponent(new JSeparator(), LayoutIncrement.LINE_DOWN);
+		c.weightx = 0.0;
+//		c.gridwidth = 2;
 	}
 
 	public void addComponent(Component component, LayoutIncrement i) {

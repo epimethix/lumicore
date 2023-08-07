@@ -37,12 +37,11 @@ import javax.swing.SwingWorker;
 import com.github.epimethix.lumicore.common.orm.Repository;
 import com.github.epimethix.lumicore.common.orm.model.Entity;
 import com.github.epimethix.lumicore.common.orm.model.TreeEntity;
-import com.github.epimethix.lumicore.common.orm.query.QueryParameters;
 import com.github.epimethix.lumicore.common.swing.DBControl;
 import com.github.epimethix.lumicore.common.swing.EntityEditor;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
-import com.github.epimethix.lumicore.common.ui.C;
 import com.github.epimethix.lumicore.common.ui.Answer;
+import com.github.epimethix.lumicore.common.ui.C;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.swing.control.DBBigDecimalField;
 import com.github.epimethix.lumicore.swing.control.DBBooleanField;
@@ -52,11 +51,11 @@ import com.github.epimethix.lumicore.swing.control.DBEnumComboPicker;
 import com.github.epimethix.lumicore.swing.control.DBEnumRadioPicker;
 import com.github.epimethix.lumicore.swing.control.DBIntegerField;
 import com.github.epimethix.lumicore.swing.control.DBPathField;
+import com.github.epimethix.lumicore.swing.control.DBPathField.Selector;
 import com.github.epimethix.lumicore.swing.control.DBTextArea;
 import com.github.epimethix.lumicore.swing.control.DBTextField;
 import com.github.epimethix.lumicore.swing.control.DBToManyField;
 import com.github.epimethix.lumicore.swing.control.DBToOneField;
-import com.github.epimethix.lumicore.swing.control.DBPathField.Selector;
 import com.github.epimethix.lumicore.swing.editor.EditorLayoutController.ControlTransform;
 import com.github.epimethix.lumicore.swing.editor.EditorLayoutController.LayoutIncrement;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
@@ -94,7 +93,9 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 
 	private final Repository<E, ID> repository;
 
-	private final EditorLayoutController<E> layoutManager;
+	protected final EditorLayoutController<E> editorLayoutController;
+
+//	private EditorLayoutController<?> editorLayoutController;
 
 	protected AbstractEditorPanel(SwingUI ui, Repository<E, ID> repository) {
 		this(ui, repository, DBControl.LABEL_LEFT);
@@ -104,7 +105,8 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 		super(new GridBagLayout());
 		this.repository = repository;
 		this.ui = ui;
-		this.layoutManager = new EditorLayoutController<E>(this, GridBagUtils.initGridBagConstraints(), labelPosition);
+		this.editorLayoutController = new EditorLayoutController<E>(this, GridBagUtils.initGridBagConstraints(),
+				labelPosition);
 		addComponentListener(this);
 		setBorder(LayoutUtils.createDefaultEmptyBorder());
 	}
@@ -133,7 +135,7 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 	@Override
 	public E initItem() {
 		Object o = repository.newRecord();
-		if(o instanceof Entity.EntityBuilder<?>) {
+		if (o instanceof Entity.EntityBuilder<?>) {
 			return (E) ((Entity.EntityBuilder) o).build();
 		}
 		return (E) o;
@@ -156,7 +158,7 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 
 				protected void done() {
 					if (Objects.nonNull(currentItem)) {
-						layoutManager.getValues(currentItem);
+						editorLayoutController.getValues(currentItem);
 						editorEvent(EditorEvent.AFTER_LOAD);
 					}
 				}
@@ -167,7 +169,7 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 
 	@Override
 	public Optional<SwingWorker<E, Void>> save(Consumer<E> onDone) {
-		for (DBControl<?> c : layoutManager.getControls()) {
+		for (DBControl<?> c : editorLayoutController.getControls()) {
 			if (!c.isValid()) {
 				return Optional.empty();
 			}
@@ -175,7 +177,7 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 		if (Objects.isNull(currentItem)) {
 			currentItem = initItem();
 		}
-		currentItem = layoutManager.setValues(currentItem);
+		currentItem = editorLayoutController.setValues(currentItem);
 		SwingWorker<E, Void> worker = new SwingWorker<E, Void>() {
 			private Exception e;
 			private E saved = null;
@@ -183,9 +185,7 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 			@Override
 			protected E doInBackground() throws Exception {
 				try {
-					saved = getRepository()
-							.save(currentItem)
-							.orElse(null);
+					saved = getRepository().save(currentItem).orElse(null);
 				} catch (SQLException e) {
 					this.e = e;
 				}
@@ -230,17 +230,17 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 	}
 
 	private void clearControls() {
-		layoutManager.clearControls();
+		editorLayoutController.clearControls();
 		currentItem = null;
 	}
 
 	public void clearChanges() {
-		layoutManager.clearChanges();
+		editorLayoutController.clearChanges();
 	}
 
 	@Override
 	public boolean hasChanges() {
-		return layoutManager.hasChanges();
+		return editorLayoutController.hasChanges();
 	}
 
 	/**
@@ -297,7 +297,7 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 
 	@Override
 	public void setParent(Object parent) {
-		for (DBControl<?> c : layoutManager.getControls()) {
+		for (DBControl<?> c : editorLayoutController.getControls()) {
 			if (TreeEntity.PARENT.equals(c.getFieldName())) {
 				try {
 					c.getClass().getMethod("setValue", Object.class).invoke(c, parent);
@@ -400,6 +400,7 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 	public DBBooleanField addBooleanField(String labelKey, String fieldName, boolean required) {
 		return addBooleanField(labelKey, fieldName, required, null);
 	}
+
 	public DBBooleanField addBooleanField(String labelKey, String fieldName, boolean required,
 			ControlTransform transform) {
 		DBBooleanField f = new DBBooleanField(ui, labelKey, fieldName, required);
@@ -496,59 +497,59 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 	 */
 
 	protected void setLabelPositionLeft() {
-		layoutManager.setLabelPositionLeft();
+		editorLayoutController.setLabelPositionLeft();
 	}
 
 	protected void setLabelPositionTop() {
-		layoutManager.setLabelPositionTop();
+		editorLayoutController.setLabelPositionTop();
 	}
 
 	protected void setNextLayoutIncrement(LayoutIncrement i) {
-		layoutManager.setNextLayoutIncrement(i);
+		editorLayoutController.setNextLayoutIncrement(i);
 	}
 
 	protected void addControl(DBControl<?> dbc) {
-		layoutManager.addControl(dbc);
+		editorLayoutController.addControl(dbc);
 	}
 
 	protected void addControl(DBControl<?> dbc, ControlTransform transform) {
-		layoutManager.addControl(dbc, transform);
+		editorLayoutController.addControl(dbc, transform);
 	}
 
 	protected void addControl(DBControl<?> dbc, ControlTransform transform, LayoutIncrement i) {
-		layoutManager.addControl(dbc, transform, i);
+		editorLayoutController.addControl(dbc, transform, i);
 	}
 
 	protected void addControl(DBControl<?> dbc, LayoutIncrement i) {
-		layoutManager.addControl(dbc, i);
+		editorLayoutController.addControl(dbc, i);
 	}
 
 	protected void addControl(DBControl<?> dbc, ControlTransform transform, LayoutIncrement i, int labelPosition) {
-		layoutManager.addControl(dbc, transform, i, labelPosition);
+		editorLayoutController.addControl(dbc, transform, i, labelPosition);
 	}
 
 	protected void addComponent(Component component, LayoutIncrement i) {
-		layoutManager.addComponent(component, i);
+		editorLayoutController.addComponent(component, i);
 	}
 
 	public void finishForm() {
-		layoutManager.finishForm();
+		editorLayoutController.finishForm();
 	}
 
 	protected final void setReadOnly(String fieldName, String... fieldNames) {
-		layoutManager.setReadOnly(fieldName, fieldNames);
+		editorLayoutController.setReadOnly(fieldName, fieldNames);
 	}
 
 	protected GridBagConstraints getGridBagConstraints() {
-		return layoutManager.getGridBagConstraints();
+		return editorLayoutController.getGridBagConstraints();
 	}
 
 	protected int getFormWidth() {
-		return layoutManager.getFormWidth();
+		return editorLayoutController.getFormWidth();
 	}
 
 	protected int getFormHeight() {
-		return layoutManager.getFormHeight();
+		return editorLayoutController.getFormHeight();
 	}
 
 //	public boolean isValid() {

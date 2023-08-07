@@ -18,7 +18,6 @@ package com.github.epimethix.lumicore.swing.util;
 import java.awt.GridBagConstraints;
 
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public final class GridBagUtils {
@@ -33,8 +32,8 @@ public final class GridBagUtils {
 		return c;
 	}
 
-	public static void addGridBagLine(JComponent panel, GridBagConstraints c, JLabel label, JComponent control) {
-		panel.add(label, c);
+	public static void addGridBagLine(JComponent panel, GridBagConstraints c, JComponent jComponent, JComponent control) {
+		panel.add(jComponent, c);
 		c.gridx++;
 		c.weightx = 1.0d;
 		panel.add(control, c);

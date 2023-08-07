@@ -157,7 +157,7 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 		} else {
 			accessView.add(tableDataView, CARD_DATA);
 		}
-		accessView.add(editor, CARD_EDITOR);
+		accessView.add(LayoutUtils.initScrollPane(editor), CARD_EDITOR);
 
 		showView(CARD_DATA);
 	}
@@ -332,13 +332,10 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 				break;
 			case 1:
 				dataModel = tableDataView.getModel();
-
 				break;
-
 			default:
 				break;
 			}
 		}
 	}
-
 }
