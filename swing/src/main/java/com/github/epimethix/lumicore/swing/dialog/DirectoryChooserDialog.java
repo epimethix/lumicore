@@ -50,10 +50,11 @@ import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import com.github.epimethix.lumicore.common.ui.C;
 import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.AnswerOption;
+import com.github.epimethix.lumicore.common.ui.C;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
+import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayerPool;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
 public class DirectoryChooserDialog extends AbstractDialog {
@@ -93,7 +94,6 @@ public class DirectoryChooserDialog extends AbstractDialog {
 		private final File parentDir;
 		private final JTree tree;
 		private final JTextField tfPath;
-//		private final JPanel message;
 		private final JCheckBox ckShowHidden;
 		private boolean showHidden;
 
@@ -126,12 +126,10 @@ public class DirectoryChooserDialog extends AbstractDialog {
 			tfPath.setText(selectedDir);
 			tfPath.setEditable(false);
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-//			message = new JPanel(new BorderLayout());
 			setPreferredSize(new Dimension((int) (screenSize.width * 0.3), (int) (screenSize.height * 0.6)));
 			add(LayoutUtils.initScrollPane(tree), BorderLayout.CENTER);
 			add(tfPath, BorderLayout.SOUTH);
 			reloadTree();
-//			return null;
 		}
 
 		private void reloadTree() {
@@ -168,10 +166,8 @@ public class DirectoryChooserDialog extends AbstractDialog {
 							TreePath selectionPath = new TreePath(child.getPath());
 							tree.expandPath(selectionPath);
 							if (i + 1 == path.length) {
-//								SwingUtilities.invokeLater(() -> {
 								tree.setSelectionPath(selectionPath);
 								tree.scrollPathToVisible(selectionPath);
-//								});
 							}
 							currentNode = child;
 							break;
@@ -263,7 +259,9 @@ public class DirectoryChooserDialog extends AbstractDialog {
 
 	public Optional<String> showDialog() {
 		result = null;
+		LabelsDisplayerPool.addLabelsDisplayers(this);
 		DialogUI.showDialogUI(dialogUI);
+		LabelsDisplayerPool.removeLabelsDisplayers(this);
 		return Optional.ofNullable(result);
 	}
 
@@ -272,9 +270,6 @@ public class DirectoryChooserDialog extends AbstractDialog {
 		if (answer == Answer.NEW) {
 			TreePath selectedNode = dcdUI.tree.getSelectionPath();
 			if (Objects.nonNull(selectedNode)) {
-//				for (Object sel : selectedNode.getPath()) {
-//					System.err.println(((DefaultMutableTreeNode) sel).getUserObject().getClass());
-//				}
 				UIFile uif = (UIFile) ((DefaultMutableTreeNode) selectedNode.getLastPathComponent()).getUserObject();
 				JTextField tfDirName = new JTextField();
 				JLabel lbDirName = new JLabel(C.getLabel(C.CREATE_DIR_MESSAGE));
@@ -308,7 +303,6 @@ public class DirectoryChooserDialog extends AbstractDialog {
 						}
 					}
 				}
-
 			}
 		} else {
 			if (answer == Answer.OK) {
