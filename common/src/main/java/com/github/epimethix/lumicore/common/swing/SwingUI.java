@@ -35,4 +35,6 @@ public interface SwingUI extends UserInterface {
 	Answer showYesNoDialog(Component c, String key, Object... args);
 
 	Answer showYesNoCancelDialog(Component c, String key, Object... args);
+
+	Answer showInputDialog(Component c, Component input, String key, Object... args);
 }

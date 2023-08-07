@@ -122,6 +122,20 @@ public abstract class AbstractSwingUI implements SwingUI, WindowListener {
 		return Answer.CANCEL;
 	}
 
+	public Answer showInputDialog(Component input, String key, Object... args) {
+		return showInputDialog(null, input, key, args);
+	}
+
+	@Override
+	public Answer showInputDialog(Component c, Component input, String key, Object... args) {
+		int answer = DialogUtils.showInputDialog(Objects.nonNull(c) ? SwingUtilities.getRoot(c) : getMainFrame(), input,
+				LabelsManagerPool.getLabel(key, args));
+		if (answer == JOptionPane.OK_OPTION) {
+			return Answer.OK;
+		}
+		return Answer.CANCEL;
+	}
+
 	@Override
 	public Theme getTheme() {
 		return application.getTheme();

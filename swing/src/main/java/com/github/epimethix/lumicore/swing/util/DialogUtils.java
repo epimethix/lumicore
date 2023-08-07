@@ -22,6 +22,8 @@ import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Collections;
@@ -31,10 +33,15 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -76,6 +83,22 @@ public final class DialogUtils {
 		int answer;
 		answer = JOptionPane.showConfirmDialog(parent, msg, "Question", choices);
 		return answer;
+	}
+
+	public static int showInputDialog(Component c, Component input, String message) {
+		JPanel pnMessage = new JPanel(new BorderLayout());
+		pnMessage.add(new JLabel(message), BorderLayout.NORTH);
+		pnMessage.add(input, BorderLayout.SOUTH);
+		@SuppressWarnings("serial")
+		JOptionPane op = new JOptionPane(pnMessage, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
+			@Override
+			public void selectInitialValue() {
+				input.requestFocusInWindow();
+			}
+
+		};
+		op.createDialog(c, "Input").setVisible(true);
+		return op.getValue().equals(JOptionPane.OK_OPTION) ? JOptionPane.OK_OPTION : JOptionPane.CANCEL_OPTION;
 	}
 
 	public static Optional<File> showOpenDialog(Component parent, File currentDirectory, String extension) {
@@ -279,6 +302,31 @@ public final class DialogUtils {
 		return Optional.ofNullable(selectedFile);
 	}
 
+	public static JComboBox<String> getLanguageSelectionDropdown(Application application) {
+		if (!SwingUtilities.isEventDispatchThread()) {
+			throw new RuntimeException(
+					"Labels.getLanguageSelectionMenu() must be called from the Event Dispatch Thread");
+		}
+		List<Locale> locales = LabelsManagerPool.getAvailableLocales();
+		Collections.sort(locales, (a, b) -> a.getDisplayLanguage().compareTo(b.getDisplayLanguage()));
+		ComboBoxModel<String> model = new DefaultComboBoxModel<>(locales.stream().map(l -> l.getDisplayLanguage())
+				.collect(Collectors.toList()).toArray(new String[] {}));
+//		JMenu menu = new JMenu(C.getLabel(C.MENU_LANGUAGES));
+//		System.err.println(locales.toString());
+		JComboBox<String> combo = new JComboBox<>(model);
+		combo.addActionListener(e -> {
+			LabelsManagerPool.setLocale(application, locales.get(combo.getSelectedIndex()));
+		});
+//		for (Locale locale : locales) {
+//			JMenuItem mi = new JMenuItem(locale.getDisplayLanguage(locale));
+//			mi.addActionListener(event -> LabelsManagerPool.setLocale(application, locale));
+//			menu.add(mi);
+//		}
+//		LabelsDisplayer ld = () -> menu.setText(C.getLabel(C.MENU_LANGUAGES));
+//		LabelsDisplayerPool.addLabelsDisplayer(ld);
+		return combo;
+	}
+
 	public static JMenu getLanguageSelectionMenu(final Application application) {
 		if (!SwingUtilities.isEventDispatchThread()) {
 			throw new RuntimeException(
@@ -301,9 +349,9 @@ public final class DialogUtils {
 	public static JMenu getThemeSeletionMenu(final SwingUI swingUi) {
 		final JMenu menu = new JMenu();
 		final JMenuItem miLight = new JMenuItem();
-		miLight.addActionListener(a->swingUi.setTheme(Theme.LIGHT));
+		miLight.addActionListener(a -> swingUi.setTheme(Theme.LIGHT));
 		final JMenuItem miDark = new JMenuItem();
-		miDark.addActionListener(a->swingUi.setTheme(Theme.DARK));
+		miDark.addActionListener(a -> swingUi.setTheme(Theme.DARK));
 		menu.add(miLight);
 		menu.add(miDark);
 		LabelsDisplayer ld = () -> {
