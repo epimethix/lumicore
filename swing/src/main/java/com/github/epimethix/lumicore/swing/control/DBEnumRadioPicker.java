@@ -22,6 +22,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.swing.BorderFactory;
@@ -57,6 +58,7 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 	private final JLabel label;
 	private final JPanel control;
 	private final Border defaultJPanelBorder;
+	private Consumer<T> selectAction;
 
 	public DBEnumRadioPicker(SwingUI ui, String labelKey, String fieldName, boolean required, Class<T> enumClass,
 			int cols) {
@@ -275,6 +277,11 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 	}
 
 	@Override
+	public void onSelect(Consumer<T> selectAction) {
+		this.selectAction = selectAction;
+	}
+
+	@Override
 	public void requestFocus() {}
 
 	@Override
@@ -283,6 +290,9 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 			selectedIndex = indexOf((JRadioButton) e.getSource());
 			if (selectedIndex > -1) {
 				control.setBorder(defaultJPanelBorder);
+				if (Objects.nonNull(selectAction)) {
+					selectAction.accept(getValue());
+				}
 			}
 		}
 	}

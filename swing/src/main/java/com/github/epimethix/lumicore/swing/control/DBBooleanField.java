@@ -16,9 +16,12 @@
 package com.github.epimethix.lumicore.swing.control;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -32,7 +35,7 @@ import com.github.epimethix.lumicore.common.ui.C;
 import com.github.epimethix.lumicore.common.ui.labels.manager.LabelsManagerPool;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
-public class DBBooleanField implements DBControl<Boolean>, FocusListener {
+public class DBBooleanField implements DBControl<Boolean>, FocusListener, ActionListener {
 	private final JLabel label;
 	private final JCheckBox control;
 	private Boolean initialValue;
@@ -41,6 +44,7 @@ public class DBBooleanField implements DBControl<Boolean>, FocusListener {
 	private final String labelKey;
 	private final SwingUI ui;
 	private final Border defaultTextFieldBorder;
+	private Consumer<Boolean> selectAction;
 
 	public DBBooleanField(SwingUI ui, String labelKey, String fieldName) {
 		this(ui, labelKey, fieldName, false);
@@ -56,6 +60,7 @@ public class DBBooleanField implements DBControl<Boolean>, FocusListener {
 		control.setMargin(LayoutUtils.createDefaultTextMargin());
 		control.addFocusListener(this);
 		defaultTextFieldBorder = control.getBorder();
+		control.addActionListener(this);
 		clear();
 	}
 
@@ -146,6 +151,11 @@ public class DBBooleanField implements DBControl<Boolean>, FocusListener {
 	}
 
 	@Override
+	public void onSelect(Consumer<Boolean> selectAction) {
+		this.selectAction = selectAction;
+	}
+
+	@Override
 	public void focusGained(FocusEvent e) {
 		if (e.getSource() == control) {
 			control.setBorder(defaultTextFieldBorder);
@@ -155,5 +165,14 @@ public class DBBooleanField implements DBControl<Boolean>, FocusListener {
 	@Override
 	public void focusLost(FocusEvent e) {
 
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == control) {
+			if(Objects.nonNull(selectAction)) {
+				selectAction.accept(getValue());
+			}
+		}
 	}
 }

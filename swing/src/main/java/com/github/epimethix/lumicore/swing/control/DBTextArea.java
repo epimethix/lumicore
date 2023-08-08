@@ -20,6 +20,7 @@ import java.awt.ComponentOrientation;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -51,6 +52,8 @@ public class DBTextArea implements DBControl<String>, FocusListener {
 	private final TextComponentValidation textComponentValidation;
 
 	private final Border defaultScrollPaneBorder;
+
+	private Consumer<String> selectAction;
 
 //	public DBTextArea(SwingUI ui, String labelKey, String fieldName) {
 //		this(ui, labelKey, fieldName, false);
@@ -188,6 +191,11 @@ public class DBTextArea implements DBControl<String>, FocusListener {
 	}
 
 	@Override
+	public void onSelect(Consumer<String> selectAction) {
+		this.selectAction = selectAction;
+	}
+
+	@Override
 	public void setEnabled(boolean enabled) {
 		control.setEnabled(enabled);
 	}
@@ -205,5 +213,9 @@ public class DBTextArea implements DBControl<String>, FocusListener {
 	}
 
 	@Override
-	public void focusLost(FocusEvent e) {}
+	public void focusLost(FocusEvent e) {
+		if(Objects.nonNull(selectAction)) {
+			selectAction.accept(getValue());
+		}
+	}
 }

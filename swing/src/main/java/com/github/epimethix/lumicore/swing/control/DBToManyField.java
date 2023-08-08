@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -45,6 +46,7 @@ public class DBToManyField<E extends Entity<?>> implements DBControl<List<E>>, A
 
 	private Set<E> value;
 	private Set<E> initialValue;
+	private Consumer<List<E>> selectAction;
 
 	public DBToManyField(SwingUI ui, String labelKey, String fieldName, boolean required, Class<E> entityClass,
 			Comparator<E> comparator) {
@@ -141,9 +143,17 @@ public class DBToManyField<E extends Entity<?>> implements DBControl<List<E>>, A
 	}
 
 	@Override
+	public void onSelect(Consumer<List<E>> selectAction) {
+		this.selectAction = selectAction;
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == control) {
 
+			if(Objects.nonNull(selectAction)) {
+				selectAction.accept(new ArrayList<>(this.value));
+			}
 		}
 	}
 

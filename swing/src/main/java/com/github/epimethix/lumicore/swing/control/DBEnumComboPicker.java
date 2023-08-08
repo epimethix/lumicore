@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.swing.BorderFactory;
@@ -51,6 +52,7 @@ public class DBEnumComboPicker<T extends Enum<T>> implements DBControl<T>, Actio
 	private final JLabel label;
 	private final JComboBox<String> control;
 	private final Border defaultComboboxBorder;
+	private Consumer<T> selectAction;
 
 	public DBEnumComboPicker(SwingUI ui, String labelKey, String fieldName, boolean required, Class<T> enumClass) {
 		this(ui, labelKey, fieldName, required, enumClass, t -> t.toString());
@@ -187,6 +189,11 @@ public class DBEnumComboPicker<T extends Enum<T>> implements DBControl<T>, Actio
 	}
 
 	@Override
+	public void onSelect(Consumer<T> selectAction) {
+		this.selectAction = selectAction;
+	}
+
+	@Override
 	public void requestFocus() {}
 
 	@Override
@@ -195,6 +202,9 @@ public class DBEnumComboPicker<T extends Enum<T>> implements DBControl<T>, Actio
 			selectedIndex = control.getSelectedIndex();
 			if (selectedIndex > -1) {
 				control.setBorder(defaultComboboxBorder);
+				if(Objects.nonNull(selectAction)) {
+					selectAction.accept(getValue());
+				}
 			}
 		}
 	}

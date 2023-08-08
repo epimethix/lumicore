@@ -20,6 +20,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.NumberFormat;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -46,6 +47,7 @@ public class DBIntegerField implements DBControl<Long>, FocusListener {
 	private final IntegerComponentValidation validation;
 	private final SwingUI ui;
 	private final Border defaultTextFieldBorder;
+	private Consumer<Long> selectAction;
 
 	public DBIntegerField(SwingUI ui, String labelKey, String fieldName) {
 		this(ui, labelKey, fieldName, false);
@@ -261,6 +263,11 @@ public class DBIntegerField implements DBControl<Long>, FocusListener {
 	}
 
 	@Override
+	public void onSelect(Consumer<Long> selectAction) {
+		this.selectAction = selectAction;
+	}
+
+	@Override
 	public void focusGained(FocusEvent e) {
 		if (e.getSource() == control) {
 			control.setBorder(defaultTextFieldBorder);
@@ -270,5 +277,8 @@ public class DBIntegerField implements DBControl<Long>, FocusListener {
 	@Override
 	public void focusLost(FocusEvent e) {
 
+		if(Objects.nonNull(selectAction)) {
+			selectAction.accept(getValue());
+		}
 	}
 }

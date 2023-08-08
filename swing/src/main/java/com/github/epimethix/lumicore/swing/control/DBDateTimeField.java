@@ -29,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -60,6 +61,7 @@ public class DBDateTimeField implements DBControl<LocalDateTime>, KeyListener, A
 	private final boolean required;
 	private final Border defaultTextFieldBorder;
 	private final SwingUI ui;
+	private Consumer<LocalDateTime> selectAction;
 
 	public DBDateTimeField(SwingUI ui, String labelKey, String fieldName, boolean required, String formatString) {
 		this.ui = ui;
@@ -214,6 +216,11 @@ public class DBDateTimeField implements DBControl<LocalDateTime>, KeyListener, A
 	}
 
 	@Override
+	public void onSelect(Consumer<LocalDateTime> selectAction) {
+		this.selectAction = selectAction;
+	}
+
+	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.getSource() == textField) {
 			DateTime.autoPutNonPatternLetter(e, textField, nonPatternLettersIndexes, nonPatternLetters, formatLength);
@@ -256,6 +263,9 @@ public class DBDateTimeField implements DBControl<LocalDateTime>, KeyListener, A
 				if (Objects.isNull(value)) {
 					textField.setBorder(BorderFactory.createLineBorder(Color.RED));
 				}
+			}
+			if(Objects.nonNull(selectAction)) {
+				selectAction.accept(getValue());
 			}
 		}
 	}

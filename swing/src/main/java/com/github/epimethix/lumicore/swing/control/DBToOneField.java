@@ -20,6 +20,7 @@ import java.awt.ComponentOrientation;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -51,6 +52,7 @@ public class DBToOneField<E extends Entity<?>> implements DBControl<E>, ActionLi
 
 	private E value;
 	private E initialValue;
+	private Consumer<E> selectAction;
 
 //	public DBToOneField(SwingUI ui, String labelKey, String fieldName, Class<E> entityClass) {
 //		this(ui, labelKey, fieldName, false, entityClass);
@@ -175,6 +177,11 @@ public class DBToOneField<E extends Entity<?>> implements DBControl<E>, ActionLi
 	}
 
 	@Override
+	public void onSelect(Consumer<E> selectAction) {
+		this.selectAction = selectAction;
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == control) {
 			EntityAccessController eac = EntityAccessControllerFactory.getEntityAccessController(entityClass);
@@ -192,6 +199,9 @@ public class DBToOneField<E extends Entity<?>> implements DBControl<E>, ActionLi
 				E selection = (E) eac.getSelectedItem();
 				this.value = selection;
 				control.setBorder(defaultButtonBorder);
+				if(Objects.nonNull(selectAction)) {
+					selectAction.accept(this.value);
+				}
 			}
 			refreshControlLabel();
 		}

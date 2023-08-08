@@ -15,11 +15,14 @@
  */
 package com.github.epimethix.lumicore.swing.control;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
@@ -29,7 +32,7 @@ import com.github.epimethix.lumicore.common.swing.DBControl;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
 import com.github.epimethix.lumicore.common.ui.labels.manager.LabelsManagerPool;
 
-public class DBBigDecimalField implements DBControl<BigDecimal> {
+public class DBBigDecimalField implements DBControl<BigDecimal>, FocusListener {
 
 	private final SwingUI ui;
 	private final String labelkey;
@@ -40,6 +43,7 @@ public class DBBigDecimalField implements DBControl<BigDecimal> {
 	private final JLabel label;
 	private final JFormattedTextField formattedTextField;
 	private final NumberFormat format;
+	private Consumer<BigDecimal> selectAction;
 
 	public DBBigDecimalField(SwingUI ui, String labelKey, String fieldName, int decimalPlacesAfterComma,
 			RoundingMode roundingMode) {
@@ -60,6 +64,7 @@ public class DBBigDecimalField implements DBControl<BigDecimal> {
 		format.setMinimumFractionDigits(decimalPlacesAfterComma);
 		format.setGroupingUsed(false);
 		formattedTextField = new JFormattedTextField(format);
+		formattedTextField.addFocusListener(this);
 		clear();
 	}
 
@@ -67,7 +72,7 @@ public class DBBigDecimalField implements DBControl<BigDecimal> {
 	public void loadLabels() {
 		label.setText(LabelsManagerPool.getLabel(labelkey));
 		formattedTextField.setLocale(Locale.getDefault());
-		
+
 	}
 
 	@Override
@@ -149,5 +154,20 @@ public class DBBigDecimalField implements DBControl<BigDecimal> {
 	@Override
 	public void requestFocus() {
 		formattedTextField.requestFocusInWindow();
+	}
+
+	@Override
+	public void onSelect(Consumer<BigDecimal> selectAction) {
+		this.selectAction = selectAction;
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		if (Objects.nonNull(selectAction)) {
+			selectAction.accept(getValue());
+		}
 	}
 }
