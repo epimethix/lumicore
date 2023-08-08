@@ -21,10 +21,10 @@ import com.github.epimethix.accounting.db.model.Category;
 import com.github.epimethix.accounting.db.repository.CategoryRepository;
 import com.github.epimethix.accounting.gui.L;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
-import com.github.epimethix.lumicore.swing.editor.AbstractEditorPanel;
+import com.github.epimethix.lumicore.swing.editor.EntityEditorPanel;
 
 @SuppressWarnings("serial")
-public class CategoryEditor extends AbstractEditorPanel<Category, Long>{
+public class CategoryEditor extends EntityEditorPanel<Category, Long>{
 
 	public CategoryEditor(SwingUI ui, CategoryRepository repository) {
 		super(ui, repository);

@@ -39,14 +39,14 @@ import com.github.epimethix.lumicore.common.swing.SwingUI;
 import com.github.epimethix.lumicore.common.ui.C;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayerPool;
-import com.github.epimethix.lumicore.swing.editor.AbstractEditorPanel;
+import com.github.epimethix.lumicore.swing.editor.EntityEditorPanel;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
 public class EntityAccessController implements ActionListener, LabelsDisplayer, ChangeListener {
 	private final SwingUI ui;
 
-	private final AbstractEditorPanel<? extends Entity<?>, ?> editor;
+	private final EntityEditorPanel<? extends Entity<?>, ?> editor;
 //	private final Repository<? extends Entity<?>, ?> repository;
 
 	private final AbstractDataView tableDataView;
@@ -86,7 +86,7 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 	public static final int ANSWER_CLEAR = 1;
 	public static final int ANSWER_SELECT = 2;
 
-	EntityAccessController(SwingUI ui, Repository<?, ?> repository, AbstractEditorPanel<?, ?> editor)
+	EntityAccessController(SwingUI ui, Repository<?, ?> repository, EntityEditorPanel<?, ?> editor)
 			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
 			NoSuchMethodException, SecurityException {
 //		this.repository = repository;
@@ -315,7 +315,7 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 		return editor.initItem().getClass();
 	}
 
-	public AbstractEditorPanel<? extends Entity<?>, ?> getEditor() {
+	public EntityEditorPanel<? extends Entity<?>, ?> getEditor() {
 		return editor;
 	}
 

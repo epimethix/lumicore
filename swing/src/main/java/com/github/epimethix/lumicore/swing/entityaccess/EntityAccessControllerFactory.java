@@ -32,7 +32,7 @@ import com.github.epimethix.lumicore.logging.Log;
 import com.github.epimethix.lumicore.logging.Logger;
 import com.github.epimethix.lumicore.orm.EntityController;
 import com.github.epimethix.lumicore.swing.LumicoreSwing;
-import com.github.epimethix.lumicore.swing.editor.AbstractEditorPanel;
+import com.github.epimethix.lumicore.swing.editor.EntityEditorPanel;
 
 public class EntityAccessControllerFactory {
 	private static final Logger LOGGER = Log.getLogger(Log.CHANNEL_SWING);
@@ -40,9 +40,9 @@ public class EntityAccessControllerFactory {
 	private static class EntityAccessMapping {
 		private final SwingUI ui;
 		private final Repository<?, ?> repository;
-		private final Class<AbstractEditorPanel<?, ?>> editorClass;
+		private final Class<EntityEditorPanel<?, ?>> editorClass;
 
-		public EntityAccessMapping(SwingUI ui, Repository<?, ?> repository, Class<AbstractEditorPanel<?, ?>> editorClass) {
+		public EntityAccessMapping(SwingUI ui, Repository<?, ?> repository, Class<EntityEditorPanel<?, ?>> editorClass) {
 			this.ui = ui;
 			this.repository = repository;
 			this.editorClass = editorClass;
@@ -51,9 +51,9 @@ public class EntityAccessControllerFactory {
 
 	private static Map<Class<?>, EntityAccessMapping> entityAccessMappings = new HashMap<>();
 
-	public static final void register(SwingUI ui, Class<AbstractEditorPanel<?, ?>> editorClass) throws RuntimeException {
-		if (!AbstractEditorPanel.class.isAssignableFrom(editorClass)) {
-			throw new RuntimeException("Editor<?> class should extend AbstractEditorPanel.");
+	public static final void register(SwingUI ui, Class<EntityEditorPanel<?, ?>> editorClass) throws RuntimeException {
+		if (!EntityEditorPanel.class.isAssignableFrom(editorClass)) {
+			throw new RuntimeException("Editor<?> class should extend EntityEditorPanel.");
 		}
 		Class<? extends Entity<?>> entityClass = Reflect.getEntityClass(editorClass);
 		if (Objects.isNull(entityClass)) {
@@ -88,7 +88,7 @@ public class EntityAccessControllerFactory {
 			EntityAccessMapping eam = entityAccessMappings.get(entityClass);
 			if (Objects.nonNull(eam)) {
 				try {
-					AbstractEditorPanel<?, ?> editor = LumicoreSwing.initializeEditor(eam.editorClass);
+					EntityEditorPanel<?, ?> editor = LumicoreSwing.initializeEditor(eam.editorClass);
 //							(AbstractEditorPanel<?, ?>) eam.editorClass
 //							.getConstructor(eam.ui.getClass(), eam.repository.getClass())
 //							.newInstance(eam.ui, eam.repository);

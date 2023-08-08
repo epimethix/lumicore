@@ -21,10 +21,10 @@ import com.github.epimethix.accounting.db.model.AccountManagerImpl;
 import com.github.epimethix.accounting.db.repository.AccountManagerRepository;
 import com.github.epimethix.accounting.gui.L;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
-import com.github.epimethix.lumicore.swing.editor.AbstractEditorPanel;
+import com.github.epimethix.lumicore.swing.editor.EntityEditorPanel;
 
 @SuppressWarnings("serial")
-public class AccountManagerEditor extends AbstractEditorPanel<AccountManagerImpl, Long>{
+public class AccountManagerEditor extends EntityEditorPanel<AccountManagerImpl, Long>{
 
 	public AccountManagerEditor(SwingUI ui, AccountManagerRepository repository) {
 		super(ui, repository);

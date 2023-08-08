@@ -23,10 +23,10 @@ import com.github.epimethix.accounting.db.model.Bank;
 import com.github.epimethix.accounting.db.repository.AccountRepository;
 import com.github.epimethix.accounting.gui.L;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
-import com.github.epimethix.lumicore.swing.editor.AbstractEditorPanel;
+import com.github.epimethix.lumicore.swing.editor.EntityEditorPanel;
 
 @SuppressWarnings("serial")
-public class AccountEditor extends AbstractEditorPanel<Account, Long>{
+public class AccountEditor extends EntityEditorPanel<Account, Long>{
 
 	public AccountEditor(SwingUI ui, AccountRepository repository) {
 		super(ui, repository);

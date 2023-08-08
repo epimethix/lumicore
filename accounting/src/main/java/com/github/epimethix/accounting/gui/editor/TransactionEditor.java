@@ -27,10 +27,10 @@ import com.github.epimethix.accounting.db.repository.TransactionRepository;
 import com.github.epimethix.accounting.gui.L;
 import com.github.epimethix.lumicore.common.DateTime;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
-import com.github.epimethix.lumicore.swing.editor.AbstractEditorPanel;
+import com.github.epimethix.lumicore.swing.editor.EntityEditorPanel;
 
 @SuppressWarnings("serial")
-public class TransactionEditor extends AbstractEditorPanel<Transaction, Long> {
+public class TransactionEditor extends EntityEditorPanel<Transaction, Long> {
 
 	public TransactionEditor(SwingUI ui, TransactionRepository repository) {
 		super(ui, repository);
