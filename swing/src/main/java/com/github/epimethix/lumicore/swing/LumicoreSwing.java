@@ -41,7 +41,7 @@ import com.github.epimethix.lumicore.common.ui.labels.manager.LabelsManagerPool;
 import com.github.epimethix.lumicore.ioc.annotation.SwingComponent;
 import com.github.epimethix.lumicore.logging.Log;
 import com.github.epimethix.lumicore.logging.Logger;
-import com.github.epimethix.lumicore.swing.editor.AbstractEditorPanel;
+import com.github.epimethix.lumicore.swing.editor.EntityEditorPanel;
 import com.github.epimethix.lumicore.swing.entityaccess.EntityAccessControllerFactory;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
@@ -144,12 +144,13 @@ public class LumicoreSwing implements SwingInjector {
 				LabelsManagerPool.setLocale(application.getDefaultLocale());
 				ckLabels.stop();
 				try {
-					Check ckSearchForSwingComponents = Benchmark.start(LumicoreSwing.class, "Search For Swing Components");
+					Check ckSearchForSwingComponents = Benchmark.start(LumicoreSwing.class,
+							"Search For Swing Components");
 					Collection<Class<?>> swingComponents = injector.searchClassesByAnnotation(SwingComponent.class);
 					Iterator<Class<?>> i = swingComponents.iterator();
 					while (i.hasNext()) {
 						Class<?> swingComponent = i.next();
-						if (AbstractEditorPanel.class.isAssignableFrom(swingComponent)) {
+						if (EntityEditorPanel.class.isAssignableFrom(swingComponent)) {
 							i.remove();
 							LOGGER.warn(
 									"Autowire-Swing: Class ignored [%s] Editor classes are not components. Use EntityAccessControllerFactory instead.",
@@ -171,10 +172,10 @@ public class LumicoreSwing implements SwingInjector {
 					ckInitializeUIController.stop();
 					uiControllerInstance.setupTheme();
 					Check ckRegisterEditors = Benchmark.start(LumicoreSwing.class, "register editors");
-					Collection<Class<?>> editors = injector.searchClassesAssignableFrom(AbstractEditorPanel.class);
+					Collection<Class<?>> editors = injector.searchClassesAssignableFrom(EntityEditorPanel.class);
 					for (Class<?> editorClass : editors) {
 						@SuppressWarnings("unchecked")
-						Class<AbstractEditorPanel<?, ?>> editorClass1 = (Class<AbstractEditorPanel<?, ?>>) editorClass;
+						Class<EntityEditorPanel<?, ?>> editorClass1 = (Class<EntityEditorPanel<?, ?>>) editorClass;
 						EntityAccessControllerFactory.register(uiControllerInstance, editorClass1);
 					}
 					ckRegisterEditors.stop();
@@ -218,7 +219,7 @@ public class LumicoreSwing implements SwingInjector {
 //					e.printStackTrace();
 //				} catch (SecurityException e) {
 //					e.printStackTrace();
-				}catch (Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 					LumicoreSwing.this.exitSwingInitializerException = e;
 //					SplashScreenController.hideSplashScreen();
@@ -241,7 +242,7 @@ public class LumicoreSwing implements SwingInjector {
 	 * @return the editor instance or null if any exception was thrown when creating
 	 *         the instance
 	 */
-	public static AbstractEditorPanel<?, ?> initializeEditor(Class<AbstractEditorPanel<?, ?>> editorClass) {
+	public static EntityEditorPanel<?, ?> initializeEditor(Class<EntityEditorPanel<?, ?>> editorClass) {
 		Object editor = null;
 		try {
 			editor = injector.autoInstance(editorClass);
@@ -256,13 +257,13 @@ public class LumicoreSwing implements SwingInjector {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
-		return (AbstractEditorPanel<?, ?>) editor;
+		return (EntityEditorPanel<?, ?>) editor;
 	}
 
 	public static Application getApplication() {
 		return injector.getApplication();
 	}
-	
+
 	public static final <T> T initComponent(Class<T> cls) {
 		T component;
 		try {

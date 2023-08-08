@@ -36,10 +36,38 @@ import com.github.epimethix.lumicore.common.orm.model.Entity.EntityBuilder;
 import com.github.epimethix.lumicore.common.swing.DBControl;
 import com.github.epimethix.lumicore.orm.ORM;
 import com.github.epimethix.lumicore.swing.util.GridBagUtils;
-
-public class EditorLayoutController<E extends Entity<?>> {
+/**
+ * {@code EntityEditorController} manages 
+ * @author epimethix
+ *
+ * @param <E> the entity to control
+ */
+public class EntityEditorController<E extends Entity<?>> {
 	public static enum LayoutIncrement {
-		DOWN, RIGHT, LINE_DOWN, NEXT_LINE, NEXT_COLUMN;
+		/**
+		 * Increments the y cursor by the current grid height.
+		 */
+		DOWN,
+		/**
+		 * Increments the x cursor by the current grid width.
+		 */
+		RIGHT,
+		/**
+		 * If the current grid width is equal to one (1) then the x cursor is
+		 * decremented by one (1), the y cursor is incremented by the current grid
+		 * height.
+		 */
+		LINE_DOWN,
+		/**
+		 * sets the x cursor to zero (0) and the y cursor to the current form height
+		 * (y-max + 1).
+		 */
+		NEXT_LINE,
+		/**
+		 * sets the x cursor to the current form width (x-max + 1) and the y cursor to
+		 * zero (0).
+		 */
+		NEXT_COLUMN;
 	}
 
 	/*
@@ -81,15 +109,15 @@ public class EditorLayoutController<E extends Entity<?>> {
 	private int formHeight;
 	private LayoutIncrement nextLayoutIncrement;
 
-	public EditorLayoutController(JComponent component) {
+	public EntityEditorController(JComponent component) {
 		this(component, GridBagUtils.initGridBagConstraints());
 	}
 
-	public EditorLayoutController(JComponent component, GridBagConstraints c) {
+	public EntityEditorController(JComponent component, GridBagConstraints c) {
 		this(component, c, DBControl.LABEL_LEFT);
 	}
 
-	public EditorLayoutController(JComponent component, GridBagConstraints c, int labelPosition) {
+	public EntityEditorController(JComponent component, GridBagConstraints c, int labelPosition) {
 		Objects.requireNonNull(component);
 		if (!(component.getLayout() instanceof GridBagLayout)) {
 			throw new IllegalArgumentException("");
@@ -101,6 +129,12 @@ public class EditorLayoutController<E extends Entity<?>> {
 		this.writeControls = new ArrayList<>();
 	}
 
+	/**
+	 * Sets the specified field names controls {@code setEditable(false)}.
+	 * 
+	 * @param fieldName the field name to set read only
+	 * @param fieldNames additional field names to set read only
+	 */
 	public final void setReadOnly(String fieldName, String... fieldNames) {
 		setControlReadOnly(fieldName);
 		for (String name : fieldNames) {
@@ -228,7 +262,7 @@ public class EditorLayoutController<E extends Entity<?>> {
 		controls.add(dbc);
 		writeControls.add(dbc);
 	}
-	
+
 	public void addControl(DBControl<?> dbc) {
 		addControl(dbc, (ControlTransform) null);
 	}

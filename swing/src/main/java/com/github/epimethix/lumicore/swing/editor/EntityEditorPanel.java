@@ -56,14 +56,14 @@ import com.github.epimethix.lumicore.swing.control.DBTextArea;
 import com.github.epimethix.lumicore.swing.control.DBTextField;
 import com.github.epimethix.lumicore.swing.control.DBToManyField;
 import com.github.epimethix.lumicore.swing.control.DBToOneField;
-import com.github.epimethix.lumicore.swing.editor.EditorLayoutController.ControlTransform;
-import com.github.epimethix.lumicore.swing.editor.EditorLayoutController.LayoutIncrement;
+import com.github.epimethix.lumicore.swing.editor.EntityEditorController.ControlTransform;
+import com.github.epimethix.lumicore.swing.editor.EntityEditorController.LayoutIncrement;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
 import com.github.epimethix.lumicore.swing.util.GridBagUtils;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
 @SuppressWarnings({ "serial" })
-public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPanel
+public abstract class EntityEditorPanel<E extends Entity<ID>, ID> extends JPanel
 		implements ComponentListener, EntityEditor<E>, LabelsDisplayer {
 	/**
 	 * The editor events are: INIT, SHOW, AFTER_SAVE, AFTER_CLEAR, AFTER_DELETE,
@@ -93,19 +93,19 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 
 	private final Repository<E, ID> repository;
 
-	protected final EditorLayoutController<E> editorLayoutController;
+	protected final EntityEditorController<E> entityEditorController;
 
 //	private EditorLayoutController<?> editorLayoutController;
 
-	protected AbstractEditorPanel(SwingUI ui, Repository<E, ID> repository) {
+	protected EntityEditorPanel(SwingUI ui, Repository<E, ID> repository) {
 		this(ui, repository, DBControl.LABEL_LEFT);
 	}
 
-	public AbstractEditorPanel(SwingUI ui, Repository<E, ID> repository, int labelPosition) {
+	public EntityEditorPanel(SwingUI ui, Repository<E, ID> repository, int labelPosition) {
 		super(new GridBagLayout());
 		this.repository = repository;
 		this.ui = ui;
-		this.editorLayoutController = new EditorLayoutController<E>(this, GridBagUtils.initGridBagConstraints(),
+		this.entityEditorController = new EntityEditorController<E>(this, GridBagUtils.initGridBagConstraints(),
 				labelPosition);
 		addComponentListener(this);
 		setBorder(LayoutUtils.createDefaultEmptyBorder());
@@ -158,7 +158,7 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 
 				protected void done() {
 					if (Objects.nonNull(currentItem)) {
-						editorLayoutController.getValues(currentItem);
+						entityEditorController.getValues(currentItem);
 						editorEvent(EditorEvent.AFTER_LOAD);
 					}
 				}
@@ -169,7 +169,7 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 
 	@Override
 	public Optional<SwingWorker<E, Void>> save(Consumer<E> onDone) {
-		for (DBControl<?> c : editorLayoutController.getControls()) {
+		for (DBControl<?> c : entityEditorController.getControls()) {
 			if (!c.isValid()) {
 				return Optional.empty();
 			}
@@ -177,7 +177,7 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 		if (Objects.isNull(currentItem)) {
 			currentItem = initItem();
 		}
-		currentItem = editorLayoutController.setValues(currentItem);
+		currentItem = entityEditorController.setValues(currentItem);
 		SwingWorker<E, Void> worker = new SwingWorker<E, Void>() {
 			private Exception e;
 			private E saved = null;
@@ -202,7 +202,7 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 					clearControls();
 				}
 				if (Objects.nonNull(e)) {
-					ui.showErrorMessage(AbstractEditorPanel.this, e.getMessage());
+					ui.showErrorMessage(EntityEditorPanel.this, e.getMessage());
 				}
 				onDone.accept(saved);
 			}
@@ -230,17 +230,17 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 	}
 
 	private void clearControls() {
-		editorLayoutController.clearControls();
+		entityEditorController.clearControls();
 		currentItem = null;
 	}
 
 	public void clearChanges() {
-		editorLayoutController.clearChanges();
+		entityEditorController.clearChanges();
 	}
 
 	@Override
 	public boolean hasChanges() {
-		return editorLayoutController.hasChanges();
+		return entityEditorController.hasChanges();
 	}
 
 	/**
@@ -277,7 +277,7 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 					@Override
 					protected void done() {
 						if (Objects.nonNull(e)) {
-							ui.showErrorMessage(AbstractEditorPanel.this, C.DLG_MSG_COULD_NOT_DELETE_ITEM_FORMAT,
+							ui.showErrorMessage(EntityEditorPanel.this, C.DLG_MSG_COULD_NOT_DELETE_ITEM_FORMAT,
 									e.getMessage());
 						}
 						if (success) {
@@ -297,7 +297,7 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 
 	@Override
 	public void setParent(Object parent) {
-		for (DBControl<?> c : editorLayoutController.getControls()) {
+		for (DBControl<?> c : entityEditorController.getControls()) {
 			if (TreeEntity.PARENT.equals(c.getFieldName())) {
 				try {
 					c.getClass().getMethod("setValue", Object.class).invoke(c, parent);
@@ -497,59 +497,59 @@ public abstract class AbstractEditorPanel<E extends Entity<ID>, ID> extends JPan
 	 */
 
 	protected void setLabelPositionLeft() {
-		editorLayoutController.setLabelPositionLeft();
+		entityEditorController.setLabelPositionLeft();
 	}
 
 	protected void setLabelPositionTop() {
-		editorLayoutController.setLabelPositionTop();
+		entityEditorController.setLabelPositionTop();
 	}
 
 	protected void setNextLayoutIncrement(LayoutIncrement i) {
-		editorLayoutController.setNextLayoutIncrement(i);
+		entityEditorController.setNextLayoutIncrement(i);
 	}
 
 	protected void addControl(DBControl<?> dbc) {
-		editorLayoutController.addControl(dbc);
+		entityEditorController.addControl(dbc);
 	}
 
 	protected void addControl(DBControl<?> dbc, ControlTransform transform) {
-		editorLayoutController.addControl(dbc, transform);
+		entityEditorController.addControl(dbc, transform);
 	}
 
 	protected void addControl(DBControl<?> dbc, ControlTransform transform, LayoutIncrement i) {
-		editorLayoutController.addControl(dbc, transform, i);
+		entityEditorController.addControl(dbc, transform, i);
 	}
 
 	protected void addControl(DBControl<?> dbc, LayoutIncrement i) {
-		editorLayoutController.addControl(dbc, i);
+		entityEditorController.addControl(dbc, i);
 	}
 
 	protected void addControl(DBControl<?> dbc, ControlTransform transform, LayoutIncrement i, int labelPosition) {
-		editorLayoutController.addControl(dbc, transform, i, labelPosition);
+		entityEditorController.addControl(dbc, transform, i, labelPosition);
 	}
 
 	protected void addComponent(Component component, LayoutIncrement i) {
-		editorLayoutController.addComponent(component, i);
+		entityEditorController.addComponent(component, i);
 	}
 
 	public void finishForm() {
-		editorLayoutController.finishForm();
+		entityEditorController.finishForm();
 	}
 
 	protected final void setReadOnly(String fieldName, String... fieldNames) {
-		editorLayoutController.setReadOnly(fieldName, fieldNames);
+		entityEditorController.setReadOnly(fieldName, fieldNames);
 	}
 
 	protected GridBagConstraints getGridBagConstraints() {
-		return editorLayoutController.getGridBagConstraints();
+		return entityEditorController.getGridBagConstraints();
 	}
 
 	protected int getFormWidth() {
-		return editorLayoutController.getFormWidth();
+		return entityEditorController.getFormWidth();
 	}
 
 	protected int getFormHeight() {
-		return editorLayoutController.getFormHeight();
+		return entityEditorController.getFormHeight();
 	}
 
 //	public boolean isValid() {
