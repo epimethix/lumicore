@@ -29,7 +29,7 @@ import com.github.epimethix.lumicore.common.ui.C;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 
 @SuppressWarnings("serial")
-public class TreeDataContextMenu extends JPopupMenu implements LabelsDisplayer, ActionListener {
+class TreeDataContextMenu extends JPopupMenu implements LabelsDisplayer, ActionListener {
 
 	private final JMenuItem miNew;
 	private final JMenuItem miDelete;

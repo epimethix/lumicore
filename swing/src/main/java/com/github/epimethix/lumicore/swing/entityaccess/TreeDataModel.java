@@ -36,7 +36,7 @@ import com.github.epimethix.lumicore.common.orm.model.TreeEntity;
 import com.github.epimethix.lumicore.common.orm.model.TreeTop;
 
 @SuppressWarnings("serial")
-public class TreeDataModel extends DefaultTreeModel implements DataModel {
+class TreeDataModel extends DefaultTreeModel implements DataModel {
 	private JTree tree;
 	private final Repository<?, ?> repository;
 	private final  Map<TreeEntity<?, ?>, DefaultMutableTreeNode> entityNodeMap;

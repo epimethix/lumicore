@@ -36,7 +36,7 @@ import com.github.epimethix.lumicore.common.orm.Repository;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
 @SuppressWarnings("serial")
-public class TableDataView extends AbstractDataView implements MouseListener, KeyListener, ComponentListener, ListSelectionListener{
+class TableDataView extends AbstractDataView implements MouseListener, KeyListener, ComponentListener, ListSelectionListener{
 
 	private final TableDataModel dataTableModel;
 	private final JTable table;

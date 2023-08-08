@@ -38,7 +38,7 @@ import com.github.epimethix.lumicore.common.orm.model.TreeTop;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
 @SuppressWarnings("serial")
-public class TreeDataView extends AbstractDataView
+class TreeDataView extends AbstractDataView
 		implements TreeWillExpandListener, TreeSelectionListener, MouseListener, ComponentListener {
 	private final EntityAccessController controller;
 //	private final Repository<?, ?> repository; 

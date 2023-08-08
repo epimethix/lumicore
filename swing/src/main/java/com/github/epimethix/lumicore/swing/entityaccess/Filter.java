@@ -15,7 +15,7 @@
  */
 package com.github.epimethix.lumicore.swing.entityaccess;
 
-public class Filter {
+class Filter {
 	@FunctionalInterface
 	public interface FilterCriterium {
 		boolean accept(Object x);

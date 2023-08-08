@@ -15,7 +15,7 @@
  */
 package com.github.epimethix.lumicore.swing.entityaccess;
 
-public interface DataModel {
+interface DataModel {
 
 	Object select();
 	
