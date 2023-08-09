@@ -31,18 +31,28 @@ import javax.swing.JLabel;
 import javax.swing.JSeparator;
 
 import com.github.epimethix.lumicore.common.orm.model.Entity;
-import com.github.epimethix.lumicore.common.orm.model.MutableEntity;
 import com.github.epimethix.lumicore.common.orm.model.Entity.EntityBuilder;
+import com.github.epimethix.lumicore.common.orm.model.MutableEntity;
 import com.github.epimethix.lumicore.common.swing.DBControl;
 import com.github.epimethix.lumicore.orm.ORM;
 import com.github.epimethix.lumicore.swing.util.GridBagUtils;
+
 /**
- * {@code EntityEditorController} manages 
+ * {@code EntityEditorController} manages the creation of editor layout while at
+ * the same time managing the editor control (user input) values for reading and
+ * writing records.
+ * 
  * @author epimethix
  *
  * @param <E> the entity to control
  */
 public class EntityEditorController<E extends Entity<?>> {
+	/**
+	 * specifies in which location the next element to be added should be placed.
+	 * 
+	 * @author epimethix
+	 *
+	 */
 	public static enum LayoutIncrement {
 		/**
 		 * Increments the y cursor by the current grid height.
@@ -70,7 +80,7 @@ public class EntityEditorController<E extends Entity<?>> {
 		NEXT_COLUMN;
 	}
 
-	/*
+	/**
 	 * Class to define custom Object transformations between entity fields and gui
 	 * controls.
 	 */
@@ -94,9 +104,13 @@ public class EntityEditorController<E extends Entity<?>> {
 
 	private final Map<String, ControlTransform> transforms = new HashMap<>();
 
-	private final void addTransform(String fieldName, ControlTransform transform) {
-		if (Objects.nonNull(transform) && Objects.nonNull(fieldName) && !fieldName.trim().isEmpty()) {
-			transforms.put(fieldName, transform);
+	private final void addTransform(String fieldName, ControlTransform transform, String controlType) {
+		if (Objects.nonNull(transform) && Objects.nonNull(fieldName)) {
+			if (!fieldName.trim().isEmpty()) {
+				transforms.put(fieldName, transform);
+			} else {
+				System.err.printf("Transform for %s was not added since no field name was specified!%n", controlType);
+			}
 		}
 	}
 
@@ -109,18 +123,39 @@ public class EntityEditorController<E extends Entity<?>> {
 	private int formHeight;
 	private LayoutIncrement nextLayoutIncrement;
 
+	/**
+	 * Creates a new {@code EntityEditorController} with label position
+	 * {@link DBControl#LABEL_LEFT}.
+	 * 
+	 * @param component the editor component (must have a {@link GridBagLayout})
+	 */
 	public EntityEditorController(JComponent component) {
 		this(component, GridBagUtils.initGridBagConstraints());
 	}
 
+	/**
+	 * Creates a new {@code EntityEditorController} with label position
+	 * {@link DBControl#LABEL_LEFT}.
+	 * 
+	 * @param component the editor component (must have a {@link GridBagLayout})
+	 * @param c         the {@link GridBagConstraints}
+	 */
 	public EntityEditorController(JComponent component, GridBagConstraints c) {
 		this(component, c, DBControl.LABEL_LEFT);
 	}
 
+	/**
+	 * Creates a new {@code EntityEditorController}.
+	 * 
+	 * @param component     the editor component (must have a {@link GridBagLayout})
+	 * @param c             the {@link GridBagConstraints}
+	 * @param labelPosition {@link DBControl#LABEL_LEFT} or
+	 *                      {@link DBControl#LABEL_TOP}
+	 */
 	public EntityEditorController(JComponent component, GridBagConstraints c, int labelPosition) {
 		Objects.requireNonNull(component);
 		if (!(component.getLayout() instanceof GridBagLayout)) {
-			throw new IllegalArgumentException("");
+			throw new IllegalArgumentException("component must have a GridBagLayout!");
 		}
 		this.component = component;
 		this.c = Objects.requireNonNull(c);
@@ -131,30 +166,41 @@ public class EntityEditorController<E extends Entity<?>> {
 
 	/**
 	 * Sets the specified field names controls {@code setEditable(false)}.
+	 * <p>
+	 * to set all controls writable again this method can be called without any arguments.
 	 * 
-	 * @param fieldName the field name to set read only
-	 * @param fieldNames additional field names to set read only
+	 * @param fieldNames the field names to set read only
 	 */
-	public final void setReadOnly(String fieldName, String... fieldNames) {
-		setControlReadOnly(fieldName);
+	public final void setReadOnly(String... fieldNames) {
+		List<DBControl<?>> roControls = new ArrayList<>(controls);
+		roControls.removeAll(writeControls);
+		for(DBControl<?> roc:roControls) {
+			setControlWritable(roc);
+		}
 		for (String name : fieldNames) {
 			setControlReadOnly(name);
 		}
 	}
 
+	private final void setControlWritable(DBControl<?> c) {
+		writeControls.add(c);
+		c.setEditable(true);
+	}
+	
 	private final void setControlReadOnly(String fieldName) {
 		if (Objects.nonNull(fieldName) && !fieldName.trim().isEmpty()) {
 			for (DBControl<?> c : controls) {
-				System.out.println(c.getFieldName());
+//				System.out.println(c.getFieldName());
 				if (fieldName.equals(c.getFieldName())) {
 					if (writeControls.remove(c)) {
-						System.err.println("removed from write list: " + fieldName);
+//						System.err.println("removed from write list: " + fieldName);
 					}
 					c.setEditable(false);
 					return;
 				}
 			}
-			System.err.printf("EditorLayoutController.setControlReadOnly:Control for field name '%s' not found!%n",
+			System.err.printf(
+					"EditorLayoutController.setControlReadOnly failed:Control for field name '%s' not found!%n",
 					fieldName);
 		}
 	}
@@ -258,6 +304,13 @@ public class EntityEditorController<E extends Entity<?>> {
 		return c;
 	}
 
+	/**
+	 * This method must be called if the control is added to the editor component
+	 * any other way than through the method {@code addControl}. This ensures that
+	 * the {@code DBControl}s values are managed.
+	 * 
+	 * @param dbc the control to register.
+	 */
 	public void registerControl(DBControl<?> dbc) {
 		controls.add(dbc);
 		writeControls.add(dbc);
@@ -279,14 +332,21 @@ public class EntityEditorController<E extends Entity<?>> {
 		addControl(dbc, transform, i, labelPosition);
 	}
 
+	/**
+	 * Adds the specified control (Label + user input).
+	 * 
+	 * @param dbc           the control to add.
+	 * @param transform     the type transformation
+	 * @param i             the {@code LayoutIncrement}
+	 * @param labelPosition
+	 */
 	public void addControl(DBControl<?> dbc, ControlTransform transform, LayoutIncrement i, int labelPosition) {
-		addTransform(dbc.getFieldName(), transform);
+		addTransform(dbc.getFieldName(), transform, dbc.getClass().getSimpleName());
 		if (Objects.nonNull(nextLayoutIncrement)) {
 			i = nextLayoutIncrement;
 			nextLayoutIncrement = null;
 		}
-		controls.add(dbc);
-		writeControls.add(dbc);
+		registerControl(dbc);
 		if (labelPosition == DBControl.LABEL_LEFT) {
 			c.gridwidth = 1;
 //			c.weightx = 0.0;
@@ -306,12 +366,32 @@ public class EntityEditorController<E extends Entity<?>> {
 		c.weightx = 0.0;
 	}
 
+	/**
+	 * Adds a title in the left column and a separator in the right column.
+	 * 
+	 * @param lbTitle the title label
+	 */
 	public void addTitle(JLabel lbTitle) {
+		c.gridwidth = 1;
 		addComponent(lbTitle, LayoutIncrement.RIGHT);
 		c.weightx = 1.0;
 		addComponent(new JSeparator(), LayoutIncrement.LINE_DOWN);
 		c.weightx = 0.0;
-//		c.gridwidth = 2;
+	}
+
+	public void addComponent(Component label, Component control, LayoutIncrement i) {
+		if(labelPosition == DBControl.LABEL_LEFT) {
+			c.gridwidth = 1;
+			addComponent(label, LayoutIncrement.RIGHT);
+			c.weightx = 1.0;
+			addComponent(control, i);
+		} else {
+			c.gridwidth = 2;
+			c.weightx = 1.0;
+			addComponent(label, LayoutIncrement.DOWN);
+			addComponent(control, i);
+		}
+		c.weightx = 0.0;
 	}
 
 	public void addComponent(Component component, LayoutIncrement i) {

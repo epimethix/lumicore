@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
@@ -62,6 +63,27 @@ import com.github.epimethix.lumicore.swing.util.DialogUtils;
 import com.github.epimethix.lumicore.swing.util.GridBagUtils;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
+/**
+ * This class can be extended to easily create an editor GUI. The form is built
+ * automatically using the add... methods during construction which return the
+ * added control for further configuration. Custom controls can be added through
+ * the addControl methods.
+ * <p>
+ * Alternatively the {@link #entityEditorController} (protected) can be used to
+ * directly add components to the form. In this case the {@link DBControl}
+ * should be registered using the
+ * {@link EntityEditorController#registerControl(DBControl)} method.
+ * <p>
+ * Override {@link #editorEvent(EditorEvent)} to implement actions on the editor
+ * events.
+ * <p>
+ * Override {@link #isDeletable()} to enable deleting.
+ * 
+ * @author epimetix
+ *
+ * @param <E>  the entity class to create this editor panel for
+ * @param <ID> the entity id class
+ */
 @SuppressWarnings({ "serial" })
 public abstract class EntityEditorPanel<E extends Entity<ID>, ID> extends JPanel
 		implements ComponentListener, EntityEditor<E>, LabelsDisplayer {
@@ -71,7 +93,36 @@ public abstract class EntityEditorPanel<E extends Entity<ID>, ID> extends JPanel
 	 *
 	 */
 	protected static enum EditorEvent {
-		INIT, SHOW, AFTER_SAVE, AFTER_CLEAR, AFTER_DELETE, AFTER_LOAD, AFTER_HIDE;
+		/**
+		 * This event is dispatched when the editor is shown for the first time.
+		 */
+		INIT,
+		/**
+		 * This event is dispatched every time the editor is shown.
+		 */
+		SHOW,
+		/**
+		 * This event is dispatched after the successful saving of the current editor
+		 * contents.
+		 */
+		AFTER_SAVE,
+		/*
+		 * This event is dispatched when the user presses "new" and when the editor is
+		 * hidden.
+		 */
+		AFTER_CLEAR,
+		/**
+		 * This event is dispatched when a record was deleted.
+		 */
+		AFTER_DELETE,
+		/**
+		 * This event is dispatched when an existing record was loaded into the editor.
+		 */
+		AFTER_LOAD,
+		/**
+		 * This event is dispatched after the editor is being hidden.
+		 */
+		AFTER_HIDE;
 	}
 
 	/**
@@ -93,15 +144,33 @@ public abstract class EntityEditorPanel<E extends Entity<ID>, ID> extends JPanel
 
 	private final Repository<E, ID> repository;
 
+	/**
+	 * Use the entity editor controller to manually add components to the editor.
+	 * 
+	 * @see EntityEditorController#registerControl(DBControl)
+	 */
 	protected final EntityEditorController<E> entityEditorController;
 
-//	private EditorLayoutController<?> editorLayoutController;
-
+	/**
+	 * Creates a new {@link EntityEditorPanel} with {@link DBControl#LABEL_LEFT} as
+	 * initial label position.
+	 * 
+	 * @param ui         the GUI controller
+	 * @param repository the entities repository
+	 */
 	protected EntityEditorPanel(SwingUI ui, Repository<E, ID> repository) {
 		this(ui, repository, DBControl.LABEL_LEFT);
 	}
 
-	public EntityEditorPanel(SwingUI ui, Repository<E, ID> repository, int labelPosition) {
+	/**
+	 * 
+	 * @param ui            the GUI controller
+	 * @param repository    the entities repository
+	 * @param labelPosition the initial label position: either
+	 *                      {@link DBControl#LABEL_LEFT} or
+	 *                      {@link DBControl#LABEL_TOP}
+	 */
+	protected EntityEditorPanel(SwingUI ui, Repository<E, ID> repository, int labelPosition) {
 		super(new GridBagLayout());
 		this.repository = repository;
 		this.ui = ui;
@@ -112,9 +181,9 @@ public abstract class EntityEditorPanel<E extends Entity<ID>, ID> extends JPanel
 	}
 
 	/**
-	 * Gets the current Ts repository
+	 * Gets the current Es repository
 	 * 
-	 * @return the current Ts repository
+	 * @return the current Es repository
 	 */
 	protected Repository<E, ID> getRepository() {
 		return repository;
@@ -129,7 +198,294 @@ public abstract class EntityEditorPanel<E extends Entity<ID>, ID> extends JPanel
 	}
 
 	/*
-	 * Editor
+	 * Add DB Controls
+	 */
+
+	/**
+	 * Adds a {@code DBDateField} to the editor.
+	 * 
+	 * @param labelKey     the label key
+	 * @param fieldName    the database field name
+	 * @param required     true to disallow null inputs
+	 * @param formatString the date format string
+	 * @return the added control
+	 */
+	protected DBDateField addDateField(String labelKey, String fieldName, boolean required, String formatString) {
+		return addDateField(labelKey, fieldName, required, formatString, null);
+	}
+
+	/**
+	 * Adds a {@code DBDateField} to the editor.
+	 * 
+	 * @param labelKey     the label key
+	 * @param fieldName    the database field name
+	 * @param required     true to disallow null inputs
+	 * @param formatString the date format string
+	 * @param transform    the {@link ControlTransform} or null
+	 * @return the added control
+	 */
+	protected DBDateField addDateField(String labelKey, String fieldName, boolean required, String formatString,
+			ControlTransform transform) {
+		DBDateField dbDF = new DBDateField(ui, labelKey, fieldName, required, formatString);
+		addControl(dbDF, transform);
+		return dbDF;
+	}
+
+	/**
+	 * Adds a {@code DBDateTimeField} to the editor.
+	 * 
+	 * @param labelKey     the label key
+	 * @param fieldName    the database field name
+	 * @param required     true to disallow null inputs
+	 * @param formatString the date format string
+	 * @return the added control
+	 */
+	protected DBDateTimeField addDateTimeField(String labelKey, String fieldName, boolean required,
+			String formatString) {
+		return addDateTimeField(labelKey, fieldName, required, formatString, null);
+	}
+
+	/**
+	 * Adds a {@code DBDateTimeField} to the editor.
+	 * 
+	 * @param labelKey     the label key
+	 * @param fieldName    the database field name
+	 * @param required     true to disallow null inputs
+	 * @param formatString the date format string
+	 * @param transform    the {@link ControlTransform} or null
+	 * @return the added control
+	 */
+	protected DBDateTimeField addDateTimeField(String labelKey, String fieldName, boolean required, String formatString,
+			ControlTransform transform) {
+		DBDateTimeField dbDTF = new DBDateTimeField(ui, labelKey, fieldName, required, formatString);
+		addControl(dbDTF, transform);
+		return dbDTF;
+	}
+
+	/**
+	 * Adds a {@code DBEnumComboPicker} to the editor.
+	 * 
+	 * @param labelKey         the label key
+	 * @param fieldName        the database field name
+	 * @param required         true to disallow null inputs
+	 * @param enumClass        the enum class
+	 * @param constantToString labels for the enum values
+	 * @return the added control
+	 */
+	protected <T extends Enum<T>> DBEnumComboPicker<T> addEnumComboPicker(String labelKey, String fieldName,
+			boolean required, Class<T> enumClass, Function<T, String> constantToString) {
+		return addEnumComboPicker(labelKey, fieldName, required, enumClass, constantToString, null);
+	}
+
+	/**
+	 * Adds a {@code DBEnumComboPicker} to the editor.
+	 * 
+	 * @param labelKey         the label key
+	 * @param fieldName        the database field name
+	 * @param required         true to disallow null inputs
+	 * @param enumClass        the enum class
+	 * @param constantToString labels for the enum values
+	 * @param transform        the {@link ControlTransform} or null
+	 * @return the added control
+	 */
+	protected <T extends Enum<T>> DBEnumComboPicker<T> addEnumComboPicker(String labelKey, String fieldName,
+			boolean required, Class<T> enumClass, Function<T, String> constantToString, ControlTransform transform) {
+		DBEnumComboPicker<T> dbECP = new DBEnumComboPicker<>(ui, labelKey, fieldName, required, enumClass,
+				constantToString);
+		addControl(dbECP, transform);
+		return dbECP;
+	}
+
+	protected <T extends Enum<T>> DBEnumRadioPicker<T> addEnumRadioPicker(String labelKey, String fieldName,
+			boolean required, Class<T> enumClass, Function<T, String> constantToString, int cols) {
+		return addEnumRadioPicker(labelKey, fieldName, required, enumClass, constantToString, cols, null);
+	}
+
+	protected <T extends Enum<T>> DBEnumRadioPicker<T> addEnumRadioPicker(String labelKey, String fieldName,
+			boolean required, Class<T> enumClass, Function<T, String> constantToString, int cols,
+			ControlTransform transform) {
+		DBEnumRadioPicker<T> dbERP = new DBEnumRadioPicker<>(ui, labelKey, fieldName, required, enumClass,
+				constantToString, cols);
+		addControl(dbERP, transform);
+		return dbERP;
+	}
+
+	protected DBIntegerField addIntegerField(String labelKey, String fieldName, boolean required) {
+		return addIntegerField(labelKey, fieldName, required, null);
+	}
+
+	protected DBIntegerField addIntegerField(String labelKey, String fieldName, boolean required,
+			ControlTransform transform) {
+		DBIntegerField dbIF = new DBIntegerField(ui, labelKey, fieldName, required);
+		addControl(dbIF, transform);
+		return dbIF;
+	}
+
+	protected DBBooleanField addBooleanField(String labelKey, String fieldName, boolean required) {
+		return addBooleanField(labelKey, fieldName, required, null);
+	}
+
+	protected DBBooleanField addBooleanField(String labelKey, String fieldName, boolean required,
+			ControlTransform transform) {
+		DBBooleanField f = new DBBooleanField(ui, labelKey, fieldName, required);
+		addControl(f, transform);
+		return f;
+	}
+
+	protected DBBigDecimalField addBigDecimalField(String labelKey, String fieldName, int decimalPlacesAfterComma,
+			RoundingMode roundingMode, boolean required) {
+		return addBigDecimalField(labelKey, fieldName, decimalPlacesAfterComma, roundingMode, required, null);
+	}
+
+	protected DBBigDecimalField addBigDecimalField(String labelKey, String fieldName, int decimalPlacesAfterComma,
+			RoundingMode roundingMode, boolean required, ControlTransform transform) {
+		DBBigDecimalField dbIF = new DBBigDecimalField(ui, labelKey, fieldName, decimalPlacesAfterComma, roundingMode,
+				required);
+		addControl(dbIF, transform);
+		return dbIF;
+	}
+
+	protected DBPathField addFilePathField(String labelKey, String fieldName, boolean required, Path parent) {
+		return addFilePathField(labelKey, fieldName, required, parent, null);
+	}
+
+	protected DBPathField addFilePathField(String labelKey, String fieldName, boolean required, Path parent,
+			ControlTransform transform) {
+		return addPathField(labelKey, fieldName, required, Selector.FILE, parent, transform);
+	}
+
+	protected DBPathField addDirectoryPathField(String labelKey, String fieldName, boolean required, Path parent) {
+		return addDirectoryPathField(labelKey, fieldName, required, parent, null);
+	}
+
+	protected DBPathField addDirectoryPathField(String labelKey, String fieldName, boolean required, Path parent,
+			ControlTransform transform) {
+		return addPathField(labelKey, fieldName, required, Selector.DIRECTORY, parent, transform);
+	}
+
+	private DBPathField addPathField(String labelKey, String fieldName, boolean required, Selector selector,
+			Path parent, ControlTransform transform) {
+		DBPathField dbPF = new DBPathField(ui, labelKey, fieldName, required, selector, parent);
+		addControl(dbPF, transform);
+		return dbPF;
+	}
+
+	protected DBTextArea addTextArea(String labelKey, String fieldName, boolean required, int rows) {
+		return addTextArea(labelKey, fieldName, required, rows, null);
+	}
+
+	protected DBTextArea addTextArea(String labelKey, String fieldName, boolean required, int rows,
+			ControlTransform transform) {
+		DBTextArea dbTA = new DBTextArea(ui, labelKey, fieldName, required, rows, 0);
+		addControl(dbTA, transform);
+		return dbTA;
+	}
+
+	protected DBTextField addTextField(String labelKey, String fieldName, boolean required) {
+		return addTextField(labelKey, fieldName, required, null);
+	}
+
+	protected DBTextField addTextField(String labelKey, String fieldName, boolean required,
+			ControlTransform transform) {
+		DBTextField dbTF = new DBTextField(ui, labelKey, fieldName, required);
+		addControl(dbTF, transform);
+		return dbTF;
+	}
+
+	protected <J extends Entity<?>> DBToManyField<J> addToManyField(String labelKey, String fieldName, boolean required,
+			Class<J> entityClass, Comparator<J> comparator) {
+		return addToManyField(labelKey, fieldName, required, entityClass, comparator, null);
+	}
+
+	protected <J extends Entity<?>> DBToManyField<J> addToManyField(String labelKey, String fieldName, boolean required,
+			Class<J> entityClass, Comparator<J> comparator, ControlTransform transform) {
+		DBToManyField<J> dbTMF = new DBToManyField<>(ui, labelKey, fieldName, required, entityClass, comparator);
+		addControl(dbTMF, transform);
+		return dbTMF;
+	}
+
+	protected <J extends Entity<?>> DBToOneField<J> addToOneField(String labelKey, String fieldName, boolean required,
+			Class<J> entityClass) {
+		return addToOneField(labelKey, fieldName, required, entityClass, null);
+	}
+
+	protected <J extends Entity<?>> DBToOneField<J> addToOneField(String labelKey, String fieldName, boolean required,
+			Class<J> entityClass, ControlTransform transform) {
+		DBToOneField<J> dbTOF = new DBToOneField<>(ui, labelKey, fieldName, required, entityClass);
+		addControl(dbTOF, transform);
+		return dbTOF;
+	}
+
+	/*
+	 * EditorLayoutController delegate methods
+	 */
+
+	protected void setLabelPositionLeft() {
+		entityEditorController.setLabelPositionLeft();
+	}
+
+	protected void setLabelPositionTop() {
+		entityEditorController.setLabelPositionTop();
+	}
+
+	protected void setNextLayoutIncrement(LayoutIncrement i) {
+		entityEditorController.setNextLayoutIncrement(i);
+	}
+
+	protected void addControl(DBControl<?> dbc) {
+		entityEditorController.addControl(dbc);
+	}
+
+	protected void addControl(DBControl<?> dbc, ControlTransform transform) {
+		entityEditorController.addControl(dbc, transform);
+	}
+
+	protected void addControl(DBControl<?> dbc, ControlTransform transform, LayoutIncrement i) {
+		entityEditorController.addControl(dbc, transform, i);
+	}
+
+	protected void addControl(DBControl<?> dbc, LayoutIncrement i) {
+		entityEditorController.addControl(dbc, i);
+	}
+
+	protected void addControl(DBControl<?> dbc, ControlTransform transform, LayoutIncrement i, int labelPosition) {
+		entityEditorController.addControl(dbc, transform, i, labelPosition);
+	}
+
+	protected void addComponent(Component label, Component component, LayoutIncrement i) {
+		entityEditorController.addComponent(label, component, i);
+	}
+
+	protected void addComponent(Component component, LayoutIncrement i) {
+		entityEditorController.addComponent(component, i);
+	}
+
+	protected void addTitle(JLabel lbTitle) {
+		entityEditorController.addTitle(lbTitle);
+	}
+
+	public void finishForm() {
+		entityEditorController.finishForm();
+	}
+
+	protected final void setReadOnly(String... fieldNames) {
+		entityEditorController.setReadOnly(fieldNames);
+	}
+
+	protected GridBagConstraints getGridBagConstraints() {
+		return entityEditorController.getGridBagConstraints();
+	}
+
+	protected int getFormWidth() {
+		return entityEditorController.getFormWidth();
+	}
+
+	protected int getFormHeight() {
+		return entityEditorController.getFormHeight();
+	}
+
+	/*
+	 * EntityEditor
 	 */
 
 	@Override
@@ -331,230 +687,6 @@ public abstract class EntityEditorPanel<E extends Entity<ID>, ID> extends JPanel
 //
 //		}
 	}
-
-	/*
-	 * Add DB Controls
-	 */
-
-	protected DBDateField addDateField(String labelKey, String fieldName, boolean required, String formatString) {
-		return addDateField(labelKey, fieldName, required, formatString, null);
-	}
-
-	protected DBDateField addDateField(String labelKey, String fieldName, boolean required, String formatString,
-			ControlTransform transform) {
-		DBDateField dbDF = new DBDateField(ui, labelKey, fieldName, required, formatString);
-		addControl(dbDF, transform);
-		return dbDF;
-	}
-
-	protected DBDateTimeField addDateTimeField(String labelKey, String fieldName, boolean required,
-			String formatString) {
-		return addDateTimeField(labelKey, fieldName, required, formatString, null);
-	}
-
-	protected DBDateTimeField addDateTimeField(String labelKey, String fieldName, boolean required, String formatString,
-			ControlTransform transform) {
-		DBDateTimeField dbDTF = new DBDateTimeField(ui, labelKey, fieldName, required, formatString);
-		addControl(dbDTF, transform);
-		return dbDTF;
-	}
-
-	protected <T extends Enum<T>> DBEnumComboPicker<T> addEnumComboPicker(String labelKey, String fieldName,
-			boolean required, Class<T> enumClass, Function<T, String> constantToString) {
-		return addEnumComboPicker(labelKey, fieldName, required, enumClass, constantToString, null);
-	}
-
-	protected <T extends Enum<T>> DBEnumComboPicker<T> addEnumComboPicker(String labelKey, String fieldName,
-			boolean required, Class<T> enumClass, Function<T, String> constantToString, ControlTransform transform) {
-		DBEnumComboPicker<T> dbECP = new DBEnumComboPicker<>(ui, labelKey, fieldName, required, enumClass,
-				constantToString);
-		addControl(dbECP, transform);
-		return dbECP;
-	}
-
-	protected <T extends Enum<T>> DBEnumRadioPicker<T> addEnumRadioPicker(String labelKey, String fieldName,
-			boolean required, Class<T> enumClass, Function<T, String> constantToString, int cols) {
-		return addEnumRadioPicker(labelKey, fieldName, required, enumClass, constantToString, cols, null);
-	}
-
-	protected <T extends Enum<T>> DBEnumRadioPicker<T> addEnumRadioPicker(String labelKey, String fieldName,
-			boolean required, Class<T> enumClass, Function<T, String> constantToString, int cols,
-			ControlTransform transform) {
-		DBEnumRadioPicker<T> dbERP = new DBEnumRadioPicker<>(ui, labelKey, fieldName, required, enumClass,
-				constantToString, cols);
-		addControl(dbERP, transform);
-		return dbERP;
-	}
-
-	protected DBIntegerField addIntegerField(String labelKey, String fieldName, boolean required) {
-		return addIntegerField(labelKey, fieldName, required, null);
-	}
-
-	protected DBIntegerField addIntegerField(String labelKey, String fieldName, boolean required,
-			ControlTransform transform) {
-		DBIntegerField dbIF = new DBIntegerField(ui, labelKey, fieldName, required);
-		addControl(dbIF, transform);
-		return dbIF;
-	}
-
-	public DBBooleanField addBooleanField(String labelKey, String fieldName, boolean required) {
-		return addBooleanField(labelKey, fieldName, required, null);
-	}
-
-	public DBBooleanField addBooleanField(String labelKey, String fieldName, boolean required,
-			ControlTransform transform) {
-		DBBooleanField f = new DBBooleanField(ui, labelKey, fieldName, required);
-		addControl(f, transform);
-		return f;
-	}
-
-	protected DBBigDecimalField addBigDecimalField(String labelKey, String fieldName, int decimalPlacesAfterComma,
-			RoundingMode roundingMode, boolean required) {
-		return addBigDecimalField(labelKey, fieldName, decimalPlacesAfterComma, roundingMode, required, null);
-	}
-
-	protected DBBigDecimalField addBigDecimalField(String labelKey, String fieldName, int decimalPlacesAfterComma,
-			RoundingMode roundingMode, boolean required, ControlTransform transform) {
-		DBBigDecimalField dbIF = new DBBigDecimalField(ui, labelKey, fieldName, decimalPlacesAfterComma, roundingMode,
-				required);
-		addControl(dbIF, transform);
-		return dbIF;
-	}
-
-	protected DBPathField addFilePathField(String labelKey, String fieldName, boolean required, Path parent) {
-		return addFilePathField(labelKey, fieldName, required, parent, null);
-	}
-
-	protected DBPathField addFilePathField(String labelKey, String fieldName, boolean required, Path parent,
-			ControlTransform transform) {
-		return addPathField(labelKey, fieldName, required, Selector.FILE, parent, transform);
-	}
-
-	protected DBPathField addDirectoryPathField(String labelKey, String fieldName, boolean required, Path parent) {
-		return addDirectoryPathField(labelKey, fieldName, required, parent, null);
-	}
-
-	protected DBPathField addDirectoryPathField(String labelKey, String fieldName, boolean required, Path parent,
-			ControlTransform transform) {
-		return addPathField(labelKey, fieldName, required, Selector.DIRECTORY, parent, transform);
-	}
-
-	private DBPathField addPathField(String labelKey, String fieldName, boolean required, Selector selector,
-			Path parent, ControlTransform transform) {
-		DBPathField dbPF = new DBPathField(ui, labelKey, fieldName, required, selector, parent);
-		addControl(dbPF, transform);
-		return dbPF;
-	}
-
-	protected DBTextArea addTextArea(String labelKey, String fieldName, boolean required, int rows) {
-		return addTextArea(labelKey, fieldName, required, rows, null);
-	}
-
-	protected DBTextArea addTextArea(String labelKey, String fieldName, boolean required, int rows,
-			ControlTransform transform) {
-		DBTextArea dbTA = new DBTextArea(ui, labelKey, fieldName, required, rows, 0);
-		addControl(dbTA, transform);
-		return dbTA;
-	}
-
-	protected DBTextField addTextField(String labelKey, String fieldName, boolean required) {
-		return addTextField(labelKey, fieldName, required, null);
-	}
-
-	protected DBTextField addTextField(String labelKey, String fieldName, boolean required,
-			ControlTransform transform) {
-		DBTextField dbTF = new DBTextField(ui, labelKey, fieldName, required);
-		addControl(dbTF, transform);
-		return dbTF;
-	}
-
-	protected <J extends Entity<?>> DBToManyField<J> addToManyField(String labelKey, String fieldName, boolean required,
-			Class<J> entityClass, Comparator<J> comparator) {
-		return addToManyField(labelKey, fieldName, required, entityClass, comparator, null);
-	}
-
-	protected <J extends Entity<?>> DBToManyField<J> addToManyField(String labelKey, String fieldName, boolean required,
-			Class<J> entityClass, Comparator<J> comparator, ControlTransform transform) {
-		DBToManyField<J> dbTMF = new DBToManyField<>(ui, labelKey, fieldName, required, entityClass, comparator);
-		addControl(dbTMF, transform);
-		return dbTMF;
-	}
-
-	protected <J extends Entity<?>> DBToOneField<J> addToOneField(String labelKey, String fieldName, boolean required,
-			Class<J> entityClass) {
-		return addToOneField(labelKey, fieldName, required, entityClass, null);
-	}
-
-	protected <J extends Entity<?>> DBToOneField<J> addToOneField(String labelKey, String fieldName, boolean required,
-			Class<J> entityClass, ControlTransform transform) {
-		DBToOneField<J> dbTOF = new DBToOneField<>(ui, labelKey, fieldName, required, entityClass);
-		addControl(dbTOF, transform);
-		return dbTOF;
-	}
-
-	/*
-	 * EditorLayoutController delegate methods
-	 */
-
-	protected void setLabelPositionLeft() {
-		entityEditorController.setLabelPositionLeft();
-	}
-
-	protected void setLabelPositionTop() {
-		entityEditorController.setLabelPositionTop();
-	}
-
-	protected void setNextLayoutIncrement(LayoutIncrement i) {
-		entityEditorController.setNextLayoutIncrement(i);
-	}
-
-	protected void addControl(DBControl<?> dbc) {
-		entityEditorController.addControl(dbc);
-	}
-
-	protected void addControl(DBControl<?> dbc, ControlTransform transform) {
-		entityEditorController.addControl(dbc, transform);
-	}
-
-	protected void addControl(DBControl<?> dbc, ControlTransform transform, LayoutIncrement i) {
-		entityEditorController.addControl(dbc, transform, i);
-	}
-
-	protected void addControl(DBControl<?> dbc, LayoutIncrement i) {
-		entityEditorController.addControl(dbc, i);
-	}
-
-	protected void addControl(DBControl<?> dbc, ControlTransform transform, LayoutIncrement i, int labelPosition) {
-		entityEditorController.addControl(dbc, transform, i, labelPosition);
-	}
-
-	protected void addComponent(Component component, LayoutIncrement i) {
-		entityEditorController.addComponent(component, i);
-	}
-
-	public void finishForm() {
-		entityEditorController.finishForm();
-	}
-
-	protected final void setReadOnly(String fieldName, String... fieldNames) {
-		entityEditorController.setReadOnly(fieldName, fieldNames);
-	}
-
-	protected GridBagConstraints getGridBagConstraints() {
-		return entityEditorController.getGridBagConstraints();
-	}
-
-	protected int getFormWidth() {
-		return entityEditorController.getFormWidth();
-	}
-
-	protected int getFormHeight() {
-		return entityEditorController.getFormHeight();
-	}
-
-//	public boolean isValid() {
-//		return layoutManager.isValid();
-//	}
 
 	/*
 	 * LabelsDisplayer
