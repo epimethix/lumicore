@@ -254,6 +254,7 @@ public class DBIntegerField implements DBControl<Long>, FocusListener {
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		label.setEnabled(enabled);
 		control.setEnabled(enabled);
 	}
 
@@ -280,5 +281,14 @@ public class DBIntegerField implements DBControl<Long>, FocusListener {
 		if(Objects.nonNull(selectAction)) {
 			selectAction.accept(getValue());
 		}
+	}
+
+	/**
+	 * Calling this method is equivalent to mutation through user input.
+	 * 
+	 * @param i the value to set to the control directly
+	 */
+	public void setInteger(long i) {
+		control.setText(String.valueOf(i));
 	}
 }

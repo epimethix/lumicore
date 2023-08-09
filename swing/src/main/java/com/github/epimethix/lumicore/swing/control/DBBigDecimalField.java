@@ -82,6 +82,7 @@ public class DBBigDecimalField implements DBControl<BigDecimal>, FocusListener {
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		label.setEnabled(enabled);
 		formattedTextField.setEnabled(enabled);
 	}
 

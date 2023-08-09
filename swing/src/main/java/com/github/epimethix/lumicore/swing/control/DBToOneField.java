@@ -102,6 +102,7 @@ public class DBToOneField<E extends Entity<?>> implements DBControl<E>, ActionLi
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		label.setEnabled(enabled);
 		control.setEnabled(enabled);
 	}
 

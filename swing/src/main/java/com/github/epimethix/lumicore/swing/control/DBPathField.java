@@ -161,6 +161,7 @@ public class DBPathField implements DBControl<Path>, ActionListener {
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		label.setEnabled(enabled);
 		btOpenSelector.setEnabled(enabled);
 	}
 

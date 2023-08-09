@@ -114,6 +114,7 @@ public class DBEnumComboPicker<T extends Enum<T>> implements DBControl<T>, Actio
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		label.setEnabled(enabled);
 		control.setEnabled(enabled);
 	}
 

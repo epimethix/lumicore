@@ -110,6 +110,7 @@ public class DBDateTimeField implements DBControl<LocalDateTime>, KeyListener, A
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		label.setEnabled(enabled);
 		textField.setEnabled(enabled);
 		btOpenPicker.setEnabled(enabled);
 	}

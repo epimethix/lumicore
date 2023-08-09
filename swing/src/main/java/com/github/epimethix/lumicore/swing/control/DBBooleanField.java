@@ -142,6 +142,7 @@ public class DBBooleanField implements DBControl<Boolean>, FocusListener, Action
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		label.setEnabled(enabled);
 		control.setEnabled(enabled);
 	}
 

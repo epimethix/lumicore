@@ -74,6 +74,7 @@ public class DBToManyField<E extends Entity<?>> implements DBControl<List<E>>, A
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		label.setEnabled(enabled);
 		// TODO Auto-generated method stub
 
 	}

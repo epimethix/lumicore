@@ -114,6 +114,7 @@ public class DBDateField implements DBControl<LocalDate>, KeyListener, ActionLis
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		label.setEnabled(enabled);
 		textField.setEnabled(enabled);
 		btOpenPicker.setEnabled(enabled);
 	}

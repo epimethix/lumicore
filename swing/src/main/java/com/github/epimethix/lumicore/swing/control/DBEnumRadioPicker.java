@@ -196,6 +196,7 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		label.setEnabled(enabled);
 		for (JRadioButton rb : radioButtons) {
 			rb.setEnabled(enabled);
 		}

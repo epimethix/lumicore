@@ -197,6 +197,7 @@ public class DBTextArea implements DBControl<String>, FocusListener {
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		label.setEnabled(enabled);
 		control.setEnabled(enabled);
 	}
 
