@@ -670,8 +670,8 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 		 */
 
 		queryBuilderFactory = db.getQueryBuilderFactory();
-
-		CreateBuilder createBuilder = queryBuilderFactory.create(DB.getSchemaName(), ENTITY_CLASS, definitionsArray);
+		CreateBuilder createBuilder = queryBuilderFactory.create(DB.getSchemaName(), ENTITY_CLASS, definitionsArray)
+				.withConstraints(constraints.toArray(new Constraint[] {}));
 		if (withoutRowID) {
 			createBuilder.withoutRowid();
 		}
@@ -1781,7 +1781,7 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 
 	@Override
 	public List<E> delete(DeleteQuery q) throws SQLException {
-		if(q.getCriteriumValues().length == 0) {
+		if (q.getCriteriumValues().length == 0) {
 			DB.executeUpdate(q.getQueryString());
 		} else {
 
@@ -1869,7 +1869,8 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 
 	@Override
 	public double average(String field) throws SQLException {
-		List<Double> result = selectDouble(queryBuilderFactory.select(this).distinct().selectAverage(this, field).build());
+		List<Double> result = selectDouble(
+				queryBuilderFactory.select(this).distinct().selectAverage(this, field).build());
 		if (result.size() == 1) {
 			return result.get(0).doubleValue();
 		}
@@ -1913,7 +1914,7 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 		} else {
 			try {
 				setter.invoke(item, id);
-			}catch (Exception e) {
+			} catch (Exception e) {
 				LOGGER.error(e);
 			}
 		}
@@ -2547,7 +2548,6 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 		sb.append(ApplicationUtils.createBanner(getClass().getSimpleName())).append("\n");
 		return sb.toString();
 	}
-
 
 	/*
 	 * * * Inner classes
