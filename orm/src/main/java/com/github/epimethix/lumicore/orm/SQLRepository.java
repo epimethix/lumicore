@@ -117,7 +117,6 @@ import com.github.epimethix.lumicore.properties.LumicoreProperties;
  * @see Entity
  * @see AbstractUserRepository
  */
-//@SuppressWarnings("unchecked")
 public abstract class SQLRepository<E extends Entity<ID>, ID> implements Repository<E, ID> {
 
 	/*
