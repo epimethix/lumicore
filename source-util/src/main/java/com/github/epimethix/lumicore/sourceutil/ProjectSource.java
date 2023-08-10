@@ -181,7 +181,7 @@ public class ProjectSource {
 	}
 
 	public List<String> getContents(String packageName) {
-		if(contents.containsKey(packageName)) {
+		if (contents.containsKey(packageName)) {
 			List<String> result = new ArrayList<>();
 			result.addAll(contents.get(packageName));
 			return result;
