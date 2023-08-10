@@ -15,7 +15,6 @@
  */
 package com.github.epimethix.lumicore.ioc.interception;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
