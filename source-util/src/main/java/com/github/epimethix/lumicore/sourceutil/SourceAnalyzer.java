@@ -548,14 +548,14 @@ public class SourceAnalyzer {
 	 * #############################################################################
 	 * @formatter:on
 	 */
-	
+
 	/*
 	 * settings.gradle
 	 */
-	
+
 	private static final String ROOT_PROJECT_NAME = "rootProject.name\\s*=\\s*";
 	public static final Pattern ROOT_PROJECT_NAME_PATTERN = Pattern.compile(ROOT_PROJECT_NAME);
-	
+
 	private static final String CHILD_PROJECT = "\\s*include\\s*[(]";
 	public static final Pattern CHILD_PROJECT_PATTERN = Pattern.compile(CHILD_PROJECT);
 
@@ -569,23 +569,29 @@ public class SourceAnalyzer {
 	 */
 	public static Optional<Matcher> findVerbose(Pattern pattern, CharSequence text, int start) {
 		Matcher m = pattern.matcher(text);
-		if (m.find(start)) {
-			System.out.printf("found '%s' starting at %d, ending at %d%n...", m.group(), m.start(), m.end());
-			for (int i = 1; i <= m.groupCount(); i++) {
-				System.out.printf("Group %d: '%s'", i, m.group(i));
-				if (i + 1 <= m.groupCount()) {
-					System.out.print(" / ");
+		try {
+			if (m.find(start)) {
+				System.out.printf("found '%s' starting at %d, ending at %d%n...", m.group(), m.start(), m.end());
+				for (int i = 1; i <= m.groupCount(); i++) {
+					System.out.printf("Group %d: '%s'", i, m.group(i));
+					if (i + 1 <= m.groupCount()) {
+						System.out.print(" / ");
+					}
+					if (i > 0 && i % 5 == 0) {
+						System.out.println();
+						System.out.print("...");
+					}
 				}
-				if (i > 0 && i % 5 == 0) {
-					System.out.println();
-					System.out.print("...");
-				}
+				System.out.println();
+				return Optional.of(m);
+			} else {
+				System.err.printf("No match found for pattern '%s'%nin text '%s'%nstarting from index %d%n",
+						pattern.pattern(), text, start);
 			}
-			System.out.println();
-			return Optional.of(m);
-		} else {
-			System.err.printf("No match found for pattern '%s'%nin text '%s'%nstarting from index %d%n",
-					pattern.pattern(), text, start);
+		} catch (Exception e) {
+			System.err.println(
+					e.getClass().getSimpleName() + " for index " + start + " using pattern " + pattern.pattern());
+			throw e;
 		}
 		return Optional.empty();
 	}
@@ -599,6 +605,9 @@ public class SourceAnalyzer {
 	 * @return the match of the specified search if there is any
 	 */
 	public static Optional<Matcher> find(Pattern pattern, CharSequence text, int start) {
+		if (System.currentTimeMillis() < 0) {
+			return findVerbose(pattern, text, start);
+		}
 //		Check check = Benchmark.start(SourceAnalyzer.class, "find", "SA.find");
 //		try {
 		Matcher m = pattern.matcher(text);
@@ -611,6 +620,8 @@ public class SourceAnalyzer {
 //		}
 	}
 
+//	private static int maxResultLen;
+
 	/**
 	 * Tests if the specified {@code Pattern} occurs at the specified index in the
 	 * given text.
@@ -622,18 +633,21 @@ public class SourceAnalyzer {
 	 */
 	public static Optional<Matcher> testIndex(Pattern pattern, CharSequence text, int index) {
 //		Check check = Benchmark.start(SourceAnalyzer.class, "testIndex", "SA.testIndex");
+		int regEnd = index + 250;
 //		try {
-		Matcher m = pattern.matcher(text);
-		if (m.find(index)) {
-			if (m.start() == index) {
-				return Optional.of(m);
+			Matcher m = pattern.matcher(text);
+			m.region(index, regEnd > text.length() ? text.length() : regEnd);
+			if (m.find()) {
+				if (m.start() == index) {
+					return Optional.of(m);
+				}
 			}
-		}
-		return Optional.empty();
+			return Optional.empty();
 //		} finally {
 //			check.stop();
-//			if(check.time() > 1_000_000_000L) {
-//				System.err.println("Lag in SourceAnalyzer::testIndex! " + pattern.toString() + " @ " + index); 
+//			if (check.time() > 1_000_000_000L) {
+//				System.err.println("Lag in SourceAnalyzer::testIndex! " + pattern.toString() + " @ " + index + "\n"
+//						+ text.subSequence(index, regEnd > text.length() ? text.length() : regEnd));
 //			}
 //		}
 	}
@@ -792,7 +806,7 @@ public class SourceAnalyzer {
 						continue;
 					}
 				} else if (inChar) {
-					if (currentChar == '\'' && previousChar != '\\') {
+					if (currentChar == '\'' && escapeChars % 2 == 0) {
 						inChar = false;
 					}
 					continue;
@@ -804,7 +818,7 @@ public class SourceAnalyzer {
 				}
 			} finally {
 				previousChar = currentChar;
-				if (inString && currentChar == '\\') {
+				if ((inString || inChar) && currentChar == '\\') {
 					escapeChars++;
 				} else if (escapeChars > 0) {
 					escapeChars = 0;

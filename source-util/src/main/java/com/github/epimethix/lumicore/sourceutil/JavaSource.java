@@ -3314,7 +3314,7 @@ public final class JavaSource implements Source {
 			end = seekEndOfBlock(sourceCode, end);
 		}
 		end = nextNewLine(sourceCode, end);
-		MethodSource methodSource = new MethodSource(javaDocComment, annotations, visibility, modifiers, typeParameters,
+		MethodSource methodSource = new MethodSource(javaDocComment, annotations2, visibility, modifiers, typeParameters,
 				returnType, returnTypeParameters, returnTypeArray, methodName, parameters, exceptions, sourceCode,
 				start, end);
 		return methodSource;
