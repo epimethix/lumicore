@@ -72,7 +72,7 @@ public abstract class AbstractEntityAccessBrowser extends JPanel implements Labe
 	private final JSplitPane splitPane;
 	private final Map<Class<?>, EntityAccessController> entityAccessControllerMap = new HashMap<>();
 	@IgnoreLabels
-	private EntityAccessController currentView;
+	protected EntityAccessController currentView;
 	private DefaultMutableTreeNode currentNode;
 	private boolean ignoreNextTreeSelectionEvent;
 
@@ -153,6 +153,18 @@ public abstract class AbstractEntityAccessBrowser extends JPanel implements Labe
 //		splitPane.setResizeWeight(0.0);
 		splitPane.setEnabled(true);
 	}
+	
+	public boolean clear() {
+		if(Objects.nonNull(currentView)) {
+			boolean b = currentView.getEditor().clear();
+			if(b) {
+				currentView.showDataView();
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
@@ -183,5 +195,12 @@ public abstract class AbstractEntityAccessBrowser extends JPanel implements Labe
 				}
 			}
 		}
+	}
+
+	public boolean hasChanges() {
+		if(Objects.nonNull(currentView)) {
+			return currentView.getEditor().hasChanges();
+		}
+		return false;
 	}
 }
