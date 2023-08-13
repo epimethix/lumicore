@@ -122,6 +122,10 @@ public class C {
 	public static final String MENU_THEMES = "MENU_THEMES";
 	public static final String MENU_THEME_LIGHT = "MENU_THEME_LIGHT";
 	public static final String MENU_THEME_DARK = "MENU_THEME_DARK";
+	public static final String ED_BTN_CLOSE = "ED_BTN_CLOSE";
+	public static final String DLG_EDIT_TITLE = "DLG_EDIT_TITLE";
+	public static final String BUTTON_SELECT = "BUTTON_SELECT";
+	public static final String BUTTON_CLEAR = "BUTTON_CLEAR";
 
 //	public static final LabelsManager getLabelsManager() {
 //		return LABELS;
