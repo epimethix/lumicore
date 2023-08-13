@@ -289,6 +289,6 @@ public class DBIntegerField implements DBControl<Long>, FocusListener {
 	 * @param i the value to set to the control directly
 	 */
 	public void setInteger(long i) {
-		control.setText(String.valueOf(i));
+		control.setValue(i);
 	}
 }
