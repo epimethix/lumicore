@@ -32,6 +32,7 @@ import com.github.epimethix.lumicore.common.orm.model.Entity;
 import com.github.epimethix.lumicore.common.orm.model.TreeTop;
 import com.github.epimethix.lumicore.common.swing.DBControl;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
+import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.C;
 import com.github.epimethix.lumicore.common.ui.labels.manager.LabelsManagerPool;
 import com.github.epimethix.lumicore.swing.entityaccess.EntityAccessController;
@@ -186,12 +187,12 @@ public class DBToOneField<E extends Entity<?>> implements DBControl<E>, ActionLi
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == control) {
 			EntityAccessController eac = EntityAccessControllerFactory.getEntityAccessController(entityClass);
-			int answer = eac.showSelectionDialog(control);
-			if (answer == EntityAccessController.ANSWER_CANCEL) {
+			Answer answer = eac.showSelectionDialog(control);
+			if (answer == Answer.CANCEL) {
 				return;
-			} else if (answer == EntityAccessController.ANSWER_CLEAR) {
+			} else if (answer == Answer.CLEAR) {
 				this.value = null;
-			} else if (answer == EntityAccessController.ANSWER_SELECT) {
+			} else if (answer == Answer.SELECT) {
 				/*
 				 * The EntityAccessController obtained with the Class<E> should return an
 				 * selected item object of type E.
