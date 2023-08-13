@@ -276,4 +276,8 @@ public class DBDateField implements DBControl<LocalDate>, KeyListener, ActionLis
 			}
 		}
 	}
+
+	public void setDate(LocalDate t) {
+		textField.setText(t.format(formatter));
+	}
 }
