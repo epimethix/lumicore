@@ -26,6 +26,8 @@ import java.util.Objects;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
@@ -35,10 +37,13 @@ import javax.swing.event.ChangeListener;
 import com.github.epimethix.lumicore.common.orm.Repository;
 import com.github.epimethix.lumicore.common.orm.model.Entity;
 import com.github.epimethix.lumicore.common.orm.model.TreeEntity;
+import com.github.epimethix.lumicore.common.swing.SwingInjector;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
+import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.C;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayerPool;
+import com.github.epimethix.lumicore.swing.LumicoreSwing;
 import com.github.epimethix.lumicore.swing.editor.EntityEditorPanel;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
@@ -62,10 +67,13 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 	private final JButton btTbCancel;
 
 	private final JPanel selectionButtons;
+	private final JPanel closeButton;
 
 	private final JButton btSelSelect;
 	private final JButton btSelCancel;
 	private final JButton btSelClearSelection;
+
+	private final JButton btClose;
 
 	private final JPanel accessView;
 
@@ -76,15 +84,15 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 
 	private String selectedView;
 
-	private int dialogAnswer;
+	private Answer dialogAnswer;
 
 	private JDialog dialog;
 
 	private final JTabbedPane tpDataViews;
 
-	public static final int ANSWER_CANCEL = 0;
-	public static final int ANSWER_CLEAR = 1;
-	public static final int ANSWER_SELECT = 2;
+//	public static final int ANSWER_CANCEL = 0;
+//	public static final int ANSWER_CLEAR = 1;
+//	public static final int ANSWER_SELECT = 2;
 
 	EntityAccessController(SwingUI ui, Repository<?, ?> repository, EntityEditorPanel<?, ?> editor)
 			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
@@ -138,11 +146,18 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 		btSelClearSelection = new JButton();
 		btSelClearSelection.addActionListener(this);
 
-		selectionButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		selectionButtons = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 		selectionButtons.add(btSelClearSelection);
 		selectionButtons.add(btSelSelect);
 		selectionButtons.add(btSelCancel);
 		selectionButtons.setBorder(LayoutUtils.createMediumEmptyBorder());
+
+		btClose = new JButton();
+		btClose.addActionListener(this);
+
+		closeButton = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+		closeButton.add(btClose);
+		closeButton.setBorder(LayoutUtils.createMediumEmptyBorder());
 
 		accessViewLayout = new CardLayout();
 
@@ -185,6 +200,7 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 		btSelCancel.setText(C.getLabel(C.DLG_BTN_CANCEL));
 		btSelClearSelection.setText(C.getLabel(C.DLG_BTN_CLEAR));
 		btSelSelect.setText(C.getLabel(C.DLG_BTN_SELECT));
+		btClose.setText(C.getLabel(C.ED_BTN_CLOSE));
 	}
 
 //	@Override
@@ -200,21 +216,44 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 		return view;
 	}
 
-	public final int showSelectionDialog(Component childComponent) {
-		LabelsDisplayerPool.loadLabels(this);
+	public final Answer showSelectionDialog(Component childComponent) {
+		LabelsDisplayerPool.addLabelsDisplayers(this);
 		JPanel view = getView();
 		view.add(selectionButtons, BorderLayout.SOUTH);
 		dialog = DialogUtils.initializeJDialog(childComponent, C.getLabel(C.DLG_SELECTION_TITLE), view, true);
+		JMenuBar menuBar = new JMenuBar();
+		JMenu langMenu = DialogUtils.getLanguageSelectionMenu(LumicoreSwing.getApplication());
+		menuBar.add(langMenu);
+		dialog.setJMenuBar(menuBar);
 		dataModel.select(null);
-
 		refresh();
 		dialog.setVisible(true);
+		LabelsDisplayerPool.removeLabelsDisplayers(this);
+		return dialogAnswer;
+	}
+
+	public Answer showEditorDialog(Component childComponent) {
+		LabelsDisplayerPool.addLabelsDisplayers(this);
+		JPanel view = getView();
+		view.add(closeButton, BorderLayout.SOUTH);
+		dialog = DialogUtils.initializeJDialog(childComponent, C.getLabel(C.DLG_EDIT_TITLE), view, true);
+		JMenuBar menuBar = new JMenuBar();
+		JMenu langMenu = DialogUtils.getLanguageSelectionMenu(LumicoreSwing.getApplication());
+		menuBar.add(langMenu);
+		dialog.setJMenuBar(menuBar);
+		dataModel.select(null);
+		refresh();
+		dialog.setVisible(true);
+		LabelsDisplayerPool.removeLabelsDisplayers(this);
 		return dialogAnswer;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (selectedView.equals(CARD_EDITOR)) {
+		if (e.getSource() == btClose) {
+			if (editor.clear())
+				hideDialog(Answer.CANCEL);
+		} else if (selectedView.equals(CARD_EDITOR)) {
 			if (e.getSource() == btTbNew) {
 				editor.clear();
 			} else if (e.getSource() == btTbSave) {
@@ -237,14 +276,14 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 					showView(CARD_DATA);
 				}
 			} else if (e.getSource() == btSelCancel) {
-				hideDialog(ANSWER_CANCEL);
+				hideDialog(Answer.CANCEL);
 			} else if (e.getSource() == btSelClearSelection) {
-				hideDialog(ANSWER_CLEAR);
+				hideDialog(Answer.CLEAR);
 			} else if (e.getSource() == btSelSelect) {
 				editor.save(i -> {
 					if (Objects.nonNull(i)) {
 						dataModel.select(i);
-						hideDialog(ANSWER_SELECT);
+						hideDialog(Answer.SELECT);
 					}
 				});
 			}
@@ -258,20 +297,20 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 			} else if (e.getSource() == btTbNew) {
 				showView(CARD_EDITOR);
 			} else if (e.getSource() == btSelCancel && Objects.nonNull(dialog)) {
-				hideDialog(ANSWER_CANCEL);
+				hideDialog(Answer.CANCEL);
 			} else if (e.getSource() == btSelClearSelection) {
 				dataModel.select(null);
-				hideDialog(ANSWER_CLEAR);
+				hideDialog(Answer.CLEAR);
 			} else if (e.getSource() == btSelSelect) {
 				Object selectedItem = dataModel.select();
 				if (Objects.nonNull(selectedItem)) {
-					hideDialog(ANSWER_SELECT);
+					hideDialog(Answer.SELECT);
 				}
 			}
 		}
 	}
 
-	private void hideDialog(int answer) {
+	private void hideDialog(Answer answer) {
 		if (Objects.nonNull(dialog)) {
 			dialogAnswer = answer;
 			dialog.setVisible(false);
