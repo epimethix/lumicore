@@ -226,7 +226,7 @@ public class EntityEditorController<E extends Entity<?>> {
 				}
 			}
 		}
-		for (DBControl<?> c : writeControls) {
+		for (DBControl<?> c : controls) {
 			if (Objects.nonNull(c.getFieldName()) && !c.getFieldName().trim().isEmpty()) {
 				try {
 					ControlTransform transform = transforms.get(c.getFieldName());
