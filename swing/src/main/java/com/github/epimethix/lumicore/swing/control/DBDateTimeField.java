@@ -177,7 +177,9 @@ public class DBDateTimeField implements DBControl<LocalDateTime>, KeyListener, A
 		LocalDateTime value = null;
 		try {
 			value = LocalDateTime.parse(textField.getText(), formatter);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return value;
 	}
 
@@ -269,5 +271,14 @@ public class DBDateTimeField implements DBControl<LocalDateTime>, KeyListener, A
 				selectAction.accept(getValue());
 			}
 		}
+	}
+
+	/**
+	 * This emulates an user input.
+	 * 
+	 * @param t the time to set
+	 */
+	public void setDateTime(LocalDateTime t) {
+		textField.setText(t.format(formatter));
 	}
 }
