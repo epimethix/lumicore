@@ -168,14 +168,14 @@ public abstract class AbstractManyToManyRepository<E extends AbstractManyToManyE
 //			Class<?> classU = (Class<?>) ((ParameterizedType) us.getClass().getGenericSuperclass())
 //					.getActualTypeArguments()[0];
 			Set<E> newState = null;
-			if (t.getClass() == classA) {
+			if (t.getClass() == classA && fieldName.equals(fieldNameA)) {
 				newState = us.stream().map(u -> {
 					E e = newRecord();
 					e.setA((A) t);
 					e.setB((B) u);
 					return e;
 				}).collect(Collectors.toSet());
-			} else if (t.getClass() == classB) {
+			} else if (t.getClass() == classB && fieldName.equals(fieldNameB)) {
 				newState = us.stream().map(u -> {
 					E e = newRecord();
 					e.setA((A) u);
