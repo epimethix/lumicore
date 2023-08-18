@@ -717,8 +717,7 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 				.where(DB.getSchemaName(), ENTITY_CLASS).equals(Entity.ID, "").leave().build();
 		FK_QUERIES = new HashMap<>();
 		for (JoinMapping j : JOIN_MAPPINGS) {
-			Repository<?, ?> repo = j.repository;
-			SelectBuilder b = db.getQueryBuilderFactory().select(repo, FLD_SQL_NAMES_PK_LEADING).withCriteria(this)
+			SelectBuilder b = db.getQueryBuilderFactory().select(this, FLD_SQL_NAMES_PK_LEADING).withCriteria(this)
 					.equals(j.fieldName, "").leave();
 			for (JoinMapping jj : JOIN_MAPPINGS) {
 				if (jj != j) {
@@ -727,7 +726,7 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 					}
 				}
 			}
-			FK_QUERIES.put(j.fieldName, DEFAULT_SELECT_QUERY);
+			FK_QUERIES.put(j.fieldName, b.build());
 		}
 
 	}
@@ -1395,27 +1394,18 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 
 	@Override
 	public List<E> selectByFK(String foreignKeyField, Object one) throws SQLException {
-		SelectQuery q = FK_QUERIES.get(foreignKeyField);
+		SelectQuery q = FK_QUERIES.get(foreignKeyField).withCriteriumValues(((Entity<?>) one).getId());
 		List<E> l = new ArrayList<E>();
 		String sql = q.getQueryString();
 		try {
 			Connection c = DB.getConnection();
 			logQuery(sql, Arrays.asList(q.getCriteriumValues()));
-			if (q.getCriteriumValues().length == 0) {
-				try (Statement st = c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+			try (PreparedStatement ps = c.prepareStatement(sql)) {
+				fillPreparedStatementAutoType(ps, q.getCriteriumValues());
+				try (ResultSet rs = ps.executeQuery()) {
 					while (rs.next()) {
 						E x = initializeRecord(rs, new int[] { 1 }, -1, (Entity<?>) one, foreignKeyField);
 						l.add(x);
-					}
-				}
-			} else {
-				try (PreparedStatement ps = c.prepareStatement(sql)) {
-					fillPreparedStatementAutoType(ps, q.getCriteriumValues());
-					try (ResultSet rs = ps.executeQuery()) {
-						while (rs.next()) {
-							E x = initializeRecord(rs);
-							l.add(x);
-						}
 					}
 				}
 			}
@@ -1429,8 +1419,6 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 			checkClose(q);
 		}
 		return l;
-
-//		return null;
 	}
 
 	@Override
