@@ -46,7 +46,7 @@ public class DefaultCriterium implements Criterium {
 	}
 
 	public DefaultCriterium(Type type, String tableAlias, String field, String value, char escape) {
-		this(type, tableAlias, field, Arrays.asList(value), escape);
+		this(type, tableAlias, field, new ArrayList<>(Arrays.asList(value)), escape);
 	}
 
 	public DefaultCriterium(Type type, String tableAlias, String field, List<Object> values, char escape) {
