@@ -22,8 +22,6 @@ import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Collections;
@@ -98,7 +96,7 @@ public final class DialogUtils {
 
 		};
 		op.createDialog(c, "Input").setVisible(true);
-		return op.getValue().equals(JOptionPane.OK_OPTION) ? JOptionPane.OK_OPTION : JOptionPane.CANCEL_OPTION;
+		return Objects.nonNull(op.getValue()) && op.getValue().equals(JOptionPane.OK_OPTION) ? JOptionPane.OK_OPTION : JOptionPane.CANCEL_OPTION;
 	}
 
 	public static Optional<File> showOpenDialog(Component parent, File currentDirectory, String extension) {
