@@ -16,29 +16,28 @@
 package com.github.epimethix.lumicore.common.orm.query;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class DefaultCriteria implements Criteria {
 
 	private final List<Criterium> criteria;
+	private final List<String> criteriumFields;
 
 	public DefaultCriteria() {
-		this(Collections.emptyList());
-	}
-
-	public DefaultCriteria(List<Criterium> criteria) {
-		this.criteria = new ArrayList<>(criteria);
+		criteria = new ArrayList<>();
+		criteriumFields = new ArrayList<>();
 	}
 
 	public DefaultCriteria(DefaultCriteria c) {
 		this.criteria = new ArrayList<>(c.criteria);
+		this.criteriumFields = new ArrayList<>(c.criteriumFields);
 	}
 
 	@Override
 	public String getCriteria() {
 		StringBuilder sb = new StringBuilder();
-		for(Criterium c:criteria) {
+		for (Criterium c : criteria) {
 			sb.append(c.getCriterium());
 		}
 		return sb.toString();
@@ -46,13 +45,19 @@ public class DefaultCriteria implements Criteria {
 
 	@Override
 	public void addCriterium(Criterium c) {
+		int n = c.getValues().size();
+		if (Objects.nonNull(c.getField()) && n > 0) {
+				for (int i = 0; i < n; i++) {
+					criteriumFields.add(c.getField());
+				}
+		}
 		criteria.add(c);
 	}
 
 	@Override
 	public List<Object> getCriteriumValues() {
 		List<Object> values = new ArrayList<>();
-		for(Criterium c:criteria) {
+		for (Criterium c : criteria) {
 			values.addAll(c.getValues());
 		}
 		return values;
@@ -67,5 +72,10 @@ public class DefaultCriteria implements Criteria {
 	public void clear() {
 		criteria.clear();
 	}
-	
+
+	@Override
+	public List<String> getCriteriumFields() {
+		return new ArrayList<>(criteriumFields);
+	}
+
 }

@@ -85,4 +85,8 @@ public final class SQLUpdateBuilder implements UpdateBuilder {
 		return new SQLUpdateQuery(user, closeConnection, sql, fields.toArray(new String[] {}), setValues.toArray(),
 				criteriaBuilder.getCriteriumValues().toArray(), this);
 	}
+
+	public String[] getCriteriumFields() {
+		return criteriaBuilder.getCriteriumFields();
+	}
 }

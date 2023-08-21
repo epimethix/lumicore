@@ -192,4 +192,9 @@ final class CriteriaBuilderImpl<T extends QueryBuilder> implements CriteriaBuild
 	public boolean isEmpty() {
 		return criteria.isEmpty();
 	}
+
+	@Override
+	public String[] getCriteriumFields() {
+		return criteria.getCriteriumFields().toArray(new String[] {});
+	}
 }

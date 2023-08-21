@@ -24,8 +24,8 @@ final class SQLUpdateQuery extends DefaultQuery implements UpdateQuery {
 	private final Object[] criteriumValues;
 	private final SQLUpdateBuilder b;
 
-	public SQLUpdateQuery(String user, Boolean isCloseConnection, String queryString, String[] setFields, Object[] setValues,
-			Object[] criteriumValues, SQLUpdateBuilder b) {
+	public SQLUpdateQuery(String user, Boolean isCloseConnection, String queryString, String[] setFields,
+			Object[] setValues, Object[] criteriumValues, SQLUpdateBuilder b) {
 		super(user, isCloseConnection, queryString);
 		this.setFields = setFields;
 		this.setValues = setValues;
@@ -50,7 +50,24 @@ final class SQLUpdateQuery extends DefaultQuery implements UpdateQuery {
 	}
 
 	@Override
+	public String[] getCriteriumFields() {
+		return b.getCriteriumFields();
+	}
+
+	@Override
 	public UpdateBuilder builder() {
 		return new SQLUpdateBuilder(b);
+	}
+
+	@Override
+	public UpdateQuery withValues(Object... values) {
+		return new SQLUpdateQuery(getUser().orElse(null), isCloseConnection().orElse(null), getQueryString(), setFields,
+				values, criteriumValues, b);
+	}
+
+	@Override
+	public UpdateQuery withCriteriumValues(Object... values) {
+		return new SQLUpdateQuery(getUser().orElse(null), isCloseConnection().orElse(null), getQueryString(), setFields,
+				setValues, values, b);
 	}
 }

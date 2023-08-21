@@ -277,13 +277,13 @@ public interface Query {
 		default SelectBuilder selectMin(Repository<?, ?> r, String field) {
 			return selectMin(r.getSchemaName(), r.getEntityClass(), field);
 		}
-		
+
 		SelectBuilder selectMin(String schemaName, Class<? extends Entity<?>> e, String field);
 
 		default SelectBuilder selectMax(Repository<?, ?> r, String field) {
 			return selectMax(r.getSchemaName(), r.getEntityClass(), field);
 		}
-		
+
 		SelectBuilder selectMax(String schemaName, Class<? extends Entity<?>> e, String field);
 
 		default SelectBuilder selectAverage(Repository<?, ?> r, String field) {
@@ -297,10 +297,16 @@ public interface Query {
 		Object[] getSetValues();
 
 		Object[] getCriteriumValues();
-		
+
 		String[] getFields();
 
 		UpdateBuilder builder();
+
+		UpdateQuery withValues(Object... values);
+
+		UpdateQuery withCriteriumValues(Object... values);
+
+		String[] getCriteriumFields();
 
 	}
 
@@ -397,6 +403,7 @@ public interface Query {
 		CriteriaBuilder<T> equals(String field, Number value);
 
 		CriteriaBuilder<T> equals(String field, Object value);
+
 		/**
 		 * Synonym for {@link #matches(String, String, char)} with backslash (\) as
 		 * escape character
@@ -425,5 +432,6 @@ public interface Query {
 
 		T leave();
 
+		String[] getCriteriumFields();
 	}
 }

@@ -22,9 +22,11 @@ public interface Criteria {
 
 	void addCriterium(Criterium c);
 
+	List<String> getCriteriumFields();
+
 	List<Object> getCriteriumValues();
 
 	boolean isEmpty();
-	
+
 	void clear();
 }
