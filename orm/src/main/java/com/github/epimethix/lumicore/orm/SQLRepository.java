@@ -1428,8 +1428,8 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 
 	@Override
 	public List<E> selectAll(List<ID> ids) throws SQLException {
-		return select(DEFAULT_SELECT_QUERY.builder().limit(ids.size()).withCriteria(this)
-				.in(PARENT_FIELD_NAME, (List<Object>) ids).leave().build());
+		return select(DEFAULT_SELECT_QUERY.builder().limit(ids.size()).withCriteria(this).in("id", (List<Object>) ids)
+				.leave().build());
 	}
 
 	@Override
@@ -1742,20 +1742,39 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 			if (MAPPING_DEFINITION_NON_PK.sqlNames[j].equals(fields[i])) {
 				delta.transforms[i] = MAPPING_DEFINITION_NON_PK.transforms[j];
 				delta.sqlTypes[i] = MAPPING_DEFINITION_NON_PK.sqlTypes[j];
+				i++;
+			}
+		}
+		String[] criteriaFields = q.getCriteriumFields();
+		MappingDefinition criteriaMapping = new MappingDefinition(criteriaFields.length);
+		for (int i = 0; i < criteriaFields.length; i++) {
+			String fieldName = criteriaFields[i];
+			outer: for (int j = 0; j < MAPPING_DEFINITION_PK_LEADING.getters.length; j++) {
+				if (MAPPING_DEFINITION_PK_LEADING.sqlNames[j].equals(fieldName)) {
+					for (; i < criteriaFields.length;) {
+						criteriaMapping.transforms[i] = MAPPING_DEFINITION_PK_LEADING.transforms[j];
+						criteriaMapping.sqlTypes[i] = MAPPING_DEFINITION_PK_LEADING.sqlTypes[j];
+						if (i < criteriaFields.length - 1 && criteriaFields[i + 1].equals(fieldName)) {
+							i++;
+						} else {
+							break outer;
+						}
+					}
+				}
 			}
 		}
 		UpdateQuery sqlUpdateDeltaQuery = q;
 		String sqlUpdateDelta = sqlUpdateDeltaQuery.getQueryString();
-
 		logQuery(sqlUpdateDelta);
 		try (PreparedStatement ps = c.prepareStatement(sqlUpdateDelta)) {
 			int nextPos = fillPreparedStatement(ps, delta.transforms, delta.sqlTypes, q.getSetValues());
-			fillPreparedStatement(ps, MAPPING_DEFINITION_PK.transforms, MAPPING_DEFINITION_PK.sqlTypes,
+			fillPreparedStatement(ps, criteriaMapping.transforms, criteriaMapping.sqlTypes,
 					q.getCriteriumValues(), nextPos);
 			ps.executeUpdate();
 //				log(item.getId(), CRUD.U, user, logWrite);
 		} catch (SQLException e) {
 			LOGGER.error(sqlUpdateDelta);
+			e.printStackTrace();
 			throw e;
 		}
 		return Collections.emptyList();
@@ -1771,7 +1790,6 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 		if (q.getCriteriumValues().length == 0) {
 			DB.executeUpdate(q.getQueryString());
 		} else {
-
 			Connection c = DB.getConnection();
 			try (PreparedStatement ps = c.prepareStatement(q.getQueryString())) {
 				fillPreparedStatementAutoType(ps, q.getCriteriumValues());
