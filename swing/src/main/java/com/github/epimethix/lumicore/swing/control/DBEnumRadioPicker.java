@@ -49,16 +49,17 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 	private final boolean required;
 	private final Function<T, String> constantToString;
 
-	private final T[] enumConstants;
-	private final JRadioButton[] radioButtons;
+	private T[] enumConstants;
+	private JRadioButton[] radioButtons;
 	private final ButtonGroup buttonGroup;
 	private int initiallySelectedIndex;
 	private int selectedIndex;
 
 	private final JLabel label;
 	private final JPanel control;
-	private final Border defaultJPanelBorder;
+	private final Border defaultBorder;
 	private Consumer<T> selectAction;
+	private final int cols;
 
 	public DBEnumRadioPicker(SwingUI ui, String labelKey, String fieldName, boolean required, Class<T> enumClass,
 			int cols) {
@@ -73,19 +74,31 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 //		this.enumClass = enumClass;
 		this.required = required;
 		this.constantToString = constantToString;
-		enumConstants = enumClass.getEnumConstants();
-		radioButtons = new JRadioButton[enumConstants.length];
+		radioButtons = new JRadioButton[0];
 		buttonGroup = new ButtonGroup();
+		initiallySelectedIndex = -1;
+		selectedIndex = -1;
+		label = new JLabel();
+		control = new JPanel(new GridBagLayout());
+		control.setBorder(BorderFactory.createLineBorder(label.getBackground()));
+		defaultBorder = control.getBorder();
+		this.cols = cols;
+		buildControl(enumClass.getEnumConstants());
+	}
+
+	private void buildControl(T[] ts) {
+		for (JRadioButton rb : radioButtons) {
+			rb.removeActionListener(this);
+			buttonGroup.remove(rb);
+		}
+		this.enumConstants = ts;
+		radioButtons = new JRadioButton[ts.length];
 		for (int i = 0; i < radioButtons.length; i++) {
 			radioButtons[i] = new JRadioButton();
 			radioButtons[i].addActionListener(this);
 			buttonGroup.add(radioButtons[i]);
 		}
-		initiallySelectedIndex = -1;
-		selectedIndex = -1;
-		label = new JLabel();
-		control = new JPanel(new GridBagLayout());
-		defaultJPanelBorder = control.getBorder();
+		control.removeAll();
 		GridBagConstraints c = GridBagUtils.initGridBagConstraints();
 		Insets rightMargin = LayoutUtils.createDefaultRightMargin();
 		Insets topMargin = LayoutUtils.createDefaultTopMargin();
@@ -116,6 +129,10 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 				c.gridx++;
 			}
 		}
+	}
+
+	public void setVisibleEnumConstants(T... ts) {
+		buildControl(ts);
 	}
 
 	public int indexOf(T t) {
@@ -231,7 +248,7 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 		} else {
 			radioButtons[selectedIndex].setSelected(true);
 		}
-		control.setBorder(defaultJPanelBorder);
+		control.setBorder(defaultBorder);
 	}
 
 	@Override
@@ -290,7 +307,7 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 		if (e.getSource() instanceof JRadioButton) {
 			selectedIndex = indexOf((JRadioButton) e.getSource());
 			if (selectedIndex > -1) {
-				control.setBorder(defaultJPanelBorder);
+				control.setBorder(defaultBorder);
 				if (Objects.nonNull(selectAction)) {
 					selectAction.accept(getValue());
 				}
