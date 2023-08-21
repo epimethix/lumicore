@@ -19,6 +19,7 @@ import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -26,6 +27,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
+
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import com.github.epimethix.lumicore.common.swing.DBControl;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
@@ -205,5 +208,9 @@ public class DBTextField implements DBControl<String>, FocusListener {
 
 	public void setText(String text) {
 		control.setText(text);
+	}
+
+	public void setAutoCompleteSuggestions(List<String> series) {
+		AutoCompleteDecorator.decorate(control, series, false);
 	}
 }
