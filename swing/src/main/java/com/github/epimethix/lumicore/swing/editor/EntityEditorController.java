@@ -15,6 +15,7 @@
  */
 package com.github.epimethix.lumicore.swing.editor;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -26,8 +27,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
 import com.github.epimethix.lumicore.common.orm.model.Entity;
@@ -36,6 +39,7 @@ import com.github.epimethix.lumicore.common.orm.model.MutableEntity;
 import com.github.epimethix.lumicore.common.swing.DBControl;
 import com.github.epimethix.lumicore.orm.ORM;
 import com.github.epimethix.lumicore.swing.util.GridBagUtils;
+import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
 /**
  * {@code EntityEditorController} manages the creation of editor layout while at
@@ -167,14 +171,15 @@ public class EntityEditorController<E extends Entity<?>> {
 	/**
 	 * Sets the specified field names controls {@code setEditable(false)}.
 	 * <p>
-	 * to set all controls writable again this method can be called without any arguments.
+	 * to set all controls writable again this method can be called without any
+	 * arguments.
 	 * 
 	 * @param fieldNames the field names to set read only
 	 */
 	public final void setReadOnly(String... fieldNames) {
 		List<DBControl<?>> roControls = new ArrayList<>(controls);
 		roControls.removeAll(writeControls);
-		for(DBControl<?> roc:roControls) {
+		for (DBControl<?> roc : roControls) {
 			setControlWritable(roc);
 		}
 		for (String name : fieldNames) {
@@ -186,7 +191,7 @@ public class EntityEditorController<E extends Entity<?>> {
 		writeControls.add(c);
 		c.setEditable(true);
 	}
-	
+
 	private final void setControlReadOnly(String fieldName) {
 		if (Objects.nonNull(fieldName) && !fieldName.trim().isEmpty()) {
 			for (DBControl<?> c : controls) {
@@ -350,8 +355,17 @@ public class EntityEditorController<E extends Entity<?>> {
 		if (labelPosition == DBControl.LABEL_LEFT) {
 			c.gridwidth = 1;
 //			c.weightx = 0.0;
-//			c.anchor=GridBagConstraints.PAGE_START;
-			addComponent(dbc.getLabel(), LayoutIncrement.RIGHT);
+//			int oldAnchor = c.anchor;
+//			System.err.println(oldAnchor);
+//			c.anchor=GridBagConstraints.LINE_START;
+			int oldFill = c.fill;
+			c.fill = GridBagConstraints.BOTH;
+			JPanel pnNorth = new JPanel(new BorderLayout());
+			pnNorth.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+			pnNorth.add(dbc.getLabel(), BorderLayout.NORTH);
+			addComponent(pnNorth, LayoutIncrement.RIGHT);
+			c.fill = oldFill;
+//			c.anchor = oldAnchor;
 			c.weightx = 1.0;
 		} else {
 			c.gridwidth = 2;
@@ -380,7 +394,7 @@ public class EntityEditorController<E extends Entity<?>> {
 	}
 
 	public void addComponent(Component label, Component control, LayoutIncrement i) {
-		if(labelPosition == DBControl.LABEL_LEFT) {
+		if (labelPosition == DBControl.LABEL_LEFT) {
 			c.gridwidth = 1;
 			addComponent(label, LayoutIncrement.RIGHT);
 			c.weightx = 1.0;

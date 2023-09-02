@@ -23,6 +23,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
+
 public class DialogController {
 
 	private final JDialog d;
@@ -88,5 +90,10 @@ public class DialogController {
 
 	public JDialog getDialog() {
 		return d;
+	}
+
+	public void dispose() {
+		thread.isDisposed = true;
+		d.dispose();
 	}
 }

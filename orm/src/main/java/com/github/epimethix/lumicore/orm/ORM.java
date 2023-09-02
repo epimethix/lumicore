@@ -170,7 +170,7 @@ public final class ORM {
 			@SuppressWarnings("unchecked")
 			Class<? extends Enum<?>> enumClass = (Class<? extends Enum<?>>) mappingType;
 			transform.javaToDb = in -> ((IntegerEnum) in).toInteger();
-			transform.dbToJava = in -> IntegerEnum.ofInteger((long) in, enumClass);
+			transform.dbToJava = in -> IntegerEnum.ofInteger(((Number) in).longValue(), enumClass);
 		} else if (mappingType.isEnum()) {
 			transform = getEnumTransform(mappingType);
 		}
@@ -186,7 +186,13 @@ public final class ORM {
 	 */
 	public final static Transform getTransform(final Method getter) {
 		Transform transform = new Transform();
-		transform.javaToDb = in -> getter.invoke(in);
+		transform.javaToDb = in -> {
+			if (Objects.isNull(in))
+				return null;
+			if (getter.getReturnType() == in.getClass())
+				return in;
+			return getter.invoke(in);
+		};
 		return transform;
 	}
 

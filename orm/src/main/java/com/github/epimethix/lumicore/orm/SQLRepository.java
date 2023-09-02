@@ -718,7 +718,7 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 		FK_QUERIES = new HashMap<>();
 		for (JoinMapping j : JOIN_MAPPINGS) {
 			SelectBuilder b = db.getQueryBuilderFactory().select(this, FLD_SQL_NAMES_PK_LEADING).withCriteria(this)
-					.equals(j.fieldName, "").leave();
+					.equals(j.fieldName, "").leave().limit(Long.MAX_VALUE);
 			for (JoinMapping jj : JOIN_MAPPINGS) {
 				if (jj != j) {
 					if (jj.eager) {
@@ -1198,7 +1198,7 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 				value = transform.dbToJava.transform(value);
 			} catch (Exception e) {
 //				e.printStackTrace();
-				throw new SQLException("Type transformation failed: " + e.getMessage(), e);
+				throw new SQLException("Type transformation failed: " + setter.getName() + ": " + e.getMessage(), e);
 			}
 			// ensure data/type integrity
 			if (!Reflect.typeEquals(value.getClass(), type) && !Reflect.typeIsWrapperOf(value.getClass(), type)) {
@@ -1768,8 +1768,8 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 		logQuery(sqlUpdateDelta);
 		try (PreparedStatement ps = c.prepareStatement(sqlUpdateDelta)) {
 			int nextPos = fillPreparedStatement(ps, delta.transforms, delta.sqlTypes, q.getSetValues());
-			fillPreparedStatement(ps, criteriaMapping.transforms, criteriaMapping.sqlTypes,
-					q.getCriteriumValues(), nextPos);
+			fillPreparedStatement(ps, criteriaMapping.transforms, criteriaMapping.sqlTypes, q.getCriteriumValues(),
+					nextPos);
 			ps.executeUpdate();
 //				log(item.getId(), CRUD.U, user, logWrite);
 		} catch (SQLException e) {

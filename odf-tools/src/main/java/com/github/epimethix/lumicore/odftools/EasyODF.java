@@ -30,12 +30,12 @@ public final class EasyODF {
 
 	public static final class UserField {
 		private Node userFieldDecl;
-		private Node userFieldGet;
+		private List<Node> userFieldsGet;
 
-		public UserField(Node userFieldDecl, Node userFieldGet) {
+		public UserField(Node userFieldDecl, List<Node> fieldOccurences) {
 			super();
 			this.userFieldDecl = userFieldDecl;
-			this.userFieldGet = userFieldGet;
+			this.userFieldsGet = fieldOccurences;
 		}
 
 		private String getName() {
@@ -45,11 +45,11 @@ public final class EasyODF {
 		public void setValue(String value) {
 			Node officeStringValue = userFieldDecl.getAttributes().getNamedItem("office:string-value");
 			officeStringValue.setNodeValue(value);
-			userFieldGet.setTextContent(value);
+			userFieldsGet.forEach(uf->uf.setTextContent(value));
 		}
 		
 		public String getValue() {
-			return userFieldGet.getTextContent();
+			return userFieldsGet.stream().findAny().get().getTextContent();
 		}
 	}
 
@@ -88,17 +88,19 @@ public final class EasyODF {
 					Node attribute = declMap.item(i);
 					if ("text:name".equals(attribute.getNodeName())) {
 						String fieldName = attribute.getNodeValue();
+						List<Node> fieldOccurences = new ArrayList<>();
 						for (Node nodeGet : userFieldsGet) {
 							NamedNodeMap getMap = nodeGet.getAttributes();
 							for (int j = 0; j < getMap.getLength(); j++) {
 								Node getAttribute = getMap.item(j);
 								if ("text:name".equals(getAttribute.getNodeName())
 										&& fieldName.equals(getAttribute.getNodeValue())) {
-									userFields.add(new UserField(nodeDecl, nodeGet));
-									continue outer;
+									fieldOccurences.add(nodeGet);
 								}
 							}
 						}
+						userFields.add(new UserField(nodeDecl, fieldOccurences));
+						continue outer;
 					}
 				}
 			}
