@@ -16,6 +16,7 @@
 package com.github.epimethix.lumicore.swing.control;
 
 import java.awt.Color;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.NumberFormat;
@@ -290,5 +291,9 @@ public class DBIntegerField implements DBControl<Long>, FocusListener {
 	 */
 	public void setInteger(long i) {
 		control.setValue(i);
+	}
+
+	public void addActionListener(ActionListener l) {
+		control.addActionListener(l);
 	}
 }

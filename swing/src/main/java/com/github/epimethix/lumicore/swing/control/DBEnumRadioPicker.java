@@ -15,6 +15,7 @@
  */
 package com.github.epimethix.lumicore.swing.control;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -31,11 +32,11 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.border.Border;
 
 import com.github.epimethix.lumicore.common.swing.DBControl;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
 import com.github.epimethix.lumicore.common.ui.C;
+import com.github.epimethix.lumicore.common.ui.LabeledEnum;
 import com.github.epimethix.lumicore.common.ui.labels.manager.LabelsManagerPool;
 import com.github.epimethix.lumicore.swing.util.GridBagUtils;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
@@ -45,7 +46,6 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 	private final SwingUI ui;
 	private final String fieldName;
 	private final String labelKey;
-//	private final Class<T> enumClass;
 	private final boolean required;
 	private final Function<T, String> constantToString;
 
@@ -57,21 +57,24 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 
 	private final JLabel label;
 	private final JPanel control;
-	private final Border defaultBorder;
 	private Consumer<T> selectAction;
 	private final int cols;
 
+	private Color currentBorderColor;
+
 	public DBEnumRadioPicker(SwingUI ui, String labelKey, String fieldName, boolean required, Class<T> enumClass,
 			int cols) {
-		this(ui, labelKey, fieldName, required, enumClass, t -> t.toString(), cols);
+		this(ui, labelKey, fieldName, required, enumClass,
+				LabeledEnum.class.isAssignableFrom(enumClass) ? t -> ((LabeledEnum) t).screenName() : t -> t.name(),
+				cols);
 	}
 
+	@SuppressWarnings("serial")
 	public DBEnumRadioPicker(SwingUI ui, String labelKey, String fieldName, boolean required, Class<T> enumClass,
 			Function<T, String> constantToString, int cols) {
 		this.ui = ui;
 		this.fieldName = fieldName;
 		this.labelKey = labelKey;
-//		this.enumClass = enumClass;
 		this.required = required;
 		this.constantToString = constantToString;
 		radioButtons = new JRadioButton[0];
@@ -79,11 +82,26 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 		initiallySelectedIndex = -1;
 		selectedIndex = -1;
 		label = new JLabel();
-		control = new JPanel(new GridBagLayout());
-		control.setBorder(BorderFactory.createLineBorder(label.getBackground()));
-		defaultBorder = control.getBorder();
+		control = new JPanel(new BorderLayout()) {
+			@Override
+			public void updateUI() {
+				super.updateUI();
+				DBEnumRadioPicker.this.updateUI();
+			}
+		};
+		currentBorderColor = control.getBackground();
+		control.setBorder(BorderFactory.createLineBorder(currentBorderColor));
 		this.cols = cols;
 		buildControl(enumClass.getEnumConstants());
+	}
+
+	private void updateUI() {
+		if (currentBorderColor != Color.RED) {
+			if (Objects.nonNull(control)) {
+				currentBorderColor = control.getBackground();
+				updateBorder();
+			}
+		}
 	}
 
 	private void buildControl(T[] ts) {
@@ -98,7 +116,7 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 			radioButtons[i].addActionListener(this);
 			buttonGroup.add(radioButtons[i]);
 		}
-		control.removeAll();
+		JPanel controlButtons = new JPanel(new GridBagLayout());
 		GridBagConstraints c = GridBagUtils.initGridBagConstraints();
 		Insets rightMargin = LayoutUtils.createDefaultRightMargin();
 		Insets topMargin = LayoutUtils.createDefaultTopMargin();
@@ -121,7 +139,7 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 			} else {
 				c.insets = topRightMargin;
 			}
-			control.add(radioButtons[i], c);
+			controlButtons.add(radioButtons[i], c);
 			if (col == 0) {
 				c.gridx = 0;
 				c.gridy++;
@@ -129,6 +147,25 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 				c.gridx++;
 			}
 		}
+		control.removeAll();
+		control.add(controlButtons, BorderLayout.WEST);
+	}
+
+	private void updateBorder() {
+		if (Objects.nonNull(control)) {
+			control.setBorder(BorderFactory.createLineBorder(currentBorderColor));
+		}
+	}
+
+	private int indexOf(JRadioButton rb) {
+		if (Objects.nonNull(rb)) {
+			for (int i = 0; i < radioButtons.length; i++) {
+				if (radioButtons[i].equals(rb)) {
+					return i;
+				}
+			}
+		}
+		return -1;
 	}
 
 	public void setVisibleEnumConstants(T... ts) {
@@ -139,17 +176,6 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 		if (Objects.nonNull(t)) {
 			for (int i = 0; i < enumConstants.length; i++) {
 				if (enumConstants[i].equals(t)) {
-					return i;
-				}
-			}
-		}
-		return -1;
-	}
-
-	private int indexOf(JRadioButton rb) {
-		if (Objects.nonNull(rb)) {
-			for (int i = 0; i < radioButtons.length; i++) {
-				if (radioButtons[i].equals(rb)) {
 					return i;
 				}
 			}
@@ -228,7 +254,9 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 	public boolean isValid() {
 		if (isEmpty() && required) {
 			ui.showErrorMessage(control, C.FIELD_MAY_NOT_BE_EMPTY_ERROR, label.getText());
-			control.setBorder(BorderFactory.createLineBorder(Color.RED));
+			currentBorderColor = Color.RED;
+			updateBorder();
+			requestFocus();
 			return false;
 		}
 		return true;
@@ -248,7 +276,8 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 		} else {
 			radioButtons[selectedIndex].setSelected(true);
 		}
-		control.setBorder(defaultBorder);
+		currentBorderColor = control.getBackground();
+		updateBorder();
 	}
 
 	@Override
@@ -300,14 +329,17 @@ public class DBEnumRadioPicker<T extends Enum<T>> implements DBControl<T>, Actio
 	}
 
 	@Override
-	public void requestFocus() {}
+	public void requestFocus() {
+		control.requestFocusInWindow();
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JRadioButton) {
 			selectedIndex = indexOf((JRadioButton) e.getSource());
 			if (selectedIndex > -1) {
-				control.setBorder(defaultBorder);
+				currentBorderColor = control.getBackground();
+				updateBorder();
 				if (Objects.nonNull(selectAction)) {
 					selectAction.accept(getValue());
 				}

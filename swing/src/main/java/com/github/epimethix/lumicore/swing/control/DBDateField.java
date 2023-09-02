@@ -88,7 +88,7 @@ public class DBDateField implements DBControl<LocalDate>, KeyListener, ActionLis
 			nonPatternLettersIndexes[i] = index;
 			nonPatternLetters[i] = formatString.charAt(index);
 		}
-		textField = new LTextField();
+		textField = new LTextField(formatString.length());
 		textField.addKeyListener(this);
 		textField.addFocusListener(this);
 		defaultTextFieldBorder = textField.getBorder();

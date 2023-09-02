@@ -17,6 +17,7 @@ package com.github.epimethix.lumicore.swing.control;
 
 import java.awt.Color;
 import java.awt.ComponentOrientation;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.List;
@@ -35,30 +36,15 @@ import com.github.epimethix.lumicore.common.swing.SwingUI;
 import com.github.epimethix.lumicore.common.ui.labels.manager.LabelsManagerPool;
 
 public class DBTextField implements DBControl<String>, FocusListener {
-
 	private final LTextField control;
-
 	private final JLabel label;
-
 	private String initialValue;
-
 	private final String fieldName;
-
 	private final boolean required;
-
 	private final String labelKey;
-
 	private final TextComponentValidation textComponentValidation;
-
 	private final Border defaultTextFieldBorder;
-
 	private Consumer<String> selectAction;
-
-//	private final SwingUI ui;
-
-//	public DBTextField(SwingUI ui, String labelKey, String fieldName) {
-//		this(ui, labelKey, fieldName, false);
-//	}
 
 	public DBTextField(SwingUI ui, String labelKey, String fieldName, boolean required) {
 		this.fieldName = fieldName;
@@ -201,7 +187,7 @@ public class DBTextField implements DBControl<String>, FocusListener {
 
 	@Override
 	public void focusLost(FocusEvent e) {
-		if(Objects.nonNull(selectAction)) {
+		if (Objects.nonNull(selectAction)) {
 			selectAction.accept(getValue());
 		}
 	}
@@ -212,5 +198,9 @@ public class DBTextField implements DBControl<String>, FocusListener {
 
 	public void setAutoCompleteSuggestions(List<String> series) {
 		AutoCompleteDecorator.decorate(control, series, false);
+	}
+
+	public void addActionListener(ActionListener l) {
+		control.addActionListener(l);
 	}
 }
