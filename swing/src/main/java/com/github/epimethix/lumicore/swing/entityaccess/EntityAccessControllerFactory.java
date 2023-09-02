@@ -36,13 +36,14 @@ import com.github.epimethix.lumicore.swing.editor.EntityEditorPanel;
 
 public class EntityAccessControllerFactory {
 	private static final Logger LOGGER = Log.getLogger(Log.CHANNEL_SWING);
-	
+
 	private static class EntityAccessMapping {
 		private final SwingUI ui;
 		private final Repository<?, ?> repository;
 		private final Class<EntityEditorPanel<?, ?>> editorClass;
 
-		public EntityAccessMapping(SwingUI ui, Repository<?, ?> repository, Class<EntityEditorPanel<?, ?>> editorClass) {
+		public EntityAccessMapping(SwingUI ui, Repository<?, ?> repository,
+				Class<EntityEditorPanel<?, ?>> editorClass) {
 			this.ui = ui;
 			this.repository = repository;
 			this.editorClass = editorClass;
@@ -96,12 +97,8 @@ public class EntityAccessControllerFactory {
 					EntityAccessController v = new EntityAccessController(eam.ui, eam.repository, editor);
 					LOGGER.trace("Editor class for %s was created", entityClass.getSimpleName());
 					return v;
-				}
-
-				catch
-
-				(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-						| NoSuchMethodException | SecurityException e) {
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 //					e.printStackTrace();
 					LOGGER.error(e);
 				} catch (Exception e) {
