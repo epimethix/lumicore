@@ -288,6 +288,7 @@ public interface Repository<E extends Entity<ID>, ID> {
 			return Optional.of(es.get(0));
 		}
 		return Optional.empty();
+//		return selectFirst()
 	}
 
 	List<E> select(Function<SelectBuilder, SelectBuilder> b) throws SQLException;
