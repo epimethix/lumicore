@@ -43,4 +43,6 @@ public interface EntityEditor<E extends Entity<?>> {
 	}
 //	void delete(Object id);
 	default void setParent(Object parent) {};
+	
+	boolean isInputValid();
 }

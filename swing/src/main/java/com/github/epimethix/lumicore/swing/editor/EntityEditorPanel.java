@@ -201,6 +201,11 @@ public abstract class EntityEditorPanel<E extends Entity<ID>, ID> extends JPanel
 	 * Add DB Controls
 	 */
 
+	@Override
+	public boolean isInputValid() {
+		return entityEditorController.isValid();
+	}
+
 	/**
 	 * Adds a {@code DBDateField} to the editor.
 	 * 
@@ -515,6 +520,9 @@ public abstract class EntityEditorPanel<E extends Entity<ID>, ID> extends JPanel
 				protected void done() {
 					if (Objects.nonNull(currentItem)) {
 						entityEditorController.getValues(currentItem);
+						editorEvent(EditorEvent.AFTER_LOAD);
+					}else if(Objects.nonNull(item)) {
+						entityEditorController.getValues((E) item);
 						editorEvent(EditorEvent.AFTER_LOAD);
 					}
 				}
