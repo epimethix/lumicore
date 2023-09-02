@@ -1,11 +1,11 @@
 plugins {
 	id 'lumicore.java-conventions'
+	id 'java-library'
 }
 
 dependencies {
-    
 	// https://mvnrepository.com/artifact/org.odftoolkit/simple-odf
-	implementation group: 'org.odftoolkit', name: 'simple-odf', version: '0.9.0'
+	api group: 'org.odftoolkit', name: 'simple-odf', version: '0.9.0'
 	
 }
 
