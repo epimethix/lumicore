@@ -18,7 +18,6 @@ package com.github.epimethix.lumicore.swing.dialog.wizard;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,9 +40,9 @@ import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayerPool;
 import com.github.epimethix.lumicore.swing.LumicoreSwing;
+import com.github.epimethix.lumicore.swing.dialog.AbstractAnswerListener;
 import com.github.epimethix.lumicore.swing.dialog.AnswerButtonPanel;
 import com.github.epimethix.lumicore.swing.dialog.DialogController;
-import com.github.epimethix.lumicore.swing.dialog.AbstractAnswerListener;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
@@ -78,16 +77,20 @@ public final class WizardUI extends AbstractAnswerListener implements LabelsDisp
 	}
 
 	private final static BiConsumer<Wizard, Component> runDisposableWizard = (w, parent) -> {
-		WizardUI wizardUI = new WizardUI(w, parent);
-		LabelsDisplayerPool.addLabelsDisplayers(wizardUI);
-		wizardUI.showUI();
-		LabelsDisplayerPool.removeLabelsDisplayers(wizardUI);
-		if (wizardUI.finished) {
-			w.finish(wizardUI.skipped);
+		if (w.getPageCount() > 0) {
+			WizardUI wizardUI = new WizardUI(w, parent);
+			LabelsDisplayerPool.addLabelsDisplayers(wizardUI);
+			wizardUI.showUI();
+			LabelsDisplayerPool.removeLabelsDisplayers(wizardUI);
+			if (wizardUI.finished) {
+				w.finish(wizardUI.skipped);
+			} else {
+				w.cancel();
+			}
+			wizardUI.disposeDialog();
 		} else {
-			w.cancel();
+			w.finish(new boolean[0]);
 		}
-		wizardUI.getDialog().dispose();
 	};
 
 	private final static Consumer<WizardUI> runReusableWizard = (wizardUI) -> {
@@ -298,6 +301,9 @@ public final class WizardUI extends AbstractAnswerListener implements LabelsDisp
 	}
 
 	private void setStep(int currentPage, int inc) {
+		if (wizard.getPageCount() == 0) {
+			return;
+		}
 		if (this.currentPage != currentPage) {
 			this.currentPage = currentPage;
 		}
@@ -335,6 +341,10 @@ public final class WizardUI extends AbstractAnswerListener implements LabelsDisp
 		cardLayout.show(pnCards, String.valueOf(currentPage));
 	}
 
+	public void disposeDialog() {
+		dialogController.dispose();
+	}
+
 	public JDialog getDialog() {
 		return dialogController.getDialog();
 	}
@@ -349,7 +359,8 @@ public final class WizardUI extends AbstractAnswerListener implements LabelsDisp
 		for (int i = 0; i < pageCount; i++) {
 			titles[i] = wizard.getPageTitle(i);
 		}
-		lbTitle.setText(titles[currentPage]);
+		if (titles.length > 0)
+			lbTitle.setText(titles[currentPage]);
 	}
 
 	@Override
@@ -360,10 +371,12 @@ public final class WizardUI extends AbstractAnswerListener implements LabelsDisp
 				step(1);
 			}
 		} else if (answer == Answer.FINISH) {
-			skipped[currentPage] = false;
-			finished = true;
-			System.err.println("setVisible(false) called");
-			dialogController.setVisible(false);
+			if (wizard.validatePage(currentPage, dialog)) {
+				skipped[currentPage] = false;
+				finished = true;
+				System.err.println("setVisible(false) called");
+				dialogController.setVisible(false);
+			}
 //			dialog.setVisible(false);
 //			System.err.println("setVisible(false) returned");
 		} else if (answer == Answer.PREVIOUS) {
