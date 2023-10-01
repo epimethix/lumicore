@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -37,7 +38,6 @@ import javax.swing.event.ChangeListener;
 import com.github.epimethix.lumicore.common.orm.Repository;
 import com.github.epimethix.lumicore.common.orm.model.Entity;
 import com.github.epimethix.lumicore.common.orm.model.TreeEntity;
-import com.github.epimethix.lumicore.common.swing.SwingInjector;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
 import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.C;
@@ -49,6 +49,10 @@ import com.github.epimethix.lumicore.swing.util.DialogUtils;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
 public class EntityAccessController implements ActionListener, LabelsDisplayer, ChangeListener {
+	public static enum ViewType {
+		FULL, SELECT, EDIT
+	}
+
 	private final SwingUI ui;
 
 	private final EntityEditorPanel<? extends Entity<?>, ?> editor;
@@ -162,7 +166,6 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 		accessViewLayout = new CardLayout();
 
 		accessView = new JPanel(accessViewLayout);
-
 		tpDataViews = new JTabbedPane();
 		tpDataViews.addChangeListener(this);
 		if (Objects.nonNull(treeDataView)) {
@@ -210,9 +213,21 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 //	}
 
 	public final JPanel getView() {
+		return getView(ViewType.FULL);
+	}
+
+	public final JPanel getView(ViewType t) {
 		JPanel view = new JPanel(new BorderLayout());
-		view.add(toolBar, BorderLayout.NORTH);
-		view.add(accessView, BorderLayout.CENTER);
+		if (t == ViewType.FULL) {
+			view.add(toolBar, BorderLayout.NORTH);
+			view.add(accessView, BorderLayout.CENTER);
+		} else if (t == ViewType.EDIT) {
+			view.add(toolBar, BorderLayout.NORTH);
+			view.add(LayoutUtils.initScrollPane(editor), BorderLayout.CENTER);
+		} else if (t == ViewType.SELECT) {
+			view.add(toolBar, BorderLayout.NORTH);
+			view.add(LayoutUtils.initScrollPane(editor), BorderLayout.CENTER);
+		}
 		return view;
 	}
 
@@ -246,6 +261,24 @@ public class EntityAccessController implements ActionListener, LabelsDisplayer, 
 		dialog.setVisible(true);
 		LabelsDisplayerPool.removeLabelsDisplayers(this);
 		return dialogAnswer;
+	}
+
+	<E extends Entity<?>> Optional<E> showCreateDialog(Component childComponent) {
+
+		LabelsDisplayerPool.addLabelsDisplayers(this);
+		JPanel view = getView(ViewType.EDIT);
+		view.add(closeButton, BorderLayout.SOUTH);
+		dialog = DialogUtils.initializeJDialog(childComponent, C.getLabel(C.DLG_EDIT_TITLE), view, true);
+		JMenuBar menuBar = new JMenuBar();
+		JMenu langMenu = DialogUtils.getLanguageSelectionMenu(LumicoreSwing.getApplication());
+		menuBar.add(langMenu);
+		dialog.setJMenuBar(menuBar);
+		dataModel.select(null);
+		refresh();
+		dialog.setVisible(true);
+		LabelsDisplayerPool.removeLabelsDisplayers(this);
+
+		return (Optional<E>) Optional.ofNullable(editor.getCurrentItem());
 	}
 
 	@Override
