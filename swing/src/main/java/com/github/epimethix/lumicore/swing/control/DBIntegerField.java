@@ -128,19 +128,6 @@ public class DBIntegerField implements DBControl<Long>, FocusListener {
 	public void loadLabels() {
 		label.setText(LabelsManagerPool.getLabel(labelKey));
 	}
-//
-//	@Override
-//	public void setOrientation(boolean rtl) {
-//		if (rtl) {
-////			System.out.println("Integer field - setOrientation(rtl)");
-//			label.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-//			control.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-//		} else {
-////			System.out.println("Integer field - setOrientation(ltr)");
-//			label.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-//			control.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-//		}
-//	}
 
 	@SuppressWarnings("incomplete-switch")
 	@Override
@@ -168,6 +155,7 @@ public class DBIntegerField implements DBControl<Long>, FocusListener {
 				break;
 			}
 			control.setBorder(BorderFactory.createLineBorder(Color.RED));
+			control.requestFocusInWindow();
 			return false;
 		}
 		return true;
@@ -176,7 +164,8 @@ public class DBIntegerField implements DBControl<Long>, FocusListener {
 	@Override
 	public Long getValue() {
 		try {
-			Long value = (Long) control.getValue();
+			
+			Long value = Long.parseLong(control.getText().replaceAll("[,.']", ""));
 			if ((Objects.nonNull(value) && value.equals(0L))) {
 				if (validation.isAllowZero()) {
 					return value;
