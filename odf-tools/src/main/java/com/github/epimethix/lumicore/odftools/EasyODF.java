@@ -16,6 +16,7 @@
 package com.github.epimethix.lumicore.odftools;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,9 +46,9 @@ public final class EasyODF {
 		public void setValue(String value) {
 			Node officeStringValue = userFieldDecl.getAttributes().getNamedItem("office:string-value");
 			officeStringValue.setNodeValue(value);
-			userFieldsGet.forEach(uf->uf.setTextContent(value));
+			userFieldsGet.forEach(uf -> uf.setTextContent(value));
 		}
-		
+
 		public String getValue() {
 			return userFieldsGet.stream().findAny().get().getTextContent();
 		}
@@ -115,6 +116,15 @@ public final class EasyODF {
 		return result;
 	}
 
+	public static void fillFields(OdfTextDocument template, Map<String, String> values) {
+		Map<String, UserField> userFields = EasyODF.getUserFields(template);
+		for (String fieldName : userFields.keySet()) {
+			String value = values.getOrDefault(fieldName, "-");
+			UserField uf = userFields.get(fieldName);
+			uf.setValue(value);
+		}
+	}
+
 	/**
 	 * open document using "libreoffice --writer file" command.
 	 * 
@@ -127,10 +137,11 @@ public final class EasyODF {
 	public static final void openOdfTextDocument(OdfTextDocument doc, boolean wait) {
 		try {
 			if (wait) {
-				Process p = Runtime.getRuntime().exec(new String[] { "libreoffice", "--writer", doc.getBaseURI() });
+				Process p = Runtime.getRuntime()
+						.exec(new String[] { "soffice", "--writer", Path.of(doc.getBaseURI()).toString() });
 				p.waitFor();
 			} else {
-				Runtime.getRuntime().exec(new String[] { "libreoffice", "--writer", doc.getBaseURI() });
+				Runtime.getRuntime().exec(new String[] { "soffice", "--writer", Path.of(doc.getBaseURI()).toString() });
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -138,6 +149,62 @@ public final class EasyODF {
 			e.printStackTrace();
 		}
 	}
+
+//	public static final void appendTextDocument(OdfTextDocument doc, OdfTextDocument append) {
+//		try {
+//			OdfTextDocument d = OdfTextDocument.newTextMasterDocument();
+//			d.getContentRoot().appendChild(doc.getContentRoot().cloneNode(true));
+//			d.getContentRoot().appendChild(append.getContentRoot().cloneNode(true));
+//			
+//			
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+
+//	import org.odftoolkit.simple.TextDocument;
+//	import org.odftoolkit.simple.table.Table;
+//	import org.odftoolkit.simple.text.Paragraph;
+//	import org.odftoolkit.simple.text.TextP;
+//	import org.odftoolkit.simple.text.TextSpan;
+//	import org.w3c.dom.Node;
+//	import org.w3c.dom.NodeList;
+
+//	public class AppendODTDocumentsWithImages {
+//	    public static void AppendODTDocumentsWithImages() {
+//	        try {
+//	            // Load the first ODT document
+//	            TextDocument doc1 = TextDocument.loadDocument("path/to/first/document.odt");
+//
+//	            // Load the second ODT document
+//	            TextDocument doc2 = TextDocument.loadDocument("path/to/second/document.odt");
+//
+//	            // Get the content of the second document
+//	            NodeList contentToAppend = doc2.getContentRoot().getChildNodes();
+//
+//	            // Append the content to the first document, including images
+//	            for (int i = 0; i < contentToAppend.getLength(); i++) {
+//	                Node nodeToAppend = contentToAppend.item(i).cloneNode(true);
+//
+//	                if (nodeToAppend instanceof TextSpan) {
+//	                    Paragraph paragraph = doc1.addParagraph("");
+//	                    TextP textP = paragraph.addTextContent(nodeToAppend.getTextContent());
+//	                    paragraph.setOdfElement(nodeToAppend);
+//	                    textP.setOdfElement(nodeToAppend);
+//	                } else if (nodeToAppend instanceof Table) {
+//	                    Table tableToAppend = (Table) nodeToAppend.cloneNode(true);
+//	                    doc1.getContentRoot().appendChild(tableToAppend);
+//	                }
+//	            }
+//
+//	            // Save the modified document to a new file
+//	            doc1.save("path/to/output/combined_document.odt");
+//	        } catch (Exception e) {
+//	            e.printStackTrace();
+//	        }
+//	    }
+//	}
 
 	private EasyODF() {}
 }
