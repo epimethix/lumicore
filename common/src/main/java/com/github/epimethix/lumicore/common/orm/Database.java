@@ -326,6 +326,4 @@ public interface Database {
 	long getInteger(String sqlGetApplicationId);
 
 	Class<? extends Entity<?>> getEntityImplementationClass(Class<? extends Entity<?>> e);
-	
-
 }

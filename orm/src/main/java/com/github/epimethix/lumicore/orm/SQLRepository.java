@@ -1083,6 +1083,9 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 		}
 		index[0] += MAPPING_DEFINITION_PK_LEADING.javaNames.length;
 		if (isNull) {
+			for(JoinMapping jm:JOIN_MAPPINGS) {
+				index[0] = jm.repository.skipSubrecord(index[0]);
+			}
 			return null;
 		}
 		int i = 0;
@@ -1171,6 +1174,15 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 			record = (E) builder.build();
 		}
 		return record;
+	}
+
+	@Override
+	public int skipSubrecord(int i) {
+		i += MAPPING_DEFINITION_PK_LEADING.sqlNames.length;
+		for(JoinMapping jm:JOIN_MAPPINGS) {
+			i = jm.repository.skipSubrecord(i);
+		}
+		return i;
 	}
 
 	private static final Object getValue(Entity<?> o, Method getter, Transform transform)

@@ -199,6 +199,8 @@ public interface Repository<E extends Entity<ID>, ID> {
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SQLException,
 			InstantiationException, NoSuchMethodException, SecurityException;
 
+	int skipSubrecord(int i);
+
 	<T> T newRecord();
 
 	/**
@@ -374,7 +376,7 @@ public interface Repository<E extends Entity<ID>, ID> {
 	/**
 	 * Checks if a record with the given id exists.
 	 * 
-	 * @param id              the id to search for.
+	 * @param id the id to search for.
 	 * 
 	 * @return true a record with the specified id exists, false otherwise
 	 * 
