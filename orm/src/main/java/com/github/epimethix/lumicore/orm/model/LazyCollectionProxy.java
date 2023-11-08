@@ -50,7 +50,6 @@ public class LazyCollectionProxy implements InvocationHandler {
 
 	private List<? extends Entity> getEntities() {
 		if (Objects.isNull(entities)) {
-			System.err.println("loading lazy");
 			try {
 				if (Objects.nonNull(type) && repository instanceof ManyToManyRepository<?, ?, ?>) {
 					ManyToManyRepository<?, ?, ?> mtmRepo = (ManyToManyRepository<?, ?, ?>) repository;

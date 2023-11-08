@@ -19,58 +19,30 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 import com.github.epimethix.lumicore.common.orm.Database;
 import com.github.epimethix.lumicore.common.orm.Repository;
 import com.github.epimethix.lumicore.common.orm.model.Entity;
 import com.github.epimethix.lumicore.common.orm.model.Log;
-//import com.github.epimethix.lumicore.common.orm.model.MutableEntity;
-//import com.github.epimethix.lumicore.common.orm.sqlite.Constraint;
-//import com.github.epimethix.lumicore.common.orm.sqlite.SQLiteUtils;
-//import com.github.epimethix.lumicore.common.orm.sqlite.Constraint.ForeignKeyConstraint;
-//import com.github.epimethix.lumicore.common.orm.sqlite.Constraint.PrimaryKeyConstraint;
-import com.github.epimethix.lumicore.common.swing.DBControl;
-import com.github.epimethix.lumicore.common.swing.EntityEditor;
 import com.github.epimethix.lumicore.common.swing.SwingUI;
-import com.github.epimethix.lumicore.ioc.annotation.Autowired;
 import com.github.epimethix.lumicore.ioc.annotation.Component;
 import com.github.epimethix.lumicore.ioc.annotation.InterceptAfterCall;
 import com.github.epimethix.lumicore.ioc.annotation.InterceptAllowCaller;
 import com.github.epimethix.lumicore.ioc.annotation.InterceptBeforeCall;
 import com.github.epimethix.lumicore.ioc.annotation.Service;
 import com.github.epimethix.lumicore.ioc.annotation.SwingComponent;
-import com.github.epimethix.lumicore.orm.annotation.database.SchemaSync;
-import com.github.epimethix.lumicore.orm.annotation.database.SchemaMetadata;
-import com.github.epimethix.lumicore.orm.annotation.entity.TableSync;
-import com.github.epimethix.lumicore.orm.annotation.entity.Table;
-import com.github.epimethix.lumicore.orm.annotation.field.BigDecimalScale;
-import com.github.epimethix.lumicore.orm.annotation.field.Column;
-import com.github.epimethix.lumicore.orm.annotation.field.JoinTable;
-import com.github.epimethix.lumicore.orm.annotation.field.ManyToMany;
-import com.github.epimethix.lumicore.orm.annotation.field.ManyToOne;
-import com.github.epimethix.lumicore.orm.annotation.field.OneToMany;
-import com.github.epimethix.lumicore.orm.annotation.field.OneToOne;
-import com.github.epimethix.lumicore.orm.annotation.field.PrimaryKey;
-import com.github.epimethix.lumicore.orm.annotation.field.Unique;
-import com.github.epimethix.lumicore.orm.annotation.type.JsonType;
-import com.github.epimethix.lumicore.properties.LumicoreProperties;
 
 public final class Reflect {
 
@@ -838,7 +810,7 @@ public final class Reflect {
 		try {
 			cls = Class.forName(className);
 		} catch (Exception e) {
-//			System.err.printf("Reflect::getClass(String) failed: %s%n", e.getMessage());
+			System.err.printf("Reflect::getClass(String) failed: %s%n", e.getMessage());
 		}
 		return Optional.ofNullable(cls);
 	}
