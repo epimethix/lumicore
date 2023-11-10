@@ -3,7 +3,7 @@ plugins {
 	id "eclipse"
 }
 
-version = '0.0.0'
+version = '0.0.1'
 group = "com.github.epimethix.lumicore";
 
 java {
