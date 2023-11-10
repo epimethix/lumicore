@@ -171,4 +171,9 @@ public class DBBigDecimalField implements DBControl<BigDecimal>, FocusListener {
 			selectAction.accept(getValue());
 		}
 	}
+
+	public void setBigDecimal(BigDecimal valuate) {
+		formattedTextField.setText(
+				String.format(String.format("%%.%df", format.getMaximumFractionDigits()), valuate.doubleValue()));
+	}
 }

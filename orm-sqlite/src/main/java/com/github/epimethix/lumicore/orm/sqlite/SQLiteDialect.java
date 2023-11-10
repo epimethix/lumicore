@@ -238,37 +238,37 @@ public final class SQLiteDialect extends SQLDialect {
 						if (needsRedefinition && autoRedefineEntity) {
 							redefineEntity(repository, es);
 						}
-					} else if (ss.tablesToCreate.contains(repository.getEntityName())) {
-						if (autoDeployNewTables) {
-							repository.create();
-						}
+					}
+				} else if (ss.tablesToCreate.contains(repository.getEntityName())) {
+					if (autoDeployNewTables) {
+						repository.create();
 					}
 				}
-				/**
-				 * Delete Segment
-				 */
-				if (autoDropTables) {
-					for (String delete : ss.tablesToDelete) {
-						if (dropTable(delete)) {
-							LOGGER.info("TABLE DROPPED: %s", delete);
-						} else {
-							LOGGER.info("Table was NOT dropped: %s", delete);
-						}
+			}
+			/**
+			 * Delete Segment
+			 */
+			if (autoDropTables) {
+				for (String delete : ss.tablesToDelete) {
+					if (dropTable(delete)) {
+						LOGGER.info("TABLE DROPPED: %s", delete);
+					} else {
+						LOGGER.info("Table was NOT dropped: %s", delete);
 					}
 				}
+			}
 //			if (upgradeSchema) {
-				if (dbFileStructureVersion < dbJavaStructureVersion) {
-					DB.afterUpgrade(dbFileStructureVersion);
-					DB.setMetaDatabaseStructureVersion(dbJavaStructureVersion);
-					LOGGER.info("database structure version was set to V%d", dbJavaStructureVersion);
-				}
+			if (dbFileStructureVersion < dbJavaStructureVersion) {
+				DB.afterUpgrade(dbFileStructureVersion);
+				DB.setMetaDatabaseStructureVersion(dbJavaStructureVersion);
+				LOGGER.info("database structure version was set to V%d", dbJavaStructureVersion);
+			}
 //			}
-				long dbRequiredAppVersion = DB.getMetaRequiredAppVersion();
-				if (dbRequiredAppVersion < DB.getDatabaseApplication().getRequiredApplicationVersion()) {
-					DB.setMetaRequiredAppVersion(DB.getDatabaseApplication().getRequiredApplicationVersion());
-					LOGGER.info("required application version V%d was set",
-							DB.getDatabaseApplication().getRequiredApplicationVersion());
-				}
+			long dbRequiredAppVersion = DB.getMetaRequiredAppVersion();
+			if (dbRequiredAppVersion < DB.getDatabaseApplication().getRequiredApplicationVersion()) {
+				DB.setMetaRequiredAppVersion(DB.getDatabaseApplication().getRequiredApplicationVersion());
+				LOGGER.info("required application version V%d was set",
+						DB.getDatabaseApplication().getRequiredApplicationVersion());
 			}
 		}
 	}
