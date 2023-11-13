@@ -32,6 +32,7 @@ import javax.swing.SwingUtilities;
 import com.github.epimethix.lumicore.common.Application;
 import com.github.epimethix.lumicore.common.ui.Answer;
 import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayer;
+import com.github.epimethix.lumicore.common.ui.labels.displayer.LabelsDisplayerPool;
 import com.github.epimethix.lumicore.swing.LumicoreSwing;
 import com.github.epimethix.lumicore.swing.util.DialogUtils;
 import com.github.epimethix.lumicore.swing.util.LayoutUtils;
@@ -48,6 +49,14 @@ public class DialogUI implements LabelsDisplayer {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static void showDisposableDialogUI(Dialog d) {
+		DialogUI dui = DialogUI.getDialogUI(d);
+		LabelsDisplayerPool.addLabelsDisplayers(dui);
+		DialogUI.showDialogUI(dui);
+		LabelsDisplayerPool.removeLabelsDisplayers(dui);
+		dui.getDialog().dispose();
 	}
 
 	public static final DialogUI getDialogUI(Dialog d, Application application) {
@@ -71,6 +80,7 @@ public class DialogUI implements LabelsDisplayer {
 		this.dialog = d;
 		this.defaultAnswer = d.getDefaultAnswer();
 		this.jDialog = DialogUtils.initializeJDialog(d.getParent(), d.getTitle(), null, true);
+		d.setDialog(jDialog);
 		buttonPanel = new AnswerButtonPanel(new AbstractAnswerListener(jDialog) {
 			@Override
 			public void onAnswer(Answer answer, JDialog d) {

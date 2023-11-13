@@ -39,5 +39,7 @@ public interface Dialog {
 		return Answer.CANCEL;
 	}
 
+	default void setDialog(JDialog parent) {}
+	
 	void onAnswer(Answer answer, JDialog parent);
 }

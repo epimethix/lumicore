@@ -69,10 +69,10 @@ public class DBIntegerField implements DBControl<Long>, FocusListener {
 		control.setMargin(LayoutUtils.createDefaultTextMargin());
 		control.addFocusListener(this);
 		defaultTextFieldBorder = control.getBorder();
-		clear();
 		if(!isRequired()) {
 			setAllowZero(true);
 		}
+		clear();
 	}
 
 	public final void setGroupingUsed(boolean group) {
