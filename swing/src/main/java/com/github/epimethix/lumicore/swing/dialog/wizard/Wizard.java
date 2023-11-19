@@ -62,4 +62,8 @@ public interface Wizard {
 	void cancel();
 
 	void clear();
+	
+	default void loadPage(int pageIndex) {}
+
+	default void setDialog(JDialog dialog) {}
 }

@@ -230,6 +230,7 @@ public final class WizardUI extends AbstractAnswerListener implements LabelsDisp
 			this.parent = null;
 		}
 		setDialog(dlg);
+		w.setDialog(dialog);
 		dialogController = new DialogController(dialog);
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(DialogUtils.getLanguageSelectionMenu(LumicoreSwing.getApplication()));
@@ -261,7 +262,7 @@ public final class WizardUI extends AbstractAnswerListener implements LabelsDisp
 		wizard.clear();
 		setStep(0, 0);
 		dialogController.setVisible(true);
-		System.err.println("setVisible(true) returned");
+//		System.err.println("setVisible(true) returned");
 	}
 
 	private void step(int inc) {
@@ -304,6 +305,7 @@ public final class WizardUI extends AbstractAnswerListener implements LabelsDisp
 		if (wizard.getPageCount() == 0) {
 			return;
 		}
+		wizard.loadPage(currentPage);
 		if (this.currentPage != currentPage) {
 			this.currentPage = currentPage;
 		}

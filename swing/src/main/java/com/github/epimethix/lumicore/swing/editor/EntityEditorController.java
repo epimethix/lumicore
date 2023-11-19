@@ -39,7 +39,6 @@ import com.github.epimethix.lumicore.common.orm.model.MutableEntity;
 import com.github.epimethix.lumicore.common.swing.DBControl;
 import com.github.epimethix.lumicore.orm.ORM;
 import com.github.epimethix.lumicore.swing.util.GridBagUtils;
-import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
 /**
  * {@code EntityEditorController} manages the creation of editor layout while at
@@ -119,13 +118,21 @@ public class EntityEditorController<E extends Entity<?>> {
 	}
 
 	private final JComponent component;
-	private final GridBagConstraints c;
+	private GridBagConstraints c;
 	private final List<DBControl<?>> controls;
 	private final List<DBControl<?>> writeControls;
 	private int labelPosition;
 	private int formWidth;
 	private int formHeight;
 	private LayoutIncrement nextLayoutIncrement;
+
+	public EntityEditorController() {
+		this(null, null);
+	}
+	
+	public void setConstraints(GridBagConstraints c) {
+		this.c = c;
+	}
 
 	/**
 	 * Creates a new {@code EntityEditorController} with label position
@@ -157,12 +164,12 @@ public class EntityEditorController<E extends Entity<?>> {
 	 *                      {@link DBControl#LABEL_TOP}
 	 */
 	public EntityEditorController(JComponent component, GridBagConstraints c, int labelPosition) {
-		Objects.requireNonNull(component);
-		if (!(component.getLayout() instanceof GridBagLayout)) {
+//		Objects.requireNonNull(component);
+		if (Objects.nonNull(component)&&!(component.getLayout() instanceof GridBagLayout)) {
 			throw new IllegalArgumentException("component must have a GridBagLayout!");
 		}
 		this.component = component;
-		this.c = Objects.requireNonNull(c);
+		this.c = c;
 		this.labelPosition = labelPosition;
 		this.controls = new ArrayList<>();
 		this.writeControls = new ArrayList<>();
@@ -380,36 +387,52 @@ public class EntityEditorController<E extends Entity<?>> {
 		c.weightx = 0.0;
 	}
 
+	public void addTitle(JLabel lbTitle) {
+		addTitle(this.component, lbTitle);
+	}
+
+//	public void addTitle(JComponent container, JLabel lbTitle, LayoutIncrement i) {
+//		addComponent(container, lbTitle, i);
+//	}
+	
 	/**
 	 * Adds a title in the left column and a separator in the right column.
 	 * 
 	 * @param lbTitle the title label
 	 */
-	public void addTitle(JLabel lbTitle) {
+	public void addTitle(JComponent container, JLabel lbTitle) {
 		c.gridwidth = 1;
-		addComponent(lbTitle, LayoutIncrement.RIGHT);
+		addComponent(container, lbTitle, LayoutIncrement.RIGHT);
 		c.weightx = 1.0;
-		addComponent(new JSeparator(), LayoutIncrement.LINE_DOWN);
+		addComponent(container, new JSeparator(), LayoutIncrement.LINE_DOWN);
 		c.weightx = 0.0;
 	}
 
 	public void addComponent(Component label, Component control, LayoutIncrement i) {
+		addComponent(this.component, label, control, i);
+	}
+
+	public void addComponent(JComponent container, Component label, Component control, LayoutIncrement i) {
 		if (labelPosition == DBControl.LABEL_LEFT) {
 			c.gridwidth = 1;
-			addComponent(label, LayoutIncrement.RIGHT);
+			addComponent(container, label, LayoutIncrement.RIGHT);
 			c.weightx = 1.0;
-			addComponent(control, i);
+			addComponent(container, control, i);
 		} else {
 			c.gridwidth = 2;
 			c.weightx = 1.0;
-			addComponent(label, LayoutIncrement.DOWN);
-			addComponent(control, i);
+			addComponent(container, label, LayoutIncrement.DOWN);
+			addComponent(container, control, i);
 		}
 		c.weightx = 0.0;
 	}
 
 	public void addComponent(Component component, LayoutIncrement i) {
-		this.component.add(component, c);
+		addComponent(this.component, component, i);
+	}
+
+	public void addComponent(JComponent container, Component component, LayoutIncrement i) {
+		container.add(component, c);
 		formWidth = Math.max(formWidth, c.gridx + c.gridwidth);
 		formHeight = Math.max(formHeight, c.gridy + c.gridheight);
 		switch (i) {

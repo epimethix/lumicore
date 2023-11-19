@@ -276,13 +276,19 @@ public class DBIntegerField implements DBControl<Long>, FocusListener {
 		}
 	}
 
+	public void setInteger(long i) {
+		setInteger(i, true);
+	}
 	/**
 	 * Calling this method is equivalent to mutation through user input.
 	 * 
 	 * @param i the value to set to the control directly
 	 */
-	public void setInteger(long i) {
+	public void setInteger(long i, boolean triggerOnSelect) {
 		control.setText(String.valueOf(i));
+		if(Objects.nonNull(selectAction) && triggerOnSelect) {
+			selectAction.accept(getValue());
+		}
 	}
 
 	public void addActionListener(ActionListener l) {

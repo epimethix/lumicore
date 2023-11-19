@@ -431,6 +431,10 @@ public interface Query {
 		CriteriaBuilder<T> clear();
 
 		T leave();
+		
+		default Query build() {
+			return leave().build();
+		}
 
 		String[] getCriteriumFields();
 	}

@@ -17,6 +17,7 @@ package com.github.epimethix.lumicore.swing.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
@@ -62,7 +63,7 @@ public class DialogUI implements LabelsDisplayer {
 	public static final DialogUI getDialogUI(Dialog d, Application application) {
 		return new DialogUI(d, application);
 	}
-	
+
 	public static final DialogUI getDialogUI(Dialog d) {
 		return new DialogUI(d, LumicoreSwing.getApplication());
 	}
@@ -105,6 +106,16 @@ public class DialogUI implements LabelsDisplayer {
 		jDialog.setJMenuBar(menuBar);
 		jDialog.setContentPane(view);
 		jDialog.pack();
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		if (jDialog.getWidth() > screenSize.width || jDialog.getHeight() > screenSize.getHeight()) {
+			Dimension dialogSize = new Dimension();
+			dialogSize.width = jDialog.getWidth() > screenSize.width ? (int) (screenSize.width * 0.8)
+					: jDialog.getWidth();
+			dialogSize.height = jDialog.getHeight() > screenSize.height ? (int) (screenSize.height * 0.8)
+					: jDialog.getHeight();
+			jDialog.setPreferredSize(dialogSize);
+			jDialog.setSize(dialogSize);
+		}
 		jDialog.setMinimumSize(jDialog.getSize());
 		jDialog.setLocationRelativeTo(jDialog.getParent());
 		jDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);

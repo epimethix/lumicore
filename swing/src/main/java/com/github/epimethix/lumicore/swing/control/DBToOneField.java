@@ -208,4 +208,17 @@ public class DBToOneField<E extends Entity<?>> implements DBControl<E>, ActionLi
 			refreshControlLabel();
 		}
 	}
+
+	public void setObject(E object) {
+		setObject(object, true);
+	}
+	
+	public void setObject(E object, boolean triggerOnSelection) {
+		this.value = object;
+		refreshControlLabel();
+		if(Objects.nonNull(selectAction) && triggerOnSelection) {
+			selectAction.accept(this.value);
+		}
+
+	}
 }

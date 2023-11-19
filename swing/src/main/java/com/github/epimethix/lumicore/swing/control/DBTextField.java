@@ -193,7 +193,14 @@ public class DBTextField implements DBControl<String>, FocusListener {
 	}
 
 	public void setText(String text) {
+		setText(text, true);
+	}
+
+	public void setText(String text, boolean triggerOnSelect) {
 		control.setText(text);
+		if (Objects.nonNull(selectAction) && triggerOnSelect) {
+			selectAction.accept(getValue());
+		}
 	}
 
 	public void setAutoCompleteSuggestions(List<String> series) {
