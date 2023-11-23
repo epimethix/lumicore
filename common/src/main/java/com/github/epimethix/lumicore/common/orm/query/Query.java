@@ -46,7 +46,7 @@ import com.github.epimethix.lumicore.common.orm.sqlite.JoinOperator;
  * @author epimethix
  *
  */
-public interface Query {
+public interface Query<Q extends Query<Q>> {
 
 	/**
 	 * Any Query may have an acting user.
@@ -74,22 +74,22 @@ public interface Query {
 	 * 
 	 * @return the builder
 	 */
-	QueryBuilder builder();
+	QueryBuilder<Q> builder();
 
 	/**
 	 * The QueryBuilder interface is extended by the specific query operation
 	 * interfaces
 	 */
-	public interface QueryBuilder {
+	public interface QueryBuilder<Q extends Query<Q>> {
 
-		QueryBuilder withUser(String user);
+		QueryBuilder<Q> withUser(String user);
 
-		QueryBuilder withCloseConnection(boolean closeConnection);
+		QueryBuilder<Q> withCloseConnection(boolean closeConnection);
 
-		Query build();
+		Q build();
 	}
 
-	public interface CreateQuery extends Query {
+	public interface CreateQuery extends Query<CreateQuery> {
 		CreateBuilder builder();
 	}
 
@@ -97,7 +97,7 @@ public interface Query {
 	 * The CreateBuilder implmentation should have a constructor that receives the
 	 * schema name, the entity class and the field definitions.
 	 */
-	public interface CreateBuilder extends QueryBuilder {
+	public interface CreateBuilder extends QueryBuilder<CreateQuery> {
 		CreateBuilder temp();
 
 		CreateBuilder ifNotExists();
@@ -112,10 +112,10 @@ public interface Query {
 
 		SelectBuilder select(Class<? extends Entity<?>> e, String... fields);
 
-		CreateQuery build();
+//		CreateQuery build();
 	}
 
-	public interface CreateIndexQuery extends Query {
+	public interface CreateIndexQuery extends Query<CreateIndexQuery> {
 
 		Object[] getCriteriumValues();
 
@@ -127,7 +127,7 @@ public interface Query {
 	 * the schema name, the entity class, the index name and the column names to
 	 * index.
 	 */
-	public interface CreateIndexBuilder extends QueryBuilder {
+	public interface CreateIndexBuilder extends QueryBuilder<CreateIndexQuery> {
 		CreateIndexBuilder unique();
 
 		CreateIndexBuilder ifNotExists();
@@ -135,16 +135,16 @@ public interface Query {
 		/**
 		 * Synonym for {@link #withCriteria(String, Class)}
 		 */
-		default CriteriaBuilder<CreateIndexBuilder> where(String schemaName, Class<? extends Entity<?>> e) {
+		default CriteriaBuilder<CreateIndexBuilder, CreateIndexQuery> where(String schemaName, Class<? extends Entity<?>> e) {
 			return withCriteria(schemaName, e);
 		}
 
-		CriteriaBuilder<CreateIndexBuilder> withCriteria(String schemaName, Class<? extends Entity<?>> e);
+		CriteriaBuilder<CreateIndexBuilder, CreateIndexQuery> withCriteria(String schemaName, Class<? extends Entity<?>> e);
 
-		CreateIndexQuery build();
+//		CreateIndexQuery build();
 	}
 
-	public interface InsertQuery extends Query {
+	public interface InsertQuery extends Query<InsertQuery> {
 		String[] getFields();
 
 		List<? extends Entity<?>> getRecords();
@@ -158,7 +158,7 @@ public interface Query {
 	 * The InsertBuilder implementation should have a constructor that receives the
 	 * schema name, the entity class and the columns to set.
 	 */
-	public interface InsertBuilder extends QueryBuilder {
+	public interface InsertBuilder extends QueryBuilder<InsertQuery> {
 		default InsertBuilder values(Entity<?> record) {
 			return values(Arrays.asList(record));
 		}
@@ -167,10 +167,10 @@ public interface Query {
 
 		SelectBuilder select(String schemaName, Class<? extends Entity<?>> entity, String... fields);
 
-		InsertQuery build();
+//		InsertQuery build();
 	}
 
-	public interface SelectQuery extends Query {
+	public interface SelectQuery extends Query<SelectQuery> {
 		Object[] getCriteriumValues();
 
 		SelectBuilder builder();
@@ -184,7 +184,7 @@ public interface Query {
 	 * SelectBuilder implementation should have a constructor that receives schema
 	 * name, Entity class and the fields to select.
 	 */
-	public interface SelectBuilder extends QueryBuilder {
+	public interface SelectBuilder extends QueryBuilder<SelectQuery> {
 
 		/**
 		 * The constructor of the implementation class should receive the select
@@ -221,18 +221,18 @@ public interface Query {
 		/**
 		 * Synonym for {@link #withCriteria(String, Class)}
 		 */
-		default CriteriaBuilder<SelectBuilder> where(String schemaName, Class<? extends Entity<?>> e) {
+		default CriteriaBuilder<SelectBuilder, SelectQuery> where(String schemaName, Class<? extends Entity<?>> e) {
 			return withCriteria(schemaName, e);
 		}
 
 		/**
 		 * Synonym for {@link #withCriteria(String, Class)}
 		 */
-		default CriteriaBuilder<SelectBuilder> having(String schemaName, Class<? extends Entity<?>> e) {
+		default CriteriaBuilder<SelectBuilder, SelectQuery> having(String schemaName, Class<? extends Entity<?>> e) {
 			return withCriteria(schemaName, e);
 		}
 
-		CriteriaBuilder<SelectBuilder> withCriteria(String schemaName, Class<? extends Entity<?>> e);
+		CriteriaBuilder<SelectBuilder, SelectQuery> withCriteria(String schemaName, Class<? extends Entity<?>> e);
 
 		SelectBuilder groupBy(String schemaName, Class<? extends Entity<?>> e, String field, String... fields);
 
@@ -256,9 +256,9 @@ public interface Query {
 
 		SelectBuilder page(long page);
 
-		SelectQuery build();
+//		SelectQuery build();
 
-		default CriteriaBuilder<SelectBuilder> withCriteria(Repository<?, ?> r) {
+		default CriteriaBuilder<SelectBuilder, SelectQuery> withCriteria(Repository<?, ?> r) {
 			return withCriteria(r.getSchemaName(), r.getEntityClass());
 		}
 
@@ -293,7 +293,7 @@ public interface Query {
 		SelectBuilder selectAverage(String schemaName, Class<? extends Entity<?>> e, String field);
 	}
 
-	public interface UpdateQuery extends Query {
+	public interface UpdateQuery extends Query<UpdateQuery> {
 		Object[] getSetValues();
 
 		Object[] getCriteriumValues();
@@ -314,31 +314,31 @@ public interface Query {
 	 * UpdateBuilder implementation should have a constructor that receives the
 	 * entity to update
 	 */
-	public interface UpdateBuilder extends QueryBuilder {
+	public interface UpdateBuilder extends QueryBuilder<UpdateQuery> {
 
 		UpdateBuilder set(String field, Object value);
 
 		/**
 		 * Synonym for {@link #withCriteria(String, Class)}
 		 */
-		default CriteriaBuilder<UpdateBuilder> where(String schemaName, Class<? extends Entity<?>> e) {
+		default CriteriaBuilder<UpdateBuilder, UpdateQuery> where(String schemaName, Class<? extends Entity<?>> e) {
 			return withCriteria(schemaName, e);
 		}
 
-		default CriteriaBuilder<UpdateBuilder> where(Repository<?, ?> r) {
+		default CriteriaBuilder<UpdateBuilder, UpdateQuery> where(Repository<?, ?> r) {
 			return withCriteria(r.getSchemaName(), r.getEntityClass());
 		}
 
-		default CriteriaBuilder<UpdateBuilder> withCriteria(Repository<?, ?> r) {
+		default CriteriaBuilder<UpdateBuilder, UpdateQuery> withCriteria(Repository<?, ?> r) {
 			return withCriteria(r.getSchemaName(), r.getEntityClass());
 		}
 
-		CriteriaBuilder<UpdateBuilder> withCriteria(String schemaName, Class<? extends Entity<?>> e);
+		CriteriaBuilder<UpdateBuilder, UpdateQuery> withCriteria(String schemaName, Class<? extends Entity<?>> e);
 
-		UpdateQuery build();
+//		UpdateQuery build();
 	}
 
-	public interface DeleteQuery extends Query {
+	public interface DeleteQuery extends Query<DeleteQuery> {
 		Object[] getCriteriumValues();
 
 		DeleteQuery withCriteriumValues(Object... values);
@@ -346,25 +346,25 @@ public interface Query {
 		DeleteBuilder builder();
 	}
 
-	public interface DeleteBuilder extends QueryBuilder {
+	public interface DeleteBuilder extends QueryBuilder<DeleteQuery> {
 		/**
 		 * Synonym for {@link #withCriteria(String, Class)}
 		 */
-		default CriteriaBuilder<DeleteBuilder> where(String schemaName, Class<? extends Entity<?>> e) {
+		default CriteriaBuilder<DeleteBuilder, DeleteQuery> where(String schemaName, Class<? extends Entity<?>> e) {
 			return withCriteria(schemaName, e);
 		}
 
-		default CriteriaBuilder<DeleteBuilder> where(Repository<?, ?> r) {
+		default CriteriaBuilder<DeleteBuilder, DeleteQuery> where(Repository<?, ?> r) {
 			return withCriteria(r.getSchemaName(), r.getEntityClass());
 		}
 
-		default CriteriaBuilder<DeleteBuilder> withCriteria(Repository<?, ?> r) {
+		default CriteriaBuilder<DeleteBuilder, DeleteQuery> withCriteria(Repository<?, ?> r) {
 			return withCriteria(r.getSchemaName(), r.getEntityClass());
 		}
 
-		CriteriaBuilder<DeleteBuilder> withCriteria(String schemaName, Class<? extends Entity<?>> e);
+		CriteriaBuilder<DeleteBuilder, DeleteQuery> withCriteria(String schemaName, Class<? extends Entity<?>> e);
 
-		DeleteQuery build();
+//		DeleteQuery build();
 	}
 
 	/**
@@ -372,55 +372,55 @@ public interface Query {
 	 * parent QueryBuilder. that way the parent builder should be returned in the
 	 * CriteriaBuilder.leave() method.
 	 */
-	public interface CriteriaBuilder<T extends QueryBuilder> {
+	public interface CriteriaBuilder<T extends QueryBuilder<Q>, Q extends Query<Q>> {
 
-		CriteriaBuilder<T> openBracket();
+		CriteriaBuilder<T, Q> openBracket();
 
-		CriteriaBuilder<T> closeBracket();
+		CriteriaBuilder<T, Q> closeBracket();
 
-		CriteriaBuilder<T> and();
+		CriteriaBuilder<T, Q> and();
 
-		CriteriaBuilder<T> or();
+		CriteriaBuilder<T, Q> or();
 
-		CriteriaBuilder<T> not();
+		CriteriaBuilder<T, Q> not();
 
-		CriteriaBuilder<T> withAlias(String alias);
+		CriteriaBuilder<T, Q> withAlias(String alias);
 
-		CriteriaBuilder<T> in(String field, List<Object> values);
+		CriteriaBuilder<T, Q> in(String field, List<Object> values);
 
-		CriteriaBuilder<T> between(String field, Number start, Number end);
+		CriteriaBuilder<T, Q> between(String field, Number start, Number end);
 
-		CriteriaBuilder<T> isNull(String field);
+		CriteriaBuilder<T, Q> isNull(String field);
 
-		CriteriaBuilder<T> isNotNull(String field);
+		CriteriaBuilder<T, Q> isNotNull(String field);
 
-		CriteriaBuilder<T> isZero(String field);
+		CriteriaBuilder<T, Q> isZero(String field);
 
-		CriteriaBuilder<T> isNotZero(String field);
+		CriteriaBuilder<T, Q> isNotZero(String field);
 
-		CriteriaBuilder<T> equals(String field, String value);
+		CriteriaBuilder<T, Q> equals(String field, String value);
 
-		CriteriaBuilder<T> equals(String field, Number value);
+		CriteriaBuilder<T, Q> equals(String field, Number value);
 
-		CriteriaBuilder<T> equals(String field, Object value);
+		CriteriaBuilder<T, Q> equals(String field, Object value);
 
 		/**
 		 * Synonym for {@link #matches(String, String, char)} with backslash (\) as
 		 * escape character
 		 */
-		default CriteriaBuilder<T> matches(String field, String value) {
+		default CriteriaBuilder<T, Q> matches(String field, String value) {
 			return matches(field, value, '\\');
 		}
 
-		CriteriaBuilder<T> matches(String field, String value, char escape);
+		CriteriaBuilder<T, Q> matches(String field, String value, char escape);
 
-		CriteriaBuilder<T> lessThan(String field, Number value);
+		CriteriaBuilder<T, Q> lessThan(String field, Number value);
 
-		CriteriaBuilder<T> lessThanEquals(String field, Number value);
+		CriteriaBuilder<T, Q> lessThanEquals(String field, Number value);
 
-		CriteriaBuilder<T> greaterThan(String field, Number value);
+		CriteriaBuilder<T, Q> greaterThan(String field, Number value);
 
-		CriteriaBuilder<T> greaterThanEquals(String field, Number value);
+		CriteriaBuilder<T, Q> greaterThanEquals(String field, Number value);
 
 		String buildCriteria();
 
@@ -428,11 +428,11 @@ public interface Query {
 
 		boolean isEmpty();
 
-		CriteriaBuilder<T> clear();
+		CriteriaBuilder<T, Q> clear();
 
 		T leave();
 		
-		default Query build() {
+		default Q build() {
 			return leave().build();
 		}
 

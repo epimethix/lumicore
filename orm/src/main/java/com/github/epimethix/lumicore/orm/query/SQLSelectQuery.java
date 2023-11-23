@@ -20,7 +20,7 @@ import java.util.Objects;
 import com.github.epimethix.lumicore.common.orm.query.Query.SelectQuery;
 
 
- final class SQLSelectQuery extends DefaultQuery implements SelectQuery {
+ final class SQLSelectQuery extends DefaultQuery<SelectQuery> implements SelectQuery {
 	private final Object[] criteriumValues;
 	private  final SQLSelectBuilder b;
 

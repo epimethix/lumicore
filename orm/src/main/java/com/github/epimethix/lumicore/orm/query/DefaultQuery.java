@@ -20,7 +20,7 @@ import java.util.Optional;
 
 import com.github.epimethix.lumicore.common.orm.query.Query;
 
-abstract class DefaultQuery implements Query {
+abstract class DefaultQuery<Q extends Query<Q>> implements Query<Q> {
 
 	private final String user;
 	private final Boolean isCloseConnection;

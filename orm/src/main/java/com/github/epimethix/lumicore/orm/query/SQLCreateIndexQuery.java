@@ -17,7 +17,7 @@ package com.github.epimethix.lumicore.orm.query;
 
 import com.github.epimethix.lumicore.common.orm.query.Query.CreateIndexQuery;
 
-final class SQLCreateIndexQuery extends DefaultQuery implements CreateIndexQuery {
+final class SQLCreateIndexQuery extends DefaultQuery<CreateIndexQuery> implements CreateIndexQuery {
 	private final Object[] criteriumValues;
 	private final SQLCreateIndexBuilder b;
 

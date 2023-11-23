@@ -17,7 +17,7 @@ package com.github.epimethix.lumicore.orm.query;
 
 import com.github.epimethix.lumicore.common.orm.query.Query.CreateQuery;
 
-final class SQLCreateQuery extends DefaultQuery implements CreateQuery {
+final class SQLCreateQuery extends DefaultQuery<CreateQuery> implements CreateQuery {
 	private final SQLCreateBuilder b;
 
 	SQLCreateQuery(String user, Boolean isCloseConnection, String queryString, SQLCreateBuilder b) {

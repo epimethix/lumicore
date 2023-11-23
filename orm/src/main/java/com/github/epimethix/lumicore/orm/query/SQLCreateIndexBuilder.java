@@ -30,7 +30,7 @@ public final class SQLCreateIndexBuilder implements CreateIndexBuilder {
 	private final String schemaName;
 	private final Class<? extends Entity<?>> e;
 	private final String indexName;
-	private final CriteriaBuilderImpl<CreateIndexBuilder> criteriaBuilder;
+	private final CriteriaBuilderImpl<CreateIndexBuilder, CreateIndexQuery> criteriaBuilder;
 	private boolean unique;
 	private boolean ifNotExists;
 	private String[] fields;
@@ -84,7 +84,7 @@ public final class SQLCreateIndexBuilder implements CreateIndexBuilder {
 	}
 
 	@Override
-	public CriteriaBuilder<CreateIndexBuilder> withCriteria(String schemaName, Class<? extends Entity<?>> e) {
+	public CriteriaBuilder<CreateIndexBuilder, CreateIndexQuery> withCriteria(String schemaName, Class<? extends Entity<?>> e) {
 		return criteriaBuilder.withAlias("T01");
 	}
 

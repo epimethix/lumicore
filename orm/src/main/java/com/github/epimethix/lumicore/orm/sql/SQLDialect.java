@@ -25,11 +25,15 @@ import com.github.epimethix.lumicore.common.orm.model.Entity;
 import com.github.epimethix.lumicore.common.orm.query.Query;
 import com.github.epimethix.lumicore.common.orm.query.Query.CreateBuilder;
 import com.github.epimethix.lumicore.common.orm.query.Query.CreateIndexBuilder;
+import com.github.epimethix.lumicore.common.orm.query.Query.CreateIndexQuery;
 import com.github.epimethix.lumicore.common.orm.query.Query.CriteriaBuilder;
 import com.github.epimethix.lumicore.common.orm.query.Query.DeleteBuilder;
+import com.github.epimethix.lumicore.common.orm.query.Query.DeleteQuery;
 import com.github.epimethix.lumicore.common.orm.query.Query.InsertBuilder;
 import com.github.epimethix.lumicore.common.orm.query.Query.SelectBuilder;
+import com.github.epimethix.lumicore.common.orm.query.Query.SelectQuery;
 import com.github.epimethix.lumicore.common.orm.query.Query.UpdateBuilder;
+import com.github.epimethix.lumicore.common.orm.query.Query.UpdateQuery;
 import com.github.epimethix.lumicore.common.orm.sql.ConnectionFactory;
 import com.github.epimethix.lumicore.common.orm.sql.Dialect;
 import com.github.epimethix.lumicore.common.orm.sqlite.Constraint;
@@ -229,7 +233,7 @@ public abstract class SQLDialect implements Dialect {
 
 	@Override
 	public String compileCreateIndex(boolean unique, boolean ifNotExists, String indexName, String schemaName,
-			Class<? extends Entity<?>> e, String[] fields, CriteriaBuilder<CreateIndexBuilder> criteriaBuilder) {
+			Class<? extends Entity<?>> e, String[] fields, CriteriaBuilder<CreateIndexBuilder, CreateIndexQuery> criteriaBuilder) {
 		StringBuilder b = new StringBuilder();
 		b.append("CREATE ");
 		if (unique) {
@@ -294,7 +298,7 @@ public abstract class SQLDialect implements Dialect {
 	@Override
 	public String compileSelect(Query prev, boolean distinct, StringBuilder selectionBuilder, String tableName,
 			String alias, StringBuilder joinBuilder, StringBuilder groupByBuilder,
-			CriteriaBuilder<SelectBuilder> criteriaBuilder, StringBuilder orderByBuilder, String nulls, Long limit,
+			CriteriaBuilder<SelectBuilder, SelectQuery> criteriaBuilder, StringBuilder orderByBuilder, String nulls, Long limit,
 			Long defLimit, Long offset) {
 		StringBuilder b = new StringBuilder();
 		if (Objects.nonNull(prev)) {
@@ -334,7 +338,7 @@ public abstract class SQLDialect implements Dialect {
 
 	@Override
 	public String compileUpdate(String schemaName, Class<? extends Entity<?>> e, String[] fields,
-			CriteriaBuilder<UpdateBuilder> criteriaBuilder) {
+			CriteriaBuilder<UpdateBuilder, UpdateQuery> criteriaBuilder) {
 		StringBuilder b = new StringBuilder();
 		b.append("UPDATE `").append(schemaName).append("`.`").append(Entity.getEntityName(e)).append("` AS T01 ");
 		b.append("SET ");
@@ -356,7 +360,7 @@ public abstract class SQLDialect implements Dialect {
 
 	@Override
 	public String compileDelete(Object schemaName, Class<? extends Entity<?>> e,
-			CriteriaBuilder<DeleteBuilder> criteriaBuilder) {
+			CriteriaBuilder<DeleteBuilder, DeleteQuery> criteriaBuilder) {
 		StringBuilder b = new StringBuilder("DELETE FROM ");
 		b.append("`").append(schemaName).append("`.`").append(Entity.getEntityName(e)).append("` AS T01");
 		if (!criteriaBuilder.isEmpty()) {

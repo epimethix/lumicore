@@ -617,7 +617,7 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 //					counter++;
 				} else {
 					FLD_NON_PK_MAPPING_TYPES[counterTrailing] =
-							FLD_MAPPING_TYPES_PK_LEADING[counter] = 
+							FLD_MAPPING_TYPES_PK_LEADING[counter] =
 							fdc.mappingType;
 					FLD_NON_PK_JAVA_NAMES[counterTrailing] =
 							FLD_JAVA_NAMES_PK_LEADING[counter] = 
@@ -1083,7 +1083,7 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 		}
 		index[0] += MAPPING_DEFINITION_PK_LEADING.javaNames.length;
 		if (isNull) {
-			for(JoinMapping jm:JOIN_MAPPINGS) {
+			for (JoinMapping jm : JOIN_MAPPINGS) {
 				index[0] = jm.repository.skipSubrecord(index[0]);
 			}
 			return null;
@@ -1179,7 +1179,7 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 	@Override
 	public int skipSubrecord(int i) {
 		i += MAPPING_DEFINITION_PK_LEADING.sqlNames.length;
-		for(JoinMapping jm:JOIN_MAPPINGS) {
+		for (JoinMapping jm : JOIN_MAPPINGS) {
 			i = jm.repository.skipSubrecord(i);
 		}
 		return i;
@@ -1494,7 +1494,8 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 	}
 
 	@Override
-	public List<E> selectCriteria(Function<CriteriaBuilder<SelectBuilder>, CriteriaBuilder<SelectBuilder>> b)
+	public List<E> selectCriteria(
+			Function<CriteriaBuilder<SelectBuilder, SelectQuery>, CriteriaBuilder<SelectBuilder, SelectQuery>> b)
 			throws SQLException {
 		return select(b.apply(DEFAULT_SELECT_QUERY.builder().withCriteria(this)).leave().build());
 	}
@@ -2124,7 +2125,7 @@ public abstract class SQLRepository<E extends Entity<ID>, ID> implements Reposit
 			}
 			{
 				int i = 0;
-				CriteriaBuilder<UpdateBuilder> cb = sqlUpdateDeltaBuilder.withCriteria(this);
+				CriteriaBuilder<UpdateBuilder, UpdateQuery> cb = sqlUpdateDeltaBuilder.withCriteria(this);
 				for (String n : MAPPING_DEFINITION_PK.sqlNames) {
 					if (i > 0) {
 						cb.and();

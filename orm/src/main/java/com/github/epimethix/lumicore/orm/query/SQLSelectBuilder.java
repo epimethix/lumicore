@@ -42,7 +42,7 @@ public final class SQLSelectBuilder implements SelectBuilder {
 	private boolean distinct;
 	private final StringBuilder selectionBuilder;
 	private final StringBuilder joinBuilder;
-	private final CriteriaBuilderImpl<SelectBuilder> criteriaBuilder;
+	private final CriteriaBuilderImpl<SelectBuilder, SelectQuery> criteriaBuilder;
 	private final StringBuilder groupByBuilder;
 	private final StringBuilder orderByBuilder;
 	private String nulls;
@@ -255,7 +255,7 @@ public final class SQLSelectBuilder implements SelectBuilder {
 	}
 
 	@Override
-	public CriteriaBuilder<SelectBuilder> withCriteria(String schemaName, Class<? extends Entity<?>> e) {
+	public CriteriaBuilder<SelectBuilder, SelectQuery> withCriteria(String schemaName, Class<? extends Entity<?>> e) {
 		String alias = getLastAlias(schemaName, e);
 		return criteriaBuilder.withAlias(alias);
 	}
@@ -342,7 +342,7 @@ public final class SQLSelectBuilder implements SelectBuilder {
 
 	@Override
 	public SelectQuery build() {
-		Query prev = null;
+		Query<?> prev = null;
 		if (Objects.nonNull(previousBuilder)) {
 			prev = previousBuilder.build();
 		}

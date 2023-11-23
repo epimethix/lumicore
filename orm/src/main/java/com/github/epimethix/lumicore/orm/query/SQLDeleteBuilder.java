@@ -25,7 +25,7 @@ public final class SQLDeleteBuilder implements DeleteBuilder {
 	private final SQLDialect dialect;
 	private String user;
 	private Boolean closeConnection;
-	private final CriteriaBuilderImpl<DeleteBuilder> criteriaBuilder;
+	private final CriteriaBuilderImpl<DeleteBuilder, DeleteQuery> criteriaBuilder;
 	private final String schemaName;
 	private final Class<? extends Entity<?>> e;
 
@@ -58,7 +58,7 @@ public final class SQLDeleteBuilder implements DeleteBuilder {
 	}
 
 	@Override
-	public CriteriaBuilder<DeleteBuilder> withCriteria(String schemaName, Class<? extends Entity<?>> e) {
+	public CriteriaBuilder<DeleteBuilder, DeleteQuery> withCriteria(String schemaName, Class<? extends Entity<?>> e) {
 		return criteriaBuilder.withAlias("T01");
 	}
 

@@ -20,10 +20,14 @@ import java.util.List;
 import com.github.epimethix.lumicore.common.orm.model.Entity;
 import com.github.epimethix.lumicore.common.orm.query.Query;
 import com.github.epimethix.lumicore.common.orm.query.Query.CreateIndexBuilder;
+import com.github.epimethix.lumicore.common.orm.query.Query.CreateIndexQuery;
 import com.github.epimethix.lumicore.common.orm.query.Query.CriteriaBuilder;
 import com.github.epimethix.lumicore.common.orm.query.Query.DeleteBuilder;
+import com.github.epimethix.lumicore.common.orm.query.Query.DeleteQuery;
 import com.github.epimethix.lumicore.common.orm.query.Query.SelectBuilder;
+import com.github.epimethix.lumicore.common.orm.query.Query.SelectQuery;
 import com.github.epimethix.lumicore.common.orm.query.Query.UpdateBuilder;
+import com.github.epimethix.lumicore.common.orm.query.Query.UpdateQuery;
 import com.github.epimethix.lumicore.common.orm.sqlite.Constraint;
 import com.github.epimethix.lumicore.common.orm.sqlite.Definition;
 
@@ -34,20 +38,20 @@ public interface QueryCompiler {
 			List<Definition> definitions, List<Constraint> constraints, boolean strict, boolean withoutRowid);
 
 	String compileCreateIndex(boolean unique, boolean ifNotExists, String indexName, String schemaName,
-			Class<? extends Entity<?>> e, String[] fields, CriteriaBuilder<CreateIndexBuilder> criteriaBuilder);
+			Class<? extends Entity<?>> e, String[] fields, CriteriaBuilder<CreateIndexBuilder, CreateIndexQuery> criteriaBuilder);
 	
 	String compileInsert(Object schemaName, Class<? extends Entity<?>> e, String[] fields,
 			List<? extends Entity<?>> records);
 
 	String compileSelect(Query prev, boolean distinct, StringBuilder selectionBuilder, String tableName, String alias,
-			StringBuilder joinBuilder, StringBuilder groupByBuilder, CriteriaBuilder<SelectBuilder> criteriaBuilder,
+			StringBuilder joinBuilder, StringBuilder groupByBuilder, CriteriaBuilder<SelectBuilder, SelectQuery> criteriaBuilder,
 			StringBuilder orderByBuilder, String nulls, Long limit, Long defLimit, Long offset);
 
 	String compileUpdate(String schemaName, Class<? extends Entity<?>> e, String[] fields,
-			CriteriaBuilder<UpdateBuilder> criteriaBuilder);
+			CriteriaBuilder<UpdateBuilder, UpdateQuery> criteriaBuilder);
 
 	String compileDelete(Object schemaName, Class<? extends Entity<?>> e,
-			CriteriaBuilder<DeleteBuilder> criteriaBuilder);
+			CriteriaBuilder<DeleteBuilder, DeleteQuery> criteriaBuilder);
 	
 	String getQuotationChar();
 

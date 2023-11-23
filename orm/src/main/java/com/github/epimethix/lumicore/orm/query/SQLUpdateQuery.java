@@ -17,7 +17,7 @@ package com.github.epimethix.lumicore.orm.query;
 
 import com.github.epimethix.lumicore.common.orm.query.Query.UpdateQuery;
 
-final class SQLUpdateQuery extends DefaultQuery implements UpdateQuery {
+final class SQLUpdateQuery extends DefaultQuery<UpdateQuery> implements UpdateQuery {
 
 	private final String[] setFields;
 	private final Object[] setValues;

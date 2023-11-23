@@ -20,7 +20,7 @@ import java.util.List;
 import com.github.epimethix.lumicore.common.orm.model.Entity;
 import com.github.epimethix.lumicore.common.orm.query.Query.InsertQuery;
 
-final class SQLInsertQuery extends DefaultQuery implements InsertQuery {
+final class SQLInsertQuery extends DefaultQuery<InsertQuery> implements InsertQuery {
 	private String[] fields;
 	private List<? extends Entity<?>> records;
 	private final SQLInsertBuilder b;

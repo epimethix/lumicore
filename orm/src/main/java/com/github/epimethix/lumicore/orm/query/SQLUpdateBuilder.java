@@ -28,7 +28,7 @@ public final class SQLUpdateBuilder implements UpdateBuilder {
 	private final SQLDialect dialect;
 	private String user;
 	private Boolean closeConnection;
-	private final CriteriaBuilderImpl<UpdateBuilder> criteriaBuilder;
+	private final CriteriaBuilderImpl<UpdateBuilder, UpdateQuery> criteriaBuilder;
 	private final List<String> fields;
 	private final List<Object> setValues;
 	private final String schemaName;
@@ -75,7 +75,7 @@ public final class SQLUpdateBuilder implements UpdateBuilder {
 	}
 
 	@Override
-	public CriteriaBuilder<UpdateBuilder> withCriteria(String schemaName, Class<? extends Entity<?>> e) {
+	public CriteriaBuilder<UpdateBuilder, UpdateQuery> withCriteria(String schemaName, Class<? extends Entity<?>> e) {
 		return criteriaBuilder.withAlias("T01");
 	}
 

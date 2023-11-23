@@ -17,7 +17,7 @@ package com.github.epimethix.lumicore.orm.query;
 
 import com.github.epimethix.lumicore.common.orm.query.Query.DeleteQuery;
 
-final class SQLDeleteQuery extends DefaultQuery implements DeleteQuery {
+final class SQLDeleteQuery extends DefaultQuery<DeleteQuery> implements DeleteQuery {
 	private final Object[] criteriumValues;
 	private final SQLDeleteBuilder b;
 

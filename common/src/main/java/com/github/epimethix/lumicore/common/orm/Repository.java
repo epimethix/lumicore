@@ -272,7 +272,8 @@ public interface Repository<E extends Entity<ID>, ID> {
 	 */
 	long getDefaultLimit();
 
-	List<E> selectCriteria(Function<CriteriaBuilder<SelectBuilder>, CriteriaBuilder<SelectBuilder>> b)
+	List<E> selectCriteria(
+			Function<CriteriaBuilder<SelectBuilder, SelectQuery>, CriteriaBuilder<SelectBuilder, SelectQuery>> b)
 			throws SQLException;
 
 	default Optional<E> selectFirst(SelectQuery q) throws SQLException {
