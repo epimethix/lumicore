@@ -19,7 +19,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,6 +37,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -83,6 +94,10 @@ public class TranslationModel {
 	private final File relativeParent;
 	private final int relativeIndex;
 
+	private FileWatcher fileWatcher;
+
+	private Set<ChangeListener> listeners = new HashSet<>();
+
 //	public TranslationModel(File file) throws IOException {
 //		this(new File("").getAbsoluteFile(), file);
 //	}
@@ -112,8 +127,105 @@ public class TranslationModel {
 			}
 		}
 		refresh();
+//		watchForChanges();
 	}
 
+//	private void watchForChanges() {
+//		try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
+//		    final WatchKey watchKey = file.toPath().getParent().register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
+//		    while (true) {
+//		        final WatchKey wk = watchService.take();
+//		        for (WatchEvent<?> event : wk.pollEvents()) {
+//		            //we only register "ENTRY_MODIFY" so the context is always a Path.
+//		            final Path changed = (Path) event.context();
+//		            System.out.println(changed);
+//		            if (changed.endsWith("myFile.txt")) {
+//		                System.out.println("My file has changed");
+//		            }
+//		        }
+//		        // reset the key
+//		        boolean valid = wk.reset();
+//		        if (!valid) {
+//		            System.out.println("Key has been unregisterede");
+//		        }
+//		    }
+//		} catch (IOException | InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		fileWatcher = new FileWatcher(file);
+//		fileWatcher.start();
+//	}
+
+	private class FileWatcher extends Thread {
+		private final File file;
+		private AtomicBoolean stop = new AtomicBoolean(false);
+
+		public FileWatcher(File file) {
+			this.file = file;
+		}
+
+		public boolean isStopped() {
+			return stop.get();
+		}
+
+		public void stopThread() {
+			stop.set(true);
+		}
+
+		public void doOnChange() {
+			try {
+				refresh();
+				listeners.stream().forEach(cl->cl.stateChanged(new ChangeEvent(this)));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void run() {
+			try (WatchService watcher = FileSystems.getDefault().newWatchService()) {
+				Path path = file.toPath().getParent();
+				path.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
+				while (!isStopped()) {
+					WatchKey key;
+					try {
+						key = watcher.poll(25, TimeUnit.MILLISECONDS);
+					} catch (InterruptedException e) {
+						return;
+					}
+					if (key == null) {
+						Thread.yield();
+						continue;
+					}
+
+					for (WatchEvent<?> event : key.pollEvents()) {
+						WatchEvent.Kind<?> kind = event.kind();
+
+						@SuppressWarnings("unchecked")
+						WatchEvent<Path> ev = (WatchEvent<Path>) event;
+						Path filename = ev.context();
+
+						if (kind == StandardWatchEventKinds.OVERFLOW) {
+							Thread.yield();
+							continue;
+						} else if (kind == java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY
+								&& filename.toString().equals(file.getName())) {
+							doOnChange();
+						}
+						boolean valid = key.reset();
+						if (!valid) {
+							break;
+						}
+					}
+					Thread.yield();
+				}
+			} catch (Throwable e) {
+				// Log or rethrow the error
+				e.printStackTrace();
+			}
+		}
+	}
 //	public TranslationModel(String name, File labelsConstantsFile, File bundleFile) throws IOException {
 //		this(new File("").getAbsoluteFile(), name, labelsConstantsFile, bundleFile);
 //	}
@@ -133,7 +245,13 @@ public class TranslationModel {
 	}
 
 	private void refresh(File bundleFile) throws IOException {
+
 		File javaConstantsFile = new File(relativeParent, modelFile.getConstantsFile());
+		if (Objects.isNull(fileWatcher)) {
+//			fileWatcher.stopThread();
+			fileWatcher = new FileWatcher(javaConstantsFile);
+			fileWatcher.start();
+		}
 		labelsConstants = JavaSource.readFile(javaConstantsFile);
 		File parentDir;
 		if (!bundleFiles.keySet().isEmpty()) {
@@ -428,6 +546,10 @@ public class TranslationModel {
 			}
 		}
 		return hidden.toArray(new String[] {});
+	}
+
+	public void addChangeListener(ChangeListener cl) {
+		this.listeners .add(cl);
 	}
 
 }

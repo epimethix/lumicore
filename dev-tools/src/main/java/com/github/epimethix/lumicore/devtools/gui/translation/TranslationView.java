@@ -32,6 +32,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -45,7 +47,8 @@ import com.github.epimethix.lumicore.swing.util.LayoutUtils;
 
 //@SwingComponent
 @SuppressWarnings("serial")
-public class TranslationView extends JPanel implements MutableFileDocument, LabelsDisplayer, ActionListener {
+public class TranslationView extends JPanel
+		implements MutableFileDocument, LabelsDisplayer, ActionListener, ChangeListener {
 
 //	private final JButton btOpen;
 	private final JButton btSave;
@@ -67,6 +70,7 @@ public class TranslationView extends JPanel implements MutableFileDocument, Labe
 	public TranslationView(TranslationModel model, TranslationController translationController) {
 		super(new BorderLayout());
 		this.model = model;
+		this.model.addChangeListener(this);
 		this.translationController = translationController;
 //		btOpen = new JButton();
 //		btOpen.addActionListener(this);
@@ -264,6 +268,11 @@ public class TranslationView extends JPanel implements MutableFileDocument, Labe
 			translationController.showAddLocalesToView(model);
 			refreshUI();
 		}
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		refreshUI();
 	}
 
 }
